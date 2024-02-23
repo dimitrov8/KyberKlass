@@ -13,5 +13,5 @@ public class Subject
 
 	[Required]
 	[MaxLength(MAX_NAME_LENGTH)]
-	public string Name { get; set; } = null!;
+	public string Name { get; set; } = null!; 
 }

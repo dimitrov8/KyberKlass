@@ -23,5 +23,5 @@ public class StudentGrade
 	public int SubjectId { get; set; }
 
 	[ForeignKey(nameof(SubjectId))]
-	public Subject Subject { get; set; } = null!;
+	public Subject Subject { get; set; } = null!; 
 }

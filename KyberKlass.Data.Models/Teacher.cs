@@ -39,5 +39,5 @@ public class Teacher
 	[Phone]
 	public string PhoneNumber { get; set; } = null!;
 
-	public ICollection<TeacherSubject> SubjectsTaught { get; set; }
+	public ICollection<TeacherSubject> SubjectsTaught { get; set; } 
 }

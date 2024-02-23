@@ -34,5 +34,5 @@ public class Guardian
 	public string PhoneNumber { get; set; } = null!;
 
 	[Required]
-	public ICollection<Student> Students { get; set; }
+	public ICollection<Student> Students { get; set; } 
 }
