@@ -17,6 +17,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KyberKlass.Common\KyberKlass.Common.csproj" />
+    <ProjectReference Include="..\KyberKlass.Data\KyberKlass.Data.csproj" />
+    <ProjectReference Include="..\KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>
