@@ -1,7 +1,6 @@
-﻿namespace KyberKlass.Common
+﻿namespace KyberKlass.Common;
+
+public static class GeneralApplicationConstants
 {
-	public static class GeneralApplicationConstants
-	{
-		public const int RELEASE_YEAR = 2024;
-	}
+	public const int RELEASE_YEAR = 2024;
 }
