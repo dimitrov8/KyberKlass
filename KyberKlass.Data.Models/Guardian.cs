@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using static Common.EntityValidations.Person;
 
 /// <summary>
-///     Represents a teacher in the school.
+///     Represents a guardian for a student/s in the school.
 /// </summary>
-public class Teacher
+public class Guardian
 {
-	public Teacher()
+	public Guardian()
 	{
 		this.Id = Guid.NewGuid();
-		this.SubjectsTaught = new HashSet<TeacherSubject>();
+		this.Students = new HashSet<Student>();
 	}
 
 	[Key]
@@ -26,12 +26,6 @@ public class Teacher
 	public string LastName { get; set; } = null!;
 
 	[Required]
-	public DateTime BirthDate { get; set; }
-
-	[Required]
-	public string Address { get; set; } = null!;
-
-	[Required]
 	[EmailAddress]
 	public string Email { get; set; } = null!;
 
@@ -39,5 +33,6 @@ public class Teacher
 	[Phone]
 	public string PhoneNumber { get; set; } = null!;
 
-	public ICollection<TeacherSubject> SubjectsTaught { get; set; }
+	[Required]
+	public ICollection<Student> Students { get; set; }
 }
