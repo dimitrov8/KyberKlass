@@ -3,9 +3,6 @@
 using System.ComponentModel.DataAnnotations;
 using static Common.EntityValidations.Person;
 
-/// <summary>
-///     Represents a teacher in the school.
-/// </summary>
 public class Teacher
 {
 	public Teacher()
@@ -40,4 +37,5 @@ public class Teacher
 	public string PhoneNumber { get; set; } = null!;
 
 	public ICollection<TeacherSubject> SubjectsTaught { get; set; }
+
 }

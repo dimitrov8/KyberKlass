@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static Common.EntityValidations.Student;
 
-/// <summary>
-///     Represents a grade assigned to a student for a particular subject.
-/// </summary>
 public class StudentGrade
 {
+	[Key]
+	public int Id { get; set; }
+
 	[Required]
 	[Range(MIN_GRADE_MARK, MAX_GRADE_MARK)]
 	public double Grade { get; set; }
@@ -18,10 +18,4 @@ public class StudentGrade
 
 	[ForeignKey(nameof(StudentId))]
 	public Student Student { get; set; } = null!;
-
-	[Required]
-	public int SubjectId { get; set; }
-
-	[ForeignKey(nameof(SubjectId))]
-	public Subject Subject { get; set; } = null!;
 }
