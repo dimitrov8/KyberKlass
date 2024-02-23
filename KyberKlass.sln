@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Web", "KyberKlas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyberKlass.Common", "KyberKlass.Common\KyberKlass.Common.csproj", "{F2CB3BBF-4EA2-4F80-91BF-7EDB6402F54B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{60132B88-A696-48D3-B4C8-8E8BFCC688BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C2A1D520-ECB6-407E-9C70-3EA6AE178F10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3006A491-1ACB-4B80-A1DE-0D3B941993AE} = {60132B88-A696-48D3-B4C8-8E8BFCC688BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2970D4E9-BF6C-42E0-B7EA-90031BEED0D9}
