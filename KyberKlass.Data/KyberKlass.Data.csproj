@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KyberKlass.Common\KyberKlass.Common.csproj" />
+    <ProjectReference Include="..\KyberKlass.Data.Models\KyberKlass.Data.Models.csproj" />
   </ItemGroup>
 
 </Project>
