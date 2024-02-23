@@ -1,13 +1,12 @@
-﻿namespace KyberKlass.Web.Data
-{
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-	using Microsoft.EntityFrameworkCore;
+﻿namespace KyberKlass.Web.Data;
 
-	public class ApplicationDbContext : IdentityDbContext
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+public class ApplicationDbContext : IdentityDbContext
+{
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+		: base(options)
 	{
-		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-			: base(options)
-		{
-		}
 	}
 }
