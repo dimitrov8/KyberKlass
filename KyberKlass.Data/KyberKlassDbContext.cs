@@ -1,18 +1,28 @@
 ﻿namespace KyberKlass.Data;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
-public class KyberKlassDbContext : IdentityDbContext
+public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
 	public KyberKlassDbContext(DbContextOptions<KyberKlassDbContext> options)
 		: base(options)
 	{
 	}
 
+	public DbSet<School> Schools { get; set; } = null!;
+
+	public DbSet<Classroom> Classrooms { get; set; } = null!;
+
+	public DbSet<Teacher> Teachers { get; set; } = null!;
+
+	public DbSet<Student> Students { get; set; } = null!;
+
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
+		
 		builder.Entity<Absence>()
 			.HasKey(a => new { a.StudentId, a.Date });
 
@@ -31,9 +41,11 @@ public class KyberKlassDbContext : IdentityDbContext
 		builder.Entity<StudentGrade>()
 			.HasKey(sg => new { sg.StudentId, sg.SubjectId });
 
-		builder.Entity<TeacherSubject>()
-			.HasKey(ts => new { ts.TeacherId, ts.SubjectId });
-
+		builder.Entity<Guardian>()
+			.HasMany(g => g.Students)
+			.WithOne(g => g.Guardian)
+			.OnDelete(DeleteBehavior.Restrict);
+			
 		base.OnModelCreating(builder);
 	}
 }
