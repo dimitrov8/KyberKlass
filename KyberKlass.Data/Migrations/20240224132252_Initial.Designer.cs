@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KyberKlass.Data.Migrations
 {
     [DbContext(typeof(KyberKlassDbContext))]
-    [Migration("20240224113419_Initial")]
+    [Migration("20240224132252_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -536,13 +536,13 @@ namespace KyberKlass.Data.Migrations
                     b.HasOne("KyberKlass.Data.Models.Classroom", "Classroom")
                         .WithMany("Absences")
                         .HasForeignKey("ClassroomId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KyberKlass.Data.Models.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Classroom");
@@ -555,7 +555,7 @@ namespace KyberKlass.Data.Migrations
                     b.HasOne("KyberKlass.Data.Models.Classroom", "Classroom")
                         .WithMany("Assignments")
                         .HasForeignKey("ClassroomId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Classroom");
@@ -566,13 +566,13 @@ namespace KyberKlass.Data.Migrations
                     b.HasOne("KyberKlass.Data.Models.Classroom", "Classroom")
                         .WithMany("Behaviors")
                         .HasForeignKey("ClassroomId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KyberKlass.Data.Models.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Classroom");
@@ -592,7 +592,7 @@ namespace KyberKlass.Data.Migrations
                     b.HasOne("KyberKlass.Data.Models.Classroom", "Classroom")
                         .WithMany("Exams")
                         .HasForeignKey("ClassroomId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KyberKlass.Data.Models.Subject", "Subject")
@@ -695,13 +695,13 @@ namespace KyberKlass.Data.Migrations
                     b.HasOne("KyberKlass.Data.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KyberKlass.Data.Models.Teacher", "Teacher")
                         .WithMany("TeachingSubjects")
                         .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Subject");

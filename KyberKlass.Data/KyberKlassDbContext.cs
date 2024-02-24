@@ -22,7 +22,6 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		
 		builder.Entity<Absence>()
 			.HasKey(a => new { a.StudentId, a.Date });
 
@@ -41,11 +40,33 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 		builder.Entity<StudentGrade>()
 			.HasKey(sg => new { sg.StudentId, sg.SubjectId });
 
+		builder.Entity<TeacherSubject>()
+			.HasKey(ts => new { ts.TeacherId, ts.SubjectId });
+
+		builder.Entity<Absence>()
+			.HasOne(a => a.Student)
+			.WithMany()
+			.HasForeignKey(a => a.StudentId)
+			.OnDelete(DeleteBehavior.Restrict);
+
+		builder.Entity<Behavior>()
+			.HasOne(b => b.Student)
+			.WithMany()
+			.HasForeignKey(b => b.StudentId)
+			.OnDelete(DeleteBehavior.Restrict);
+
 		builder.Entity<Guardian>()
 			.HasMany(g => g.Students)
-			.WithOne(g => g.Guardian)
+			.WithOne(s => s.Guardian)
+			.HasForeignKey(s => s.GuardianId)
 			.OnDelete(DeleteBehavior.Restrict);
-			
+
+		builder.Entity<Praise>()
+			.HasOne(p => p.Classroom)
+			.WithMany(c => c.Praises)
+			.HasForeignKey(p => p.ClassroomId)
+			.OnDelete(DeleteBehavior.Restrict);
+
 		base.OnModelCreating(builder);
 	}
 }

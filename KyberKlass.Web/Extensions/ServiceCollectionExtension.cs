@@ -1,8 +1,7 @@
 ﻿namespace KyberKlass.Web.Extensions;
 
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
-using Microsoft.AspNetCore.Identity;
+using Data;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 public static class ServiceCollectionExtension

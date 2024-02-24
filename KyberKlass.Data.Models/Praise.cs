@@ -32,5 +32,5 @@ public class Praise
 
 	[Required]
 	[MaxLength(MAX_DESCRIPTION_LENGTH)]
-	public string Description { get; set; } = null!; 
+	public string Description { get; set; } = null!;
 }

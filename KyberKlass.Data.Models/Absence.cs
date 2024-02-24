@@ -24,5 +24,5 @@ public class Absence
 	public DateTime Date { get; set; }
 
 	[Required]
-	public bool IsExcused { get; set; }
+	public bool IsExcused { get; set; } = false;
 }

@@ -1,7 +1,6 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
-using static Common.EntityValidations.ApplicationUser;
 
 /// <summary>
 ///     Represents a teacher in the school.
@@ -20,5 +19,5 @@ public class Teacher
 	[Required]
 	public bool IsRetired { get; set; } = false;
 
-	public ICollection<TeacherSubject> TeachingSubjects { get; set; } 
+	public ICollection<TeacherSubject> TeachingSubjects { get; set; }
 }

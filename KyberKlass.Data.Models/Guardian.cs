@@ -1,7 +1,6 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
-using static Common.EntityValidations.ApplicationUser;
 
 /// <summary>
 ///     Represents a guardian for a student/s in the school.
@@ -18,5 +17,5 @@ public class Guardian
 	public Guid Id { get; set; }
 
 	[Required]
-	public ICollection<Student> Students { get; set; } 
+	public ICollection<Student> Students { get; set; }
 }

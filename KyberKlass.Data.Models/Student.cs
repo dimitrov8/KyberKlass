@@ -2,7 +2,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.ApplicationUser;
 using static Common.EntityValidations.Student;
 
 /// <summary>
@@ -19,30 +18,8 @@ public class Student
 	public Guid Id { get; set; }
 
 	[Required]
-	[MaxLength(MAX_NAME_LENGTH)]
-	public string FirstName { get; set; } = null!;
-
-	[Required]
-	[MaxLength(MAX_NAME_LENGTH)]
-	public string LastName { get; set; } = null!;
-
-	[Required]
-	public DateTime BirthDate { get; set; }
-
-	[Required]
 	[Range(MIN_GRADE_LEVEL, MAX_GRADE_LEVEL)]
 	public int GradeLevel { get; set; }
-
-	[Required]
-	public string Address { get; set; } = null!;
-
-	[Required]
-	[EmailAddress]
-	public string Email { get; set; } = null!;
-
-	[Required]
-	[Phone]
-	public string PhoneNumber { get; set; } = null!;
 
 	[Required]
 	public Guid GuardianId { get; set; }

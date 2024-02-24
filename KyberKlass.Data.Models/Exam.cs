@@ -25,5 +25,5 @@ public class Exam
 	public DateTime Date { get; set; }
 
 	[MaxLength(MAX_DESCRIPTION_LENGTH)]
-	public string? Description { get; set; } 
+	public string? Description { get; set; }
 }
