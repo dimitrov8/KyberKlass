@@ -1,5 +1,6 @@
 ﻿namespace KyberKlass.Data;
 
+using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,11 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		
+		var configAssembly = Assembly.GetAssembly(typeof(KyberKlassDbContext)) ??
+		                     Assembly.GetExecutingAssembly();
+
+		builder.ApplyConfigurationsFromAssembly(configAssembly);
+
 		builder.Entity<Absence>()
 			.HasKey(a => new { a.StudentId, a.Date });
 
@@ -45,7 +50,7 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 			.HasMany(g => g.Students)
 			.WithOne(g => g.Guardian)
 			.OnDelete(DeleteBehavior.Restrict);
-			
+
 		base.OnModelCreating(builder);
 	}
 }
