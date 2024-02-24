@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.Person;
+using static Common.EntityValidations.ApplicationUser;
 using static Common.EntityValidations.Student;
 
 /// <summary>
@@ -60,5 +60,8 @@ public class Student
 	public Guid ClassroomId { get; set; }
 
 	[ForeignKey(nameof(ClassroomId))]
-	public Classroom Classroom { get; set; } = null!; 
+	public Classroom Classroom { get; set; } = null!;
+
+	[Required]
+	public bool IsEnrolled { get; set; } = true;
 }
