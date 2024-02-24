@@ -51,6 +51,12 @@ public class Student
 	public Guardian Guardian { get; set; } = null!;
 
 	[Required]
+	public Guid SchoolId { get; set; }
+
+	[ForeignKey(nameof(SchoolId))]
+	public School School { get; set; } = null!;
+
+	[Required]
 	public Guid ClassroomId { get; set; }
 
 	[ForeignKey(nameof(ClassroomId))]
