@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using ViewModels.Home;
 
 public class HomeController : Controller
-
 {
 	public IActionResult Index()
 	{
