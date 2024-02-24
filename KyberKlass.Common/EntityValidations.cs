@@ -2,15 +2,15 @@
 
 public static class EntityValidations
 {
-	public static class School
+	public static class ApplicationUser
 	{
-		public const int MIN_NAME_LENGTH = 4;
+		public const int MIN_NAME_LENGTH = 2;
 		public const int MAX_NAME_LENGTH = 30;
 	}
 
-	public static class Person
+	public static class School
 	{
-		public const int MIN_NAME_LENGTH = 2;
+		public const int MIN_NAME_LENGTH = 4;
 		public const int MAX_NAME_LENGTH = 30;
 	}
 
