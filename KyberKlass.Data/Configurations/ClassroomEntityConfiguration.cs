@@ -8,6 +8,9 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 {
 	public void Configure(EntityTypeBuilder<Classroom> builder)
 	{
+		builder
+			.HasQueryFilter(c => !c.IsDeleted);
+
 		// Absences
 		builder
 			.HasMany(c => c.Absences)
@@ -35,12 +38,5 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 			.WithOne(e => e.Classroom)
 			.HasForeignKey(e => e.ClassroomId)
 			.OnDelete(DeleteBehavior.Restrict);
-
-		// Praise
-		//builder
-		//	.HasMany(c => c.Praises)
-		//	.WithOne(p => p.Classroom)
-		//	.HasForeignKey(p => p.ClassroomId)
-		//	.OnDelete(DeleteBehavior.Restrict);
 	}
 }

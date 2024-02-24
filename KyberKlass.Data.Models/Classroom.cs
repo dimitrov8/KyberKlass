@@ -1,6 +1,7 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static Common.EntityValidations.Classroom;
 
 /// <summary>
@@ -28,6 +29,12 @@ public class Classroom
 	[MaxLength(MAX_NAME_LENGTH)]
 	public string Name { get; set; } = null!;
 
+	[Required]
+	public Guid SchoolId { get; set; }
+
+	[ForeignKey(nameof(SchoolId))]
+	public School School { get; set; } = null!;
+
 	public ICollection<Student> Students { get; set; }
 
 	public ICollection<Subject> Subjects { get; set; }
@@ -43,4 +50,6 @@ public class Classroom
 	public ICollection<Behavior> Behaviors { get; set; }
 
 	public ICollection<Praise> Praises { get; set; }
+
+	public bool IsDeleted { get; set; } = false;
 }

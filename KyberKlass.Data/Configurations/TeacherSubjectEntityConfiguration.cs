@@ -22,5 +22,10 @@ public class TeacherSubjectEntityConfiguration : IEntityTypeConfiguration<Teache
 			.WithMany()
 			.HasForeignKey(ts => ts.SubjectId)
 			.OnDelete(DeleteBehavior.Restrict);
+
+		builder
+			.Navigation(ts => ts.Teacher)
+			.UsePropertyAccessMode(PropertyAccessMode.Property)
+			.IsRequired(false);
 	}
 }

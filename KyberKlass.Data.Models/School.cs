@@ -29,4 +29,6 @@ public class School
 	public string PhoneNumber { get; set; } = null!;
 
 	public ICollection<Classroom> Classrooms { get; set; }
+
+	public bool IsDeleted { get; set; } = false;
 }

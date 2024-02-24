@@ -20,6 +20,12 @@ public class StudentGrade
 	public Student Student { get; set; } = null!;
 
 	[Required]
+	public Guid ClassroomId { get; set; }
+
+	[ForeignKey(nameof(ClassroomId))]
+	public Classroom Classroom { get; set; } = null!;
+
+	[Required]
 	public int SubjectId { get; set; }
 
 	[ForeignKey(nameof(SubjectId))]

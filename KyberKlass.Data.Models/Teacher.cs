@@ -17,7 +17,7 @@ public class Teacher
 	public Guid Id { get; set; }
 
 	[Required]
-	public bool IsRetired { get; set; } = false;
+	public bool IsWorking { get; set; } = true;
 
 	public ICollection<TeacherSubject> TeachingSubjects { get; set; }
 }
