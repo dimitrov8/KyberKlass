@@ -17,7 +17,6 @@ public class Classroom
 		this.Assignments = new HashSet<Assignment>();
 		this.Exams = new HashSet<Exam>();
 		this.Absences = new HashSet<Absence>();
-		this.Behaviors = new HashSet<Behavior>();
 		this.Praises = new HashSet<Praise>();
 	}
 
@@ -39,8 +38,6 @@ public class Classroom
 	public ICollection<Exam> Exams { get; set; }
 
 	public ICollection<Absence> Absences { get; set; }
-
-	public ICollection<Behavior> Behaviors { get; set; } 
 
 	public ICollection<Praise> Praises { get; set; }
 }

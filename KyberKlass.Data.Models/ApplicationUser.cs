@@ -29,7 +29,7 @@ public class ApplicationUser : IdentityUser<Guid>
 	public override string PhoneNumber { get; set; } = null!;
 
 	[Required]
-	public UserRole Role { get; set; }
+	public UserRole Role { get; set; } 
 }
 
 public enum UserRole

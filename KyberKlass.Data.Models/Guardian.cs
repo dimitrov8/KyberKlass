@@ -1,7 +1,6 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 using static Common.EntityValidations.ApplicationUser;
 
 /// <summary>
