@@ -26,7 +26,7 @@ public class School
 
 	[Required]
 	[Phone]
-	public string Phone { get; set; } = null!;
+	public string PhoneNumber { get; set; } = null!;
 
 	public ICollection<Classroom> Classrooms { get; set; }
 }
