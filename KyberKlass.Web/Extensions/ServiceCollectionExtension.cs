@@ -2,12 +2,17 @@
 
 using Data;
 using Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 public static class ServiceCollectionExtension
 {
 	public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 	{
+		services.AddAuthentication()
+			.AddCookie();
+		services.AddAuthorization();
+
 		return services;
 	}
 
@@ -27,6 +32,7 @@ public static class ServiceCollectionExtension
 	public static IServiceCollection AddApplicationIdentity(this IServiceCollection services, IConfiguration config)
 	{
 		services.AddDefaultIdentity<ApplicationUser>(options => { options.SignIn.RequireConfirmedAccount = false; })
+			.AddRoles<IdentityRole<Guid>>()
 			.AddEntityFrameworkStores<KyberKlassDbContext>();
 
 		return services;
