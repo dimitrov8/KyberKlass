@@ -11,32 +11,16 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 		builder
 			.HasQueryFilter(c => !c.IsDeleted);
 
-		// Absences
 		builder
-			.HasMany(c => c.Absences)
-			.WithOne(a => a.Classroom)
-			.HasForeignKey(a => a.ClassroomId)
+			.HasMany(c => c.Students)
+			.WithOne(s => s.Classroom)
+			.HasForeignKey(s => s.ClassroomId)
 			.OnDelete(DeleteBehavior.Restrict);
 
-		// Assignments
 		builder
-			.HasMany(c => c.Assignments)
-			.WithOne(a => a.Classroom)
-			.HasForeignKey(a => a.ClassroomId)
-			.OnDelete(DeleteBehavior.Restrict);
-
-		// Behaviors
-		builder
-			.HasMany(c => c.Behaviors)
-			.WithOne(b => b.Classroom)
-			.HasForeignKey(b => b.ClassroomId)
-			.OnDelete(DeleteBehavior.Restrict);
-
-		// Exams
-		builder
-			.HasMany(c => c.Exams)
-			.WithOne(e => e.Classroom)
-			.HasForeignKey(e => e.ClassroomId)
+			.HasMany(c => c.Subjects)
+			.WithOne(s => s.Classroom)
+			.HasForeignKey(s => s.ClassroomId)
 			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

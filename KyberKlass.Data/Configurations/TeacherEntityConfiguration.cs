@@ -12,12 +12,9 @@ public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>
 			.HasQueryFilter(t => t.IsWorking);
 
 		builder
-			.HasMany(t => t.TeachingSubjects)
-			.WithOne(ts => ts.Teacher)
-			.OnDelete(DeleteBehavior.Cascade);
-
-		builder
-			.Navigation(t => t.TeachingSubjects)
-			.UsePropertyAccessMode(PropertyAccessMode.Property);
+			.HasMany(t => t.Subjects)
+			.WithOne(s => s.Teacher)
+			.HasForeignKey(s => s.TeacherId)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

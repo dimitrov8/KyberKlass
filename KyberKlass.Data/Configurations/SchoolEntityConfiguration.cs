@@ -11,10 +11,28 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
 		builder
 			.HasQueryFilter(c => !c.IsDeleted);
 
-		builder
-			.HasMany(s => s.Classrooms)
-			.WithOne(c => c.School)
-			.HasForeignKey(c => c.SchoolId)
-			.OnDelete(DeleteBehavior.Restrict);
+		this.SeedSchools(builder);
+	}
+
+	private void SeedSchools(EntityTypeBuilder<School> builder)
+	{
+		builder.HasData(
+			new School
+			{
+				Id = Guid.NewGuid(),
+				Name = "St. George International School",
+				Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
+				Email = "st@example.com",
+				PhoneNumber = "02 414 4414"
+			},
+			new School
+			{
+				Id = Guid.NewGuid(),
+				Name = "91. Немска езикова гимназия „Проф. Константин Гълъбов“",
+				Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
+				Email = "schoolb@ez.com",
+				PhoneNumber = "02 987 5305"
+			}
+		);
 	}
 }

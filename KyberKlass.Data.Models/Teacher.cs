@@ -1,23 +1,22 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-/// <summary>
-///     Represents a teacher in the school.
-/// </summary>
-public class Teacher
+public class Teacher : BasePerson
 {
 	public Teacher()
 	{
-		this.Id = Guid.NewGuid();
-		this.TeachingSubjects = new HashSet<TeacherSubject>();
+		this.Subjects = new HashSet<Subject>();
 	}
-
-	[Key]
-	public Guid Id { get; set; }
 
 	[Required]
 	public bool IsWorking { get; set; } = true;
 
-	public ICollection<TeacherSubject> TeachingSubjects { get; set; }
+	public ICollection<Subject> Subjects { get; set; }
+
+	public override string ToString()
+	{
+		return this.Id.ToString();
+	}
 }

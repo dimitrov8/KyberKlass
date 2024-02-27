@@ -2,7 +2,7 @@
 
 public static class EntityValidations
 {
-	public static class ApplicationUser
+	public static class BasePerson
 	{
 		public const int MIN_NAME_LENGTH = 2;
 		public const int MAX_NAME_LENGTH = 30;
@@ -11,16 +11,16 @@ public static class EntityValidations
 	public static class School
 	{
 		public const int MIN_NAME_LENGTH = 4;
-		public const int MAX_NAME_LENGTH = 30;
-	}
+		public const int MAX_NAME_LENGTH = 100;
 
-	public static class Student
-	{
-		public const int MIN_GRADE_LEVEL = 1;
-		public const int MAX_GRADE_LEVEL = 12;
+		public const int MIN_COUNTRY_NAME_LENGTH = 4;
+		public const int MAX_COUNTRY_NAME_LENGTH = 56;
 
-		public const double MIN_GRADE_MARK = 2.00;
-		public const double MAX_GRADE_MARK = 6.00;
+		public const int MIN_CITY_VILLAGE_NAME_LENGTH = 4;
+		public const int MAX_CITY_VILLAGE_NAME_LENGTH = 85;
+
+		public const int MIN_ADDRESS_LENGTH = 5;
+		public const int MAX_ADDRESS_LENGTH = 100;
 	}
 
 	public static class Classroom

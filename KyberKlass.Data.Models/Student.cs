@@ -2,24 +2,14 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.Student;
 
-/// <summary>
-///     Represents a student in the school.
-/// </summary>
-public class Student
+public class Student : BasePerson
 {
 	public Student()
 	{
-		this.Id = Guid.NewGuid();
+		this.Grades = new HashSet<Grade>();
+		this.Absences = new HashSet<Absence>();
 	}
-
-	[Key]
-	public Guid Id { get; set; }
-
-	[Required]
-	[Range(MIN_GRADE_LEVEL, MAX_GRADE_LEVEL)]
-	public int GradeLevel { get; set; }
 
 	[Required]
 	public Guid GuardianId { get; set; }
@@ -28,10 +18,7 @@ public class Student
 	public Guardian Guardian { get; set; } = null!;
 
 	[Required]
-	public Guid SchoolId { get; set; }
-
-	[ForeignKey(nameof(SchoolId))]
-	public School School { get; set; } = null!;
+	public bool IsEnrolled { get; set; } = true;
 
 	[Required]
 	public Guid ClassroomId { get; set; }
@@ -39,6 +26,7 @@ public class Student
 	[ForeignKey(nameof(ClassroomId))]
 	public Classroom Classroom { get; set; } = null!;
 
-	[Required]
-	public bool IsEnrolled { get; set; } = true;
+	public ICollection<Grade> Grades { get; set; }
+
+	public ICollection<Absence> Absences { get; set; }
 }

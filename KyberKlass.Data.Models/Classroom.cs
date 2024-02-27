@@ -4,25 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static Common.EntityValidations.Classroom;
 
-/// <summary>
-///     Represents a classroom in the school.
-/// </summary>
 public class Classroom
 {
 	public Classroom()
 	{
 		this.Id = Guid.NewGuid();
+
 		this.Students = new HashSet<Student>();
 		this.Subjects = new HashSet<Subject>();
-		this.Grades = new HashSet<StudentGrade>();
-		this.Assignments = new HashSet<Assignment>();
-		this.Exams = new HashSet<Exam>();
-		this.Absences = new HashSet<Absence>();
-		this.Behaviors = new HashSet<Behavior>();
-		this.Praises = new HashSet<Praise>();
 	}
 
 	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public Guid Id { get; set; }
 
 	[Required]
@@ -30,26 +23,20 @@ public class Classroom
 	public string Name { get; set; } = null!;
 
 	[Required]
-	public Guid SchoolId { get; set; }
+	public Guid TeacherId { get; set; }
 
-	[ForeignKey(nameof(SchoolId))]
-	public School School { get; set; } = null!;
+	[ForeignKey(nameof(TeacherId))]
+	public Teacher Teacher { get; set; } = null!;
+
+	[Required]
+	public bool IsDeleted { get; set; } = false;
 
 	public ICollection<Student> Students { get; set; }
 
 	public ICollection<Subject> Subjects { get; set; }
 
-	public ICollection<StudentGrade> Grades { get; set; }
-
-	public ICollection<Assignment> Assignments { get; set; }
-
-	public ICollection<Exam> Exams { get; set; }
-
-	public ICollection<Absence> Absences { get; set; }
-
-	public ICollection<Behavior> Behaviors { get; set; }
-
-	public ICollection<Praise> Praises { get; set; }
-
-	public bool IsDeleted { get; set; } = false;
+	public override string ToString()
+	{
+		return this.Name;
+	}
 }

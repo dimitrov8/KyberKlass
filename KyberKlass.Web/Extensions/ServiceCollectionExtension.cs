@@ -2,8 +2,13 @@
 
 using Data;
 using Data.Models;
+using DotNetEd.CoreAdmin;
+using DotNetEd.CoreAdmin.Controllers;
+using DotNetEd.CoreAdmin.ViewComponents;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Services.Data;
+using Services.Data.Interfaces;
 
 public static class ServiceCollectionExtension
 {
@@ -11,7 +16,10 @@ public static class ServiceCollectionExtension
 	{
 		services.AddAuthentication()
 			.AddCookie();
+
 		services.AddAuthorization();
+
+		services.AddScoped<ISchoolService, SchoolService>();
 
 		return services;
 	}
@@ -23,6 +31,12 @@ public static class ServiceCollectionExtension
 
 		services.AddDbContext<KyberKlassDbContext>(options =>
 			options.UseSqlServer(connectionString));
+
+		//services.AddCoreAdmin("Admin");
+		//	services.AddCoreAdmin(new CoreAdminOptions()
+		//	{
+		//		IgnoreEntityTypes = new[] {typeof(IdentityUserRole<Guid>), typeof(IdentityRoleClaim<Guid>), typeof(Classroom)}
+		//	});
 
 		services.AddDatabaseDeveloperPageExceptionFilter();
 

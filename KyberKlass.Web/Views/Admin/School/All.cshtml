@@ -1,0 +1,82 @@
+﻿@model IEnumerable<SchoolViewModel>
+
+@{
+	ViewBag.Title = "All Schools";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr/>
+
+<div class="card-body">
+	<table id="id" class="table table-bordered table-striped">
+		<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Address</th>
+			<th>Email</th>
+			<th>Phone Number</th>
+			<th>IsDeleted</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var school in Model)
+		{
+			<tr>
+				<td>@school.Id</td>
+				<td>@school.Name</td>
+				<td>@school.Address</td>
+				<td>@school.Email</td>
+				<td>@school.PhoneNumber</td>
+				<td>
+					<input type="checkbox" disabled @(school.IsDeleted ? "checked" : "")/>
+				</td>
+				<td>
+					<!-- Edit button -->
+					<form asp-controller="School" asp-action="Edit" method="get">
+						<input type="hidden" name="id" value="@school.Id"/>
+						<button type="submit" class="btn btn-primary">Edit</button>
+					</form>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+
+	@* Include necessary scripts for DataTables.js and DataTables.Export *@
+
+	@section scripts
+	{
+		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+		<script src="~/plugins/jszip/jszip.min.js"></script>
+		<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+		<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+	}
+
+	<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+</div>

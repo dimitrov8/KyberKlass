@@ -1,16 +1,19 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static Common.EntityValidations.School;
 
 public class School
 {
 	public School()
 	{
+		this.Id = Guid.NewGuid();
 		this.Classrooms = new HashSet<Classroom>();
 	}
 
 	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public Guid Id { get; set; }
 
 	[Required]
@@ -28,7 +31,8 @@ public class School
 	[Phone]
 	public string PhoneNumber { get; set; } = null!;
 
-	public ICollection<Classroom> Classrooms { get; set; }
-
+	[Required]
 	public bool IsDeleted { get; set; } = false;
+
+	public ICollection<Classroom> Classrooms { get; set; }
 }

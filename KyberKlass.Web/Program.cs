@@ -1,5 +1,4 @@
 using KyberKlass.Web.Extensions;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +28,21 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapDefaultControllerRoute();
+app.UseEndpoints(endpoints =>
+{
+	endpoints.MapControllerRoute(
+		"adminSchool",
+		"Admin/School/{action=Index}",
+		new { controller = "School" }
+	);
+
+	// Add other endpoint mappings here if needed
+
+	endpoints.MapControllerRoute(
+		"default",
+		"{controller=Home}/{action=Index}/{id?}");
+});
+
 app.MapRazorPages();
 
 app.Run();

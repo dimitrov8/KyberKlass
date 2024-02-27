@@ -10,20 +10,20 @@ public class StudentEntityConfiguration : IEntityTypeConfiguration<Student>
 	{
 		builder
 			.HasQueryFilter(s => s.IsEnrolled);
-		
+
 		builder
 			.HasQueryFilter(s => !s.Classroom.IsDeleted);
+
+		builder
+			.HasMany(s => s.Absences)
+			.WithOne(a => a.Student)
+			.HasForeignKey(a => a.StudentId)
+			.OnDelete(DeleteBehavior.Restrict);
 
 		builder
 			.HasOne(s => s.Guardian)
 			.WithMany(g => g.Students)
 			.HasForeignKey(s => s.GuardianId)
 			.OnDelete(DeleteBehavior.Restrict);
-
-	builder
-		.HasOne(s => s.Classroom)
-		.WithMany(c => c.Students)
-		.HasForeignKey(s => s.ClassroomId)
-		.OnDelete(DeleteBehavior.Restrict);
 	}
 }

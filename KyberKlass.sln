@@ -5,17 +5,21 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Web", "KyberKlass.Web\KyberKlass.Web.csproj", "{3006A491-1ACB-4B80-A1DE-0D3B941993AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyberKlass.Common", "KyberKlass.Common\KyberKlass.Common.csproj", "{F2CB3BBF-4EA2-4F80-91BF-7EDB6402F54B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Common", "KyberKlass.Common\KyberKlass.Common.csproj", "{F2CB3BBF-4EA2-4F80-91BF-7EDB6402F54B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{60132B88-A696-48D3-B4C8-8E8BFCC688BD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C2A1D520-ECB6-407E-9C70-3EA6AE178F10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyberKlass.Data", "KyberKlass.Data\KyberKlass.Data.csproj", "{35ABA900-53C7-46A2-B2A0-C297FC91A1D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Data", "KyberKlass.Data\KyberKlass.Data.csproj", "{35ABA900-53C7-46A2-B2A0-C297FC91A1D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyberKlass.Data.Models", "KyberKlass.Data.Models\KyberKlass.Data.Models.csproj", "{2EE4C305-3FF9-494F-A76B-4B7C69FFEC34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Data.Models", "KyberKlass.Data.Models\KyberKlass.Data.Models.csproj", "{2EE4C305-3FF9-494F-A76B-4B7C69FFEC34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyberKlass.Web.ViewModels", "KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj", "{21A0C24E-189A-4D67-9841-6920394FFEEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Web.ViewModels", "KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj", "{21A0C24E-189A-4D67-9841-6920394FFEEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{8C9800E0-AB4B-4C13-A0D9-A944579C85F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Services.Data", "KyberKlass.Services.Data\KyberKlass.Services.Data.csproj", "{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +47,10 @@ Global
 		{21A0C24E-189A-4D67-9841-6920394FFEEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21A0C24E-189A-4D67-9841-6920394FFEEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21A0C24E-189A-4D67-9841-6920394FFEEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +60,7 @@ Global
 		{35ABA900-53C7-46A2-B2A0-C297FC91A1D5} = {C2A1D520-ECB6-407E-9C70-3EA6AE178F10}
 		{2EE4C305-3FF9-494F-A76B-4B7C69FFEC34} = {C2A1D520-ECB6-407E-9C70-3EA6AE178F10}
 		{21A0C24E-189A-4D67-9841-6920394FFEEC} = {60132B88-A696-48D3-B4C8-8E8BFCC688BD}
+		{46E09F4B-2B8F-47A5-B5AB-64EEE74B9FA1} = {8C9800E0-AB4B-4C13-A0D9-A944579C85F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2970D4E9-BF6C-42E0-B7EA-90031BEED0D9}

@@ -3,11 +3,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-/// <summary>
-///     Represents an absence record for a student in the school.
-/// </summary>
 public class Absence
 {
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	public int Id { get; set; }
+
 	[Required]
 	public Guid StudentId { get; set; }
 
@@ -15,14 +16,9 @@ public class Absence
 	public Student Student { get; set; } = null!;
 
 	[Required]
-	public Guid ClassroomId { get; set; }
-
-	[ForeignKey(nameof(ClassroomId))]
-	public Classroom Classroom { get; set; } = null!;
-
-	[Required]
 	public DateTime Date { get; set; }
 
 	[Required]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public bool IsExcused { get; set; } = false;
 }
