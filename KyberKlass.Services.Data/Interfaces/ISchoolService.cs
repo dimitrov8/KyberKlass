@@ -5,14 +5,16 @@ using Web.ViewModels.Admin.School;
 
 public interface ISchoolService
 {
-	Task<bool> AddSchoolAsync(AddSchoolFormModel model);
+	Task<bool> AddAsync(AddSchoolFormModel model);
 
-	Task<IEnumerable<SchoolViewModel>> AllSchoolsAsync();
+	Task<IEnumerable<SchoolViewModel>> AllAsync();
 
-	Task<bool> SchoolExistAsync(School newSchool);
+	Task<bool> ExistAsync(School newSchool);
 
 	//Task<bool> RemoveSchoolAsync();
-	Task<AddSchoolFormModel?> GetForEditSchoolAsync(string id);
+	Task<AddSchoolFormModel?> GetForEditAsync(string id);
 
 	Task<bool> EditSchoolAsync(string id, SchoolViewModel model);
+
+	Task<SchoolViewModel?> ViewDetailsAsync(string id);
 }
