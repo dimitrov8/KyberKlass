@@ -1,12 +1,18 @@
-﻿@model SchoolViewModel
+﻿@model AddSchoolFormModel
 
 @{
-    ViewData["Title"] = "Edit";
+	ViewBag.Title = "Edit School";
 }
 
-<h1>Edit</h1>
+@if(TempData["ErrorMessage"] != null)
+{
+	<div class="alert alert-danger" role="alert">
+		@TempData["ErrorMessage"]
+	</div>
+}
 
-<h4>School</h4>
+<h1>@ViewBag.Title</h1>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
