@@ -16,7 +16,7 @@ public class SchoolService : ISchoolService
     }
 
     // Adding school
-    public async Task<bool> AddSchoolAsync(AddSchoolFormModel model)
+    public async Task<bool> AddAsync(AddSchoolFormModel model)
     {
         var newSchool = new School
         {
@@ -28,7 +28,7 @@ public class SchoolService : ISchoolService
             IsDeleted = false
         };
 
-        bool schoolExists = await this.SchoolExistAsync(newSchool);
+        bool schoolExists = await this.ExistAsync(newSchool);
 
         if (schoolExists)
         {
@@ -46,7 +46,7 @@ public class SchoolService : ISchoolService
     }
 
     // Visualizing schools
-    public async Task<IEnumerable<SchoolViewModel>> AllSchoolsAsync()
+    public async Task<IEnumerable<SchoolViewModel>> AllAsync()
     {
         IEnumerable<SchoolViewModel> schools = await this._dbContext
             .Schools
@@ -66,14 +66,15 @@ public class SchoolService : ISchoolService
     }
 
     // Checks if school exists
-    public async Task<bool> SchoolExistAsync(School newSchool)
+    public async Task<bool> ExistAsync(School newSchool)
     {
         return await this._dbContext
             .Schools
             .AnyAsync(s => s.Name == newSchool.Name);
     }
-
-    public async Task<AddSchoolFormModel?> GetForEditSchoolAsync(string? id)
+    
+    // Gets school for editing
+    public async Task<AddSchoolFormModel?> GetForEditAsync(string? id)
     {
         if (id == null)
         {
@@ -97,6 +98,7 @@ public class SchoolService : ISchoolService
         return viewModel;
     }
 
+    // Editing school
     public async Task<bool> EditSchoolAsync(string id, SchoolViewModel model)
     {
         var schoolForEdit = await this._dbContext
@@ -117,5 +119,24 @@ public class SchoolService : ISchoolService
         await this._dbContext.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<SchoolViewModel?> ViewDetailsAsync(string id)
+    {
+	    var viewModel = await this._dbContext
+		    .Schools
+		    .Select(s => new SchoolViewModel
+		    {
+			    Id = s.Id.ToString(),
+			    Name = s.Name,
+			    Address = s.Address,
+			    Email = s.Email,
+			    PhoneNumber = s.PhoneNumber,
+			    IsDeleted = s.IsDeleted
+		    })
+		    .AsNoTracking()
+		    .FirstOrDefaultAsync(s => s.Id == id);
+
+	    return viewModel;
     }
 }
