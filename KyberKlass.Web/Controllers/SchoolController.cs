@@ -8,162 +8,182 @@ using ViewModels.Admin.School;
 [Authorize(Roles = "Admin")]
 public class SchoolController : Controller
 {
-	private readonly ISchoolService _schoolService;
+    private readonly ISchoolService _schoolService;
 
-	public SchoolController(ISchoolService schoolService)
-	{
-		this._schoolService = schoolService;
-	}
+    public SchoolController(ISchoolService schoolService)
+    {
+        this._schoolService = schoolService;
+    }
 
-	private string GetViewPath(string viewName)
-	{
-		return $"~/Views/Admin/School/{viewName}.cshtml";
-	}
+    private string GetViewPath(string viewName)
+    {
+        return $"~/Views/Admin/School/{viewName}.cshtml";
+    }
 
-	// Shows all schools
-	[HttpGet]
-	public async Task<IActionResult> All()
-	{
-		IEnumerable<SchoolViewModel> schools = await this._schoolService.AllSchoolsAsync();
+    // Shows all schools
+    [HttpGet]
+    public async Task<IActionResult> All()
+    {
+        IEnumerable<SchoolViewModel> schools = await this._schoolService.AllSchoolsAsync();
 
-		return this.View(this.GetViewPath(nameof(this.All)), schools);
-	}
+        return this.View(this.GetViewPath(nameof(this.All)), schools);
+    }
 
-	//[HttpGet]
-	//public async Task<IActionResult> Details(Guid? id)
-	//{
-	//	if (id == null)
-	//	{
-	//		return this.NotFound();
-	//	}
+    //[HttpGet]
+    //public async Task<IActionResult> Details(Guid? id)
+    //{
+    //	if (id == null)
+    //	{
+    //		return this.NotFound();
+    //	}
 
-	//	var school = await this._context.Schools
-	//		.FirstOrDefaultAsync(m => m.Id == id);
+    //	var school = await this._context.Schools
+    //		.FirstOrDefaultAsync(m => m.Id == id);
 
-	//	if (school == null)
-	//	{
-	//		return this.NotFound();
-	//	}
+    //	if (school == null)
+    //	{
+    //		return this.NotFound();
+    //	}
 
-	//	return this.View(school);
-	//}
+    //	return this.View(school);
+    //}
 
-	// Returns a view from which we can add a school
-	[HttpGet]
-	public IActionResult Add()
-	{
-		return this.View(this.GetViewPath(nameof(Add)));
-	}
+    // Returns a view from which we can add a school
+    [HttpGet]
+    public IActionResult Add()
+    {
+        return this.View(this.GetViewPath(nameof(Add)));
+    }
 
-	// Tries to add the school
-	[HttpPost]
-	public async Task<IActionResult> Add(AddSchoolFormModel model)
-	{
-		if (!this.ModelState.IsValid)
-		{
-			return this.View(this.GetViewPath(nameof(Add)), model);
-		}
+    // Tries to add the school
+    [HttpPost]
+    public async Task<IActionResult> Add(AddSchoolFormModel model)
+    {
+        if (!this.ModelState.IsValid)
+        {
+            return this.View(this.GetViewPath(nameof(Add)), model);
+        }
 
-		try
-		{
-			bool addedSuccessfully = await this._schoolService.AddSchoolAsync(model);
+        try
+        {
+            bool addedSuccessfully = await this._schoolService.AddSchoolAsync(model);
 
-			if (addedSuccessfully == false)
-			{
-				this.TempData["ErrorMessage"] = "School already added"!;
-			}
+            if (!addedSuccessfully)
+            {
+                this.TempData["ErrorMessage"] = "School already added.";
+            }
+            else
+            {
+                this.TempData["SuccessMessage"] = $"Successfully added School \"{model.Name}\".";
+            }
 
-			return this.RedirectToAction(nameof(this.All), model);
-		}
-		catch (Exception)
-		{
-			this.ModelState.AddModelError(string.Empty, "An error occurred while adding the school.");
+            return this.RedirectToAction(nameof(this.All));
+        }
+        catch (Exception)
+        {
+            this.ModelState.AddModelError(string.Empty, "An error occurred while adding the school.");
 
-			return this.View(this.GetViewPath(nameof(Add)), model);
-		}
-	}
+            return this.View(this.GetViewPath(nameof(Add)), model);
+        }
+    }
 
-	// Gets school by id
-	[HttpGet]
-	public async Task<IActionResult> Edit(string? id)
-	{
-		if (id == null)
-		{
-			return this.NotFound();
-		}
+    // Gets school by id
+    [HttpGet]
+    public async Task<IActionResult> Edit(string? id)
+    {
+        if (id == null)
+        {
+            return this.NotFound();
+        }
 
-		var school = await this._schoolService.GetForEditSchoolAsync(id);
+        var school = await this._schoolService.GetForEditSchoolAsync(id);
 
-		if (school == null)
-		{
-			return this.NotFound();
-		}
+        if (school == null)
+        {
+            return this.NotFound();
+        }
 
-		return this.View(this.GetViewPath(nameof(this.Edit)), school);
-	}
+        return this.View(this.GetViewPath(nameof(this.Edit)), school);
+    }
 
-	[HttpPost]
-	public async Task<IActionResult> Edit(string id, SchoolViewModel model)
-	{
-		if (id != model.Id)
-		{
-			return this.NotFound();
-		}
+    [HttpPost]
+    public async Task<IActionResult> Edit(string id, SchoolViewModel model)
+    {
+        if (id != model.Id)
+        {
+            return this.NotFound();
+        }
 
-		if (!this.ModelState.IsValid)
-		{
-			return this.View(this.GetViewPath(nameof(Edit)), model);
-		}
+        if (!this.ModelState.IsValid)
+        {
+            this.TempData["ErrorMessage"] = "Something went wrong trying to save the changes you made. Please try again.";
 
-		try
-		{
-			await this._schoolService.EditSchoolAsync(id, model);
+            return this.View(this.GetViewPath(nameof(Edit)), model);
+        }
 
-			return this.RedirectToAction(nameof(this.All));
-		}
-		catch (Exception)
-		{
-			return this.NotFound();
-		}
-	}
+        try
+        {
+            bool editSuccessfully = await this._schoolService.EditSchoolAsync(id, model);
 
-	//[HttpGet]
-	//public async Task<IActionResult> Delete(Guid? id)
-	//{
-	//	if (id == null)
-	//	{
-	//		return this.NotFound();
-	//	}
+            if (editSuccessfully)
+            {
+                if (model.IsDeleted)
+                {
+                    this.TempData["SuccessDeleteMessage"] = $"Successfully soft deleted School : \"{model.Name}\".";
+                }
+                else
+                {
+                    this.TempData["SuccessMessage"] = $"Successfully applied changes for School: \"{model.Name}\". ";
+                }
+            }
 
-	//	var school = await this._context.Schools
-	//		.FirstOrDefaultAsync(m => m.Id == id);
+            return this.RedirectToAction(nameof(this.All));
+        }
+        catch (Exception)
+        {
+            this.ModelState.AddModelError(string.Empty, "An error occurred while editing the school.");
 
-	//	if (school == null)
-	//	{
-	//		return this.NotFound();
-	//	}
+            return this.View(this.GetViewPath(nameof(Edit)), model);
+        }
+    }
 
-	//	return this.View(school);
-	//}
+//[HttpGet]
+//public async Task<IActionResult> Delete(Guid? id)
+//{
+//	if (id == null)
+//	{
+//		return this.NotFound();
+//	}
 
-	//[HttpPost]
-	//[ActionName("Delete")]
-	//[ValidateAntiForgeryToken]
-	//public async Task<IActionResult> DeleteConfirmed(Guid id)
-	//{
-	//	var school = await this._context.Schools.FindAsync(id);
+//	var school = await this._context.Schools
+//		.FirstOrDefaultAsync(m => m.Id == id);
 
-	//	if (school != null)
-	//	{
-	//		this._context.Schools.Remove(school);
-	//	}
+//	if (school == null)
+//	{
+//		return this.NotFound();
+//	}
 
-	//	await this._context.SaveChangesAsync();
-	//	return this.RedirectToAction(nameof(this.All));
-	//}
+//	return this.View(school);
+//}
 
-	//private bool SchoolExists(Guid id)
-	//{
-	//	return (this._context.Schools?.Any(e => e.Id == id)).GetValueOrDefault();
-	//}
+//[HttpPost]
+//[ActionName("Delete")]
+//[ValidateAntiForgeryToken]
+//public async Task<IActionResult> DeleteConfirmed(Guid id)
+//{
+//	var school = await this._context.Schools.FindAsync(id);
+
+//	if (school != null)
+//	{
+//		this._context.Schools.Remove(school);
+//	}
+
+//	await this._context.SaveChangesAsync();
+//	return this.RedirectToAction(nameof(this.All));
+//}
+
+//private bool SchoolExists(Guid id)
+//{
+//	return (this._context.Schools?.Any(e => e.Id == id)).GetValueOrDefault();
+//}
 }
