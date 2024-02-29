@@ -1,10 +1,14 @@
 ﻿namespace KyberKlass.Web.ViewModels.Admin.School;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static Common.EntityValidations.School;
 
 public class AddSchoolFormModel
 {
+	[Required]
+	public Guid Id { get; set; }
+
 	[Required]
 	[StringLength(MAX_NAME_LENGTH, MinimumLength = MIN_NAME_LENGTH)]
 	public string Name { get; set; } = null!;
@@ -21,4 +25,7 @@ public class AddSchoolFormModel
 	[Phone]
 	[Display(Name = "Phone Number")]
 	public string PhoneNumber { get; set; } = null!;
+
+	[Required]
+	public bool IsDeleted { get; set; }
 }
