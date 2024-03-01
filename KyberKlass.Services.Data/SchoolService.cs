@@ -72,30 +72,55 @@ public class SchoolService : ISchoolService
             .Schools
             .AnyAsync(s => s.Name == newSchool.Name);
     }
-    
+
     // Gets school for editing
     public async Task<AddSchoolFormModel?> GetForEditAsync(string? id)
     {
-        if (id == null)
+        if (string.IsNullOrEmpty(id) == false)
         {
-            return null;
+            var viewModel = await this._dbContext
+                .Schools
+                .Where(s => s.Id.ToString() == id)
+                .Select(s => new AddSchoolFormModel
+                {
+                    Name = s.Name,
+                    Address = s.Address,
+                    Email = s.Email,
+                    PhoneNumber = s.PhoneNumber,
+                    IsDeleted = s.IsDeleted
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return viewModel;
         }
 
-        var viewModel = await this._dbContext
-            .Schools
-            .Where(s => s.Id.ToString() == id)
-            .Select(s => new AddSchoolFormModel
-            {
-                Name = s.Name,
-                Address = s.Address,
-                Email = s.Email,
-                PhoneNumber = s.PhoneNumber,
-                IsDeleted = s.IsDeleted
-            })
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
+        return null;
+    }
 
-        return viewModel;
+    public async Task<SchoolViewModel?> GetForDeleteAsync(string? id)
+    {
+        if (string.IsNullOrEmpty(id) == false)
+        {
+            var viewModel = await this._dbContext
+                .Schools
+                .Where(s => s.Id.ToString() == id)
+                .Select(s => new SchoolViewModel
+                {
+                    Id = s.Id.ToString(),
+                    Name = s.Name,
+                    Address = s.Address,
+                    Email = s.Email,
+                    PhoneNumber = s.PhoneNumber,
+                    IsDeleted = s.IsDeleted
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return viewModel;
+        }
+
+        return null;
     }
 
     // Editing school
@@ -123,20 +148,55 @@ public class SchoolService : ISchoolService
 
     public async Task<SchoolViewModel?> ViewDetailsAsync(string id)
     {
-	    var viewModel = await this._dbContext
-		    .Schools
-		    .Select(s => new SchoolViewModel
-		    {
-			    Id = s.Id.ToString(),
-			    Name = s.Name,
-			    Address = s.Address,
-			    Email = s.Email,
-			    PhoneNumber = s.PhoneNumber,
-			    IsDeleted = s.IsDeleted
-		    })
-		    .AsNoTracking()
-		    .FirstOrDefaultAsync(s => s.Id == id);
+        var viewModel = await this._dbContext
+            .Schools
+            .Select(s => new SchoolViewModel
+            {
+                Id = s.Id.ToString(),
+                Name = s.Name,
+                Address = s.Address,
+                Email = s.Email,
+                PhoneNumber = s.PhoneNumber,
+                IsDeleted = s.IsDeleted
+            })
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id);
 
-	    return viewModel;
+        return viewModel;
+    }
+
+    public async Task<bool> DeleteAsync(string? id)
+    {
+        if (string.IsNullOrEmpty(id) == false)
+        {
+            var schoolToDelete = await this._dbContext
+                .Schools
+                .FirstOrDefaultAsync(s => s.Id.ToString() == id);
+
+            if (schoolToDelete != null)
+            {
+                this._dbContext.Schools.Remove(schoolToDelete);
+                await this._dbContext.SaveChangesAsync();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public async Task<bool> ValidateInputAsync(string id, SchoolViewModel? model)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return false;
+        }
+
+        if (model != null && string.IsNullOrEmpty(model.Id))
+        {
+            return false;
+        }
+
+        return true;
     }
 }
