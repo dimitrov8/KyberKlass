@@ -8,176 +8,212 @@ using ViewModels.Admin.School;
 [Authorize(Roles = "Admin")]
 public class SchoolController : Controller
 {
-	private readonly ISchoolService _schoolService;
+    private readonly ISchoolService _schoolService;
 
-	public SchoolController(ISchoolService schoolService)
-	{
-		this._schoolService = schoolService;
-	}
+    private const string INVALID_INPUT_MESSAGE = "Invalid input. Please check your data and try again.";
 
-	private string GetViewPath(string viewName)
-	{
-		return $"~/Views/Admin/School/{viewName}.cshtml";
-	}
+    public SchoolController(ISchoolService schoolService)
+    {
+        this._schoolService = schoolService;
+    }
 
-	// Shows all schools
-	[HttpGet]
-	public async Task<IActionResult> All()
-	{
-		IEnumerable<SchoolViewModel> schools = await this._schoolService.AllAsync();
+    private string GetViewPath(string viewName)
+    {
+        return $"~/Views/Admin/School/{viewName}.cshtml";
+    }
 
-		return this.View(this.GetViewPath(nameof(this.All)), schools);
-	}
+    // Shows all schools
+    [HttpGet]
+    public async Task<IActionResult> All()
+    {
+        IEnumerable<SchoolViewModel> schools = await this._schoolService.AllAsync();
 
-	[HttpGet]
-	public async Task<IActionResult> Details(string? id)
-	{
-		if (id == null)
-		{
-			return this.NotFound();
-		}
+        return this.View(this.GetViewPath(nameof(this.All)), schools);
+    }
 
-		var school = await this._schoolService.ViewDetailsAsync(id);
+    [HttpGet]
+    public async Task<IActionResult> Details(string id)
+    {
+        bool isValid = await this._schoolService.ValidateInputAsync(id, null);
 
-		if (school == null)
-		{
-			return this.NotFound();
-		}
+        if (isValid == false)
+        {
+            return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-		return this.View(this.GetViewPath(nameof(this.Details)), school);
-	}
+        try
+        {
+            var school = await this._schoolService.ViewDetailsAsync(id);
 
-	// Returns a view from which we can add a school
-	[HttpGet]
-	public IActionResult Add()
-	{
-		return this.View(this.GetViewPath(nameof(Add)));
-	}
+            if (school == null)
+            {
+                return this.NotFound();
+            }
 
-	// Tries to add the school
-	[HttpPost]
-	public async Task<IActionResult> Add(AddSchoolFormModel model)
-	{
-		if (!this.ModelState.IsValid)
-		{
-			return this.View(this.GetViewPath(nameof(Add)), model);
-		}
+            return this.View(this.GetViewPath(nameof(this.Details)), school);
+        }
+        catch (Exception)
+        {
+            return this.StatusCode(500, "An error occurred while processing your request. Please try again later.");
+        }
+    }
 
-		try
-		{
-			bool addedSuccessfully = await this._schoolService.AddAsync(model);
+    // Returns a view from which we can add a school
+    [HttpGet]
+    public IActionResult Add()
+    {
+        return this.View(this.GetViewPath(nameof(Add)));
+    }
 
-			if (!addedSuccessfully)
-			{
-				this.TempData["ErrorMessage"] = "School already added.";
-			}
-			else
-			{
-				this.TempData["SuccessMessage"] = $"Successfully added School \"{model.Name}\".";
-			}
+    // Tries to add the school
+    [HttpPost]
+    public async Task<IActionResult> Add(AddSchoolFormModel model)
+    {
+        if (this.ModelState.IsValid == false)
+        {
+            return this.View(this.GetViewPath(nameof(Add)), model);
+        }
 
-			return this.RedirectToAction(nameof(this.All));
-		}
-		catch (Exception)
-		{
-			this.ModelState.AddModelError(string.Empty, "An error occurred while adding the school.");
+        try
+        {
+            bool addedSuccessfully = await this._schoolService.AddAsync(model);
 
-			return this.View(this.GetViewPath(nameof(Add)), model);
-		}
-	}
+            if (!addedSuccessfully)
+            {
+                this.TempData["ErrorMessage"] = "School already added.";
+            }
+            else
+            {
+                this.TempData["SuccessMessage"] = $"Successfully added School \"{model.Name}\".";
+            }
 
-	// Gets school by id
-	[HttpGet]
-	public async Task<IActionResult> Edit(string? id)
-	{
-		if (id == null)
-		{
-			return this.NotFound();
-		}
+            return this.RedirectToAction(nameof(this.All));
+        }
+        catch (Exception)
+        {
+            this.ModelState.AddModelError(string.Empty, "An error occurred while adding the school.");
 
-		var school = await this._schoolService.GetForEditAsync(id);
+            return this.View(this.GetViewPath(nameof(Add)), model);
+        }
+    }
 
-		if (school == null)
-		{
-			return this.NotFound();
-		}
+    // Gets school by id
+    [HttpGet]
+    public async Task<IActionResult> Edit(string id)
+    {
+        bool isValid = await this._schoolService.ValidateInputAsync(id, null);
 
-		return this.View(this.GetViewPath(nameof(this.Edit)), school);
-	}
+        if (isValid == false)
+        {
+            return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-	[HttpPost]
-	public async Task<IActionResult> Edit(string id, SchoolViewModel model)
-	{
-		if (id != model.Id)
-		{
-			return this.NotFound();
-		}
+        try
+        {
+            var school = await this._schoolService.GetForEditAsync(id);
 
-		if (!this.ModelState.IsValid)
-		{
-			this.TempData["ErrorMessage"] = "Something went wrong trying to save the changes you made. Please try again.";
+            if (school == null)
+            {
+                return this.NotFound();
+            }
 
-			return this.View(this.GetViewPath(nameof(Edit)), model);
-		}
+            return this.View(this.GetViewPath(nameof(this.Edit)), school);
+        }
+        catch (Exception)
+        {
+            return this.StatusCode(500, "An error occurred while processing your request. Please try again later.");
+        }
+    }
 
-		try
-		{
-			bool editSuccessfully = await this._schoolService.EditSchoolAsync(id, model);
+    [HttpPost]
+    public async Task<IActionResult> Edit(string id, SchoolViewModel model)
+    {
+        bool isValid = await this._schoolService.ValidateInputAsync(id, model);
 
-			if (editSuccessfully)
-			{
-				if (model.IsDeleted)
-				{
-					this.TempData["SuccessDeleteMessage"] = $"Successfully soft deleted School : \"{model.Name}\".";
-				}
-				else
-				{
-					this.TempData["SuccessMessage"] = $"Successfully applied changes for School: \"{model.Name}\". ";
-				}
-			}
+        if (isValid == false)
+        {
+            return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-			return this.RedirectToAction(nameof(this.All));
-		}
-		catch (Exception)
-		{
-			this.ModelState.AddModelError(string.Empty, "An error occurred while editing the school.");
+        if (this.ModelState.IsValid == false)
+        {
+            this.TempData["ErrorMessage"] = "Something went wrong trying to save the changes you made. Please try again.";
 
-			return this.View(this.GetViewPath(nameof(Edit)), model);
-		}
-	}
+            return this.View(this.GetViewPath(nameof(Edit)), model);
+        }
 
-//[HttpGet]
-//public async Task<IActionResult> Delete(Guid? id)
-//{
-//	if (id == null)
-//	{
-//		return this.NotFound();
-//	}
+        try
+        {
+            bool editSuccessfully = await this._schoolService.EditSchoolAsync(id, model);
 
-//	var school = await this._context.Schools
-//		.FirstOrDefaultAsync(m => m.Id == id);
+            if (editSuccessfully)
+            {
+                if (model.IsDeleted)
+                {
+                    this.TempData["SuccessDeleteMessage"] = $"Successfully soft deleted School : \"{model.Name}\".";
+                }
+                else
+                {
+                    this.TempData["SuccessMessage"] = $"Successfully applied changes for School: \"{model.Name}\". ";
+                }
+            }
 
-//	if (school == null)
-//	{
-//		return this.NotFound();
-//	}
+            return this.RedirectToAction(nameof(this.All));
+        }
+        catch (Exception)
+        {
+            this.ModelState.AddModelError(string.Empty, "An error occurred while editing the school.");
 
-//	return this.View(school);
-//}
+            return this.View(this.GetViewPath(nameof(Edit)), model);
+        }
+    }
 
-//[HttpPost]
-//[ActionName("Delete")]
-//[ValidateAntiForgeryToken]
-//public async Task<IActionResult> DeleteConfirmed(Guid id)
-//{
-//	var school = await this._context.Schools.FindAsync(id);
+    [HttpGet]
+    public async Task<IActionResult> Delete(string id)
+    {
+        bool isValid = await this._schoolService.ValidateInputAsync(id, null);
 
-//	if (school != null)
-//	{
-//		this._context.Schools.Remove(school);
-//	}
+        if (isValid == false)
+        {
+            return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-//	await this._context.SaveChangesAsync();
-//	return this.RedirectToAction(nameof(this.All));
-//}
+        try
+        {
+            var model = await this._schoolService.GetForDeleteAsync(id);
+
+            if (model == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.View(this.GetViewPath(nameof(this.Delete)), model);
+        }
+        catch (Exception)
+        {
+            return this.RedirectToAction(nameof(this.All), "School");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteConfirmed(string id)
+    {
+        try
+        {
+            bool successfullyDeleted = await this._schoolService.DeleteAsync(id);
+
+            if (successfullyDeleted)
+            {
+                this.TempData["SuccessDeleteMessage"] = $"School successfully deleted.";
+
+                return this.RedirectToAction(nameof(this.All));
+            }
+
+            return this.BadRequest("Failed to delete the school. Please try again later.");
+        }
+        catch (Exception)
+        {
+            return this.StatusCode(500, "An error occurred while processing your request. Please try again later.");
+        }
+    }
 }
