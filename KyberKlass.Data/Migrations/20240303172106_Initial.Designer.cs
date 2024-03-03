@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KyberKlass.Data.Migrations
 {
     [DbContext(typeof(KyberKlassDbContext))]
-    [Migration("20240225094416_Initial")]
+    [Migration("20240303172106_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.20")
+                .HasAnnotation("ProductVersion", "6.0.27")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -36,6 +36,7 @@ namespace KyberKlass.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsExcused")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit");
 
                     b.Property<Guid>("StudentId")
@@ -57,6 +58,14 @@ namespace KyberKlass.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BirthDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -67,6 +76,16 @@ namespace KyberKlass.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -112,6 +131,29 @@ namespace KyberKlass.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"),
+                            AccessFailedCount = 0,
+                            Address = "1416 Ryan Mountains",
+                            BirthDate = "01-01-2001",
+                            ConcurrencyStamp = "d4f6406d-9b51-4290-994d-cf1bb9668b5e",
+                            Email = "admin@kyberklass.com",
+                            EmailConfirmed = false,
+                            FirstName = "Admin",
+                            LastName = "User",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@KYBERKLASS.COM",
+                            NormalizedUserName = "ADMIN@KYBERKLASS.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJdvYTQDkzW4Rbgn7e5htaVdsjy7r+IHircTV0acCoReGDNOGsS/6TMnDHCghGtyQA==",
+                            PhoneNumber = "08888888888",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@kyberklass.com"
+                        });
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Classroom", b =>
@@ -120,7 +162,7 @@ namespace KyberKlass.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -151,16 +193,23 @@ namespace KyberKlass.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<Guid?>("ClassroomId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
 
                     b.HasIndex("StudentId");
 
@@ -174,31 +223,6 @@ namespace KyberKlass.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -219,13 +243,13 @@ namespace KyberKlass.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -234,6 +258,26 @@ namespace KyberKlass.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Schools");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("da54b08d-06a4-44ae-bc4c-d67f7867f398"),
+                            Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
+                            Email = "st@example.com",
+                            IsActive = true,
+                            Name = "St. George International School",
+                            PhoneNumber = "02 414 4414"
+                        },
+                        new
+                        {
+                            Id = new Guid("e25b1707-bba4-49da-918b-80c465fcbfa9"),
+                            Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
+                            Email = "schoolb@ez.com",
+                            IsActive = true,
+                            Name = "91. Немска езикова гимназия „Проф. Константин Гълъбов“",
+                            PhoneNumber = "02 987 5305"
+                        });
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Student", b =>
@@ -242,39 +286,14 @@ namespace KyberKlass.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("ClassroomId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
 
                     b.Property<Guid>("GuardianId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsEnrolled")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -319,33 +338,8 @@ namespace KyberKlass.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<bool>("IsWorking")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -378,6 +372,36 @@ namespace KyberKlass.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
+                            ConcurrencyStamp = "b7291292-e39e-4aaa-9df1-b42ee576ee45",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("d3d03709-3739-4d37-bb34-50203e6aaa0f"),
+                            ConcurrencyStamp = "eed63e22-d964-42da-8e56-19cb38e3d275",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = new Guid("d499bfe4-60b7-4879-b456-87174d861d1d"),
+                            ConcurrencyStamp = "2889ab55-5f89-4196-9cb1-9693c4d412aa",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = new Guid("806dbcef-1d09-43d0-a0cf-34e1d807a8de"),
+                            ConcurrencyStamp = "d8219396-78b9-452a-8c79-d8afaedd159c",
+                            Name = "Guardian",
+                            NormalizedName = "GUARDIAN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -431,12 +455,10 @@ namespace KyberKlass.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -464,6 +486,13 @@ namespace KyberKlass.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"),
+                            RoleId = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -472,12 +501,10 @@ namespace KyberKlass.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -515,6 +542,10 @@ namespace KyberKlass.Data.Migrations
 
             modelBuilder.Entity("KyberKlass.Data.Models.Grade", b =>
                 {
+                    b.HasOne("KyberKlass.Data.Models.Classroom", null)
+                        .WithMany("Grades")
+                        .HasForeignKey("ClassroomId");
+
                     b.HasOne("KyberKlass.Data.Models.Student", "Student")
                         .WithMany("Grades")
                         .HasForeignKey("StudentId")
@@ -623,6 +654,8 @@ namespace KyberKlass.Data.Migrations
 
             modelBuilder.Entity("KyberKlass.Data.Models.Classroom", b =>
                 {
+                    b.Navigation("Grades");
+
                     b.Navigation("Students");
 
                     b.Navigation("Subjects");

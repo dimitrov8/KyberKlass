@@ -9,6 +9,6 @@ public class AbsenceEntityConfiguration : IEntityTypeConfiguration<Absence>
 	public void Configure(EntityTypeBuilder<Absence> builder)
 	{
 		builder
-			.HasQueryFilter(a => !a.Student.IsEnrolled);
+			.HasQueryFilter(a => a.Student.IsActive);
 	}
 }

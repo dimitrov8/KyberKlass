@@ -30,7 +30,7 @@ else if (TempData["SuccessMessage"] != null)
 			<th>Address</th>
 			<th>Email</th>
 			<th>Phone Number</th>
-			<th>IsDeleted</th>
+			<th>IsActive</th>
 			<th style="width: 200px;">Actions</th>
 		</tr>
 		</thead>
@@ -44,7 +44,7 @@ else if (TempData["SuccessMessage"] != null)
 				<td>@school.Email</td>
 				<td>@school.PhoneNumber</td>
 				<td>
-					<input type="checkbox" disabled @(school.IsDeleted ? "checked" : "")/>
+					<input type="checkbox" disabled @(school.IsActive ? "checked" : "")/>
 				</td>
 				<td>
 					<!-- Edit button -->

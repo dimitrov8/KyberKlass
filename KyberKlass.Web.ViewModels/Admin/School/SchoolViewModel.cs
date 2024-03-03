@@ -15,5 +15,5 @@ public class SchoolViewModel
 	[Display(Name = "Phone Number")]
 	public string PhoneNumber { get; set; } = null!;
 
-	public bool IsDeleted { get; set; }
+	public bool IsActive { get; set; }
 }

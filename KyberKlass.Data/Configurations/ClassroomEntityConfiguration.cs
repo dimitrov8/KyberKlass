@@ -9,7 +9,7 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 	public void Configure(EntityTypeBuilder<Classroom> builder)
 	{
 		builder
-			.HasQueryFilter(c => !c.IsDeleted);
+			.HasQueryFilter(c => c.IsActive);
 
 		builder
 			.HasMany(c => c.Students)

@@ -3,6 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
+using KyberKlass.Data.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,7 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
 		foreach (var entityType in builder.Model.GetEntityTypes())
 		{

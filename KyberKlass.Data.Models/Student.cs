@@ -3,13 +3,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Student : BasePerson
+public class Student 
 {
 	public Student()
 	{
 		this.Grades = new HashSet<Grade>();
 		this.Absences = new HashSet<Absence>();
 	}
+
+	[Key]
+	public Guid Id { get; set; }
 
 	[Required]
 	public Guid GuardianId { get; set; }
@@ -18,7 +21,7 @@ public class Student : BasePerson
 	public Guardian Guardian { get; set; } = null!;
 
 	[Required]
-	public bool IsEnrolled { get; set; } = true;
+	public bool IsActive { get; set; } = true;
 
 	[Required]
 	public Guid ClassroomId { get; set; }

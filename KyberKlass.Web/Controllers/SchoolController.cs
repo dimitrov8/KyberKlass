@@ -148,7 +148,7 @@ public class SchoolController : Controller
 
             if (editSuccessfully)
             {
-                if (model.IsDeleted)
+                if (model.IsActive == false)
                 {
                     this.TempData["SuccessDeleteMessage"] = $"Successfully soft deleted School : \"{model.Name}\".";
                 }

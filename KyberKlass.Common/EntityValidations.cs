@@ -2,11 +2,14 @@
 
 public static class EntityValidations
 {
-	public static class BasePerson
+	public static class BaseUser
 	{
 		public const int MIN_NAME_LENGTH = 2;
 		public const int MAX_NAME_LENGTH = 30;
-	}
+
+        public const int MIN_ADDRESS_LENGTH = 5;
+        public const int MAX_ADDRESS_LENGTH = 100;
+    }
 
 	public static class School
 	{
@@ -33,7 +36,14 @@ public static class EntityValidations
 	{
 		public const int MIN_NAME_LENGTH = 3;
 		public const int MAX_NAME_LENGTH = 30;
+
+		public const int GRADE_LENGTH = 4;
+		public const string GRADE_REGEX = @"^[2-6]\.\d{2}$";
+
+		public const string MIN_GRADE_VALUE = "2.00";
+		public const string MAX_GRADE_VALUE = "6.00";
 	}
+
 
 	public static class Assignment
 	{

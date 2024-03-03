@@ -25,7 +25,7 @@ public class SchoolService : ISchoolService
             Address = model.Address,
             Email = model.Email,
             PhoneNumber = model.PhoneNumber,
-            IsDeleted = false
+            IsActive = true
         };
 
         bool schoolExists = await this.ExistAsync(newSchool);
@@ -57,7 +57,7 @@ public class SchoolService : ISchoolService
                 Address = s.Address,
                 Email = s.Email,
                 PhoneNumber = s.PhoneNumber,
-                IsDeleted = false
+                IsActive = true
             })
             .AsNoTracking()
             .ToArrayAsync();
@@ -87,7 +87,7 @@ public class SchoolService : ISchoolService
                     Address = s.Address,
                     Email = s.Email,
                     PhoneNumber = s.PhoneNumber,
-                    IsDeleted = s.IsDeleted
+                    IsActive = s.IsActive
                 })
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
@@ -112,7 +112,7 @@ public class SchoolService : ISchoolService
                     Address = s.Address,
                     Email = s.Email,
                     PhoneNumber = s.PhoneNumber,
-                    IsDeleted = s.IsDeleted
+                    IsActive = s.IsActive
                 })
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
@@ -139,7 +139,7 @@ public class SchoolService : ISchoolService
         schoolForEdit.Address = model.Address;
         schoolForEdit.Email = model.Email;
         schoolForEdit.PhoneNumber = model.PhoneNumber;
-        schoolForEdit.IsDeleted = model.IsDeleted;
+        schoolForEdit.IsActive = model.IsActive;
 
         await this._dbContext.SaveChangesAsync();
 
@@ -157,7 +157,7 @@ public class SchoolService : ISchoolService
                 Address = s.Address,
                 Email = s.Email,
                 PhoneNumber = s.PhoneNumber,
-                IsDeleted = s.IsDeleted
+                IsActive = s.IsActive
             })
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == id);

@@ -12,6 +12,7 @@ public class Classroom
 
 		this.Students = new HashSet<Student>();
 		this.Subjects = new HashSet<Subject>();
+		this.Grades = new HashSet<Grade>();
 	}
 
 	[Key]
@@ -29,11 +30,13 @@ public class Classroom
 	public Teacher Teacher { get; set; } = null!;
 
 	[Required]
-	public bool IsDeleted { get; set; } = false;
+	public bool IsActive { get; set; } = false;
 
 	public ICollection<Student> Students { get; set; }
 
 	public ICollection<Subject> Subjects { get; set; }
+
+	public ICollection<Grade> Grades { get; set; }
 
 	public override string ToString()
 	{

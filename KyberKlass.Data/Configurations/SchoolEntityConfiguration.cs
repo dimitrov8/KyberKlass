@@ -9,7 +9,7 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
 	public void Configure(EntityTypeBuilder<School> builder)
 	{
 		builder
-			.HasQueryFilter(c => !c.IsDeleted);
+			.HasQueryFilter(c => c.IsActive);
 
 		this.SeedSchools(builder);
 	}

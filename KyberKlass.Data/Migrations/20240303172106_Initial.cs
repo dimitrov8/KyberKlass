@@ -28,6 +28,10 @@ namespace KyberKlass.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    BirthDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -52,13 +56,7 @@ namespace KyberKlass.Data.Migrations
                 name: "Guardian",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,11 +68,11 @@ namespace KyberKlass.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,13 +84,7 @@ namespace KyberKlass.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsWorking = table.Column<bool>(type: "bit", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    IsWorking = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,8 +137,8 @@ namespace KyberKlass.Data.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -190,8 +182,8 @@ namespace KyberKlass.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -212,7 +204,7 @@ namespace KyberKlass.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     TeacherId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -237,14 +229,8 @@ namespace KyberKlass.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GuardianId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsEnrolled = table.Column<bool>(type: "bit", nullable: false),
-                    ClassroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ClassroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -318,12 +304,18 @@ namespace KyberKlass.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Value = table.Column<double>(type: "float", nullable: false),
-                    SubjectId = table.Column<int>(type: "int", nullable: false)
+                    Value = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    ClassroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Grade", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Grade_Classrooms_ClassroomId",
+                        column: x => x.ClassroomId,
+                        principalTable: "Classrooms",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Grade_Students_StudentId",
                         column: x => x.StudentId,
@@ -337,6 +329,36 @@ namespace KyberKlass.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"), "b7291292-e39e-4aaa-9df1-b42ee576ee45", "Admin", "ADMIN" },
+                    { new Guid("806dbcef-1d09-43d0-a0cf-34e1d807a8de"), "d8219396-78b9-452a-8c79-d8afaedd159c", "Guardian", "GUARDIAN" },
+                    { new Guid("d3d03709-3739-4d37-bb34-50203e6aaa0f"), "eed63e22-d964-42da-8e56-19cb38e3d275", "Teacher", "TEACHER" },
+                    { new Guid("d499bfe4-60b7-4879-b456-87174d861d1d"), "2889ab55-5f89-4196-9cb1-9693c4d412aa", "Student", "STUDENT" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"), 0, "1416 Ryan Mountains", "01-01-2001", "d4f6406d-9b51-4290-994d-cf1bb9668b5e", "admin@kyberklass.com", false, "Admin", "User", false, null, "ADMIN@KYBERKLASS.COM", "ADMIN@KYBERKLASS.COM", "AQAAAAEAACcQAAAAEJdvYTQDkzW4Rbgn7e5htaVdsjy7r+IHircTV0acCoReGDNOGsS/6TMnDHCghGtyQA==", "08888888888", false, "0DB9D047-3375-4739-9C32-217CC8337032", false, "admin@kyberklass.com" });
+
+            migrationBuilder.InsertData(
+                table: "Schools",
+                columns: new[] { "Id", "Address", "Email", "IsActive", "Name", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { new Guid("da54b08d-06a4-44ae-bc4c-d67f7867f398"), "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia", "st@example.com", true, "St. George International School", "02 414 4414" },
+                    { new Guid("e25b1707-bba4-49da-918b-80c465fcbfa9"), "Sofia Center, Pozitano St 26, 1000 Sofia", "schoolb@ez.com", true, "91. Немска езикова гимназия „Проф. Константин Гълъбов“", "02 987 5305" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"), new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Absences_StudentId",
@@ -391,6 +413,11 @@ namespace KyberKlass.Data.Migrations
                 name: "IX_Classrooms_TeacherId",
                 table: "Classrooms",
                 column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Grade_ClassroomId",
+                table: "Grade",
+                column: "ClassroomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Grade_StudentId",

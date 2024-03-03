@@ -32,7 +32,7 @@ public class School
 	public string PhoneNumber { get; set; } = null!;
 
 	[Required]
-	public bool IsDeleted { get; set; } = false;
+	public bool IsActive { get; set; } = true;
 
 	public ICollection<Classroom> Classrooms { get; set; }
 }

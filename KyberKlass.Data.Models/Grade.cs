@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static Common.EntityValidations.Subject;
 
 public class Grade
 {
@@ -15,8 +16,9 @@ public class Grade
 	public Student Student { get; set; } = null!;
 
 	[Required]
-	// TODO ADD VALIDATION
-	public double Value { get; set; }
+	[StringLength(GRADE_LENGTH)]
+	[RegularExpression(GRADE_REGEX)]
+	public string Value { get; set; } = null!;
 
 	[Required]
 	public int SubjectId { get; set; }
