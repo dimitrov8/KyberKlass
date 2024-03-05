@@ -12,6 +12,7 @@ public interface ISchoolService
     Task<bool> ExistAsync(School newSchool);
 
     Task<AddSchoolFormModel?> GetForEditAsync(string id);
+
     Task<SchoolViewModel?> GetForDeleteAsync(string id);
 
     Task<bool> EditSchoolAsync(string id, SchoolViewModel model);
