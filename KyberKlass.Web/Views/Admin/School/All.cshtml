@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SchoolViewModel>
 
 @{
-	ViewBag.Title = "All Schools";
+	ViewData["Title"] = "All Schools";
 }
 
 @if (TempData["SuccessDeleteMessage"] != null)
@@ -18,7 +18,7 @@ else if (TempData["SuccessMessage"] != null)
 }
 
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
 <hr/>
 
 <div class="card-body">
