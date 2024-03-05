@@ -3,7 +3,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
-using KyberKlass.Data.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -30,23 +29,24 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
 		foreach (var entityType in builder.Model.GetEntityTypes())
 		{
-			var isDeletedProperty = entityType.FindProperty("IsDeleted");
+			var isActiveProperty = entityType.FindProperty("IsActive");
 
-			if (isDeletedProperty != null && isDeletedProperty.ClrType == typeof(bool))
+			if (isActiveProperty != null && isActiveProperty.ClrType == typeof(bool))
 			{
 				var parameter = Expression.Parameter(entityType.ClrType, "e");
 				var body = Expression.Equal(
-					Expression.Property(parameter, "IsDeleted"),
-					Expression.Constant(false));
+					Expression.Property(parameter, "IsActive"),
+					Expression.Constant(true)); 
 
 				builder.Entity(entityType.ClrType)
 					.HasQueryFilter(Expression.Lambda(body, parameter));
 			}
 		}
+
 
 		base.OnModelCreating(builder);
 	}

@@ -60,9 +60,8 @@ namespace KyberKlass.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BirthDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("DATE");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -79,6 +78,9 @@ namespace KyberKlass.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -136,16 +138,17 @@ namespace KyberKlass.Data.Migrations
                             Id = new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"),
                             AccessFailedCount = 0,
                             Address = "1416 Ryan Mountains",
-                            BirthDate = "01-01-2001",
+                            BirthDate = new DateTime(2001, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ConcurrencyStamp = "d4f6406d-9b51-4290-994d-cf1bb9668b5e",
                             Email = "admin@kyberklass.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
+                            IsActive = true,
                             LastName = "User",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KYBERKLASS.COM",
                             NormalizedUserName = "ADMIN@KYBERKLASS.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJdvYTQDkzW4Rbgn7e5htaVdsjy7r+IHircTV0acCoReGDNOGsS/6TMnDHCghGtyQA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBSPZSqYhOBgFq/HhEvApq+gJDa/LNpTB+mOIcR2z1sS0YWEO2ldKRCnFrDUUh4I9w==",
                             PhoneNumber = "08888888888",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
@@ -260,7 +263,7 @@ namespace KyberKlass.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("da54b08d-06a4-44ae-bc4c-d67f7867f398"),
+                            Id = new Guid("cbfeff57-54b6-4978-bcb1-74ac4fd44acc"),
                             Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
                             Email = "st@example.com",
                             IsActive = true,
@@ -269,7 +272,7 @@ namespace KyberKlass.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e25b1707-bba4-49da-918b-80c465fcbfa9"),
+                            Id = new Guid("4bc9e203-7eb6-4bcc-9d35-6637341a9ac0"),
                             Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                             Email = "schoolb@ez.com",
                             IsActive = true,
@@ -375,28 +378,28 @@ namespace KyberKlass.Data.Migrations
                         new
                         {
                             Id = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
-                            ConcurrencyStamp = "b7291292-e39e-4aaa-9df1-b42ee576ee45",
+                            ConcurrencyStamp = "444924a1-8ad1-4dc9-b076-34650a42d294",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("d3d03709-3739-4d37-bb34-50203e6aaa0f"),
-                            ConcurrencyStamp = "eed63e22-d964-42da-8e56-19cb38e3d275",
+                            Id = new Guid("a0638004-c5e4-4225-8a7d-7788e33e9629"),
+                            ConcurrencyStamp = "5431d171-5629-4752-9422-ae11a1be9f2f",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = new Guid("d499bfe4-60b7-4879-b456-87174d861d1d"),
-                            ConcurrencyStamp = "2889ab55-5f89-4196-9cb1-9693c4d412aa",
+                            Id = new Guid("d76b04a4-e324-47e7-833b-0af951ef60bc"),
+                            ConcurrencyStamp = "d9b1770b-0580-489a-be94-ea2ba312ba47",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("806dbcef-1d09-43d0-a0cf-34e1d807a8de"),
-                            ConcurrencyStamp = "d8219396-78b9-452a-8c79-d8afaedd159c",
+                            Id = new Guid("c01c17e1-0f32-40ca-a467-4379cde5bc98"),
+                            ConcurrencyStamp = "620e7a98-e56d-408c-abcf-d6e13d3dfe9b",
                             Name = "Guardian",
                             NormalizedName = "GUARDIAN"
                         });
