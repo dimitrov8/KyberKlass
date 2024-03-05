@@ -20,6 +20,7 @@ public static class ServiceCollectionExtension
 		services.AddAuthorization();
 
 		services.AddScoped<ISchoolService, SchoolService>();
+		services.AddScoped<IUserService, UserService>();
 
 		return services;
 	}
