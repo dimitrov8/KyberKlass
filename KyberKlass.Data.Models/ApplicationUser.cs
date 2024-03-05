@@ -17,8 +17,14 @@ public class ApplicationUser : IdentityUser<Guid>
     public string LastName { get; set; } = null!;
 
     [Required]
-    public string BirthDate { get; set; } = DateTime.UtcNow.ToString("yy-MM-dd", CultureInfo.InvariantCulture);
+    [Column(TypeName = "DATE")]
+    [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+	public DateTime BirthDate { get; set; }
+
+	[Required]
+    public string Address { get; set; } = null!;
 
     [Required]
-    public string Address { get; set; } = null!;
+    public bool IsActive { get; set; } = true;
 }
