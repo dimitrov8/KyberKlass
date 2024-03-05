@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Models;
-using static Constants.SeedDataConstants;
+using static Constants.SeedDataConstants.Admin;
 
 public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
@@ -31,7 +31,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
             EmailConfirmed = false,
             FirstName = "Admin",
             LastName = "User",
-            BirthDate = "01-01-2001",
+            BirthDate = DateTime.Parse("01/01/2001"),
             Address = "1416 Ryan Mountains",
             PasswordHash = hashedPassword,
             SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
