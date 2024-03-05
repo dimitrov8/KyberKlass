@@ -22,5 +22,6 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 			.WithOne(s => s.Classroom)
 			.HasForeignKey(s => s.ClassroomId)
 			.OnDelete(DeleteBehavior.Restrict);
-	}
+
+    }
 }
