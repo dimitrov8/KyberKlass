@@ -3,6 +3,7 @@
 namespace KyberKlass.Web.Areas.Identity.Pages.Account;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -60,9 +61,8 @@ public class RegisterModel : PageModel
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "Birth Date")]
         [DataType(DataType.Date)]
-        public DateTime BirthDate { get; set; }
+		public DateTime BirthDate { get; set; }
 
         [Required]
         [Display(Name = "Address")]
@@ -121,7 +121,7 @@ public class RegisterModel : PageModel
             {
                 FirstName = this.Input.FirstName,
                 LastName = this.Input.LastName,
-                BirthDate = this.Input.BirthDate.ToString("yy-MM-dd", CultureInfo.InvariantCulture),
+                BirthDate = this.Input.BirthDate,
                 Address = this.Input.Address,
                 UserName = this.Input.Email,
                 Email = this.Input.Email,
