@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using static Constants.SeedDataConstants;
+using static Constants.SeedDataConstants.Admin;
 
 public class IdentityUserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<Guid>>
 {
