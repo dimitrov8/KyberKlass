@@ -12,11 +12,13 @@ public class UserService : IUserService
 {
 	private readonly KyberKlassDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-	public UserService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
+	public UserService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
 	{
 		this._dbContext = dbContext;
 		this._userManager = userManager;
+		this._roleManager = roleManager;
 	}
 
 	public async Task<List<UserViewModel>> AllAsync()
@@ -51,7 +53,7 @@ public class UserService : IUserService
 
 	public async Task<UserDetailsViewModel?> GetUserDetailsAsync(string id)
 	{
-		ApplicationUser? user = await this._dbContext
+		var user = await this._dbContext
 			.Users.FirstOrDefaultAsync(u => u.Id.ToString() == id);
 
 		if (user == null)
@@ -59,8 +61,8 @@ public class UserService : IUserService
 			return null;
 		}
 
-		var  roles = await this._userManager.GetRolesAsync(user);
-		string userRole = roles.FirstOrDefault() ?? "No Role Assigned";
+		IList<string>? userRoles = await this._userManager.GetRolesAsync(user);
+		string currentUserRole = userRoles.FirstOrDefault() ?? "No Role Assigned";
 
 		var viewModel = new UserDetailsViewModel
 		{
@@ -70,10 +72,61 @@ public class UserService : IUserService
 			Address = user.Address,
 			PhoneNumber = user.PhoneNumber,
 			Email = user.Email,
-			Role = userRole,
+			Role = currentUserRole,
 			IsActive = user.IsActive ? "True" : "False"
 		};
 
 		return viewModel;
+	}
+
+	public async Task<UserUpdateRoleViewModel?> UpdateRole(string id)
+	{
+		var user = await this._dbContext
+			.Users.FirstOrDefaultAsync(u => u.Id.ToString() == id);
+
+		if (user == null)
+		{
+			return null;
+		}
+
+		IList<string>? userRoles = await this._userManager.GetRolesAsync(user);
+		var currentUserRole = userRoles.FirstOrDefault() ?? "No Role Assigned";
+
+			var availableRoles = await this._roleManager
+			.Roles
+			.Select(r => new UserRolesViewModel
+			{
+				Id = r.Id.ToString(),
+				Name = r.Name
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		var viewModel = new UserUpdateRoleViewModel
+		{
+			Id = user.Id.ToString(),
+			FullName = $"{user.FirstName} {user.LastName}",
+			Email = user.Email,
+			IsActive = user.IsActive,
+			CurrentRoleName = currentUserRole,
+			AvailableRoles = availableRoles
+		};
+
+		return viewModel;
+	}
+
+	public async Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model)
+	{
+		if (string.IsNullOrEmpty(id))
+		{
+			return false;
+		}
+
+		if (model != null && string.IsNullOrEmpty(model.Id))
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

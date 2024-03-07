@@ -4,38 +4,88 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
 using ViewModels.Admin.User;
+using static Common.CustomMessageConstants.Common;
 
 [Authorize(Roles = "Admin")]
 public class UserController : Controller
 {
-    private readonly IUserService _userService;
+	private readonly IUserService _userService;
 
-    public UserController(IUserService userService)
-    {
-        this._userService = userService;
-    }
+	public UserController(IUserService userService)
+	{
+		this._userService = userService;
+	}
 
-    private string GetViewPath(string viewName)
-    {
-        return $"~/Views/Admin/User/{viewName}.cshtml";
-    }
+	private string GetViewPath(string viewName)
+	{
+		return $"~/Views/Admin/User/{viewName}.cshtml";
+	}
 
-    public async Task<IActionResult> All()
-    {
-        List<UserViewModel> users = await this._userService.AllAsync();
+	[HttpGet]
+	public async Task<IActionResult> All()
+	{
+		List<UserViewModel> allUsersViewModel = await this._userService.AllAsync();
 
-        return this.View(this.GetViewPath(nameof(this.All)), users);
-    }
+		return this.View(this.GetViewPath(nameof(this.All)), allUsersViewModel);
+	}
 
-    public async Task<IActionResult> Details(string id)
-    {
-	    var userDetails = await this._userService.GetUserDetailsAsync(id);
+	[HttpGet]
+	public async Task<IActionResult> Details(string id)
+	{
+		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
 
-	    if (userDetails == null)
-	    {
-		    return this.NotFound();
-	    }
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
 
-	    return this.View(this.GetViewPath(nameof(this.Details)), userDetails);
-    }
+		try
+		{
+			var userDetailsViewModel = await this._userService.GetUserDetailsAsync(id);
+
+			if (userDetailsViewModel == null)
+			{
+				return this.NotFound();
+			}
+
+			return this.View(this.GetViewPath(nameof(this.Details)), userDetailsViewModel);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.All), "User");
+		}
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> UpdateRole(string id)
+	{
+		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+		
+		try
+		{
+			var userUpdateRoleViewModel = await this._userService.UpdateRole(id);
+
+			if (userUpdateRoleViewModel == null)
+			{
+				return this.NotFound();
+			}
+
+			return this.View(this.GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.All), "User");
+		}
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> UpdateRoleConfirmed(string id)
+	{
+		return null;
+	}
 }
