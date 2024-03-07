@@ -12,5 +12,9 @@
         Task<List<UserViewModel>> AllAsync();
 
         Task<UserDetailsViewModel?> GetUserDetailsAsync(string id);
-    }
+
+        Task<UserUpdateRoleViewModel?> UpdateRole(string id);
+
+        Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model);
+	}
 }
