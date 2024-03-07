@@ -2,7 +2,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using static Common.EntityValidations.BaseUser;
 
