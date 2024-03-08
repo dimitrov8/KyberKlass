@@ -76,54 +76,44 @@ public class SchoolService : ISchoolService
 	// Gets school for editing
 	public async Task<AddSchoolFormModel?> GetForEditAsync(string? id)
 	{
-		if (string.IsNullOrEmpty(id) == false)
-		{
-			var viewModel = await this._dbContext
-				.Schools
-				.Where(s => s.Id.ToString() == id)
-				.Select(s => new AddSchoolFormModel
-				{
-					Name = s.Name,
-					Address = s.Address,
-					Email = s.Email,
-					PhoneNumber = s.PhoneNumber,
-					IsActive = s.IsActive
-				})
-				.AsNoTracking()
-				.FirstOrDefaultAsync();
+		var viewModel = await this._dbContext
+			.Schools
+			.Where(s => s.Id.ToString() == id)
+			.Select(s => new AddSchoolFormModel
+			{
+				Name = s.Name,
+				Address = s.Address,
+				Email = s.Email,
+				PhoneNumber = s.PhoneNumber,
+				IsActive = s.IsActive
+			})
+			.AsNoTracking()
+			.FirstOrDefaultAsync();
 
-			return viewModel;
-		}
-
-		return null;
+		return viewModel;
 	}
 
 	public async Task<SchoolViewModel?> GetForDeleteAsync(string? id)
 	{
-		if (string.IsNullOrEmpty(id) == false)
-		{
-			var viewModel = await this._dbContext
-				.Schools
-				.Where(s => s.Id.ToString() == id)
-				.Select(s => new SchoolViewModel
-				{
-					Id = s.Id.ToString(),
-					Name = s.Name,
-					Address = s.Address,
-					Email = s.Email,
-					PhoneNumber = s.PhoneNumber,
-					IsActive = s.IsActive
-				})
-				.AsNoTracking()
-				.FirstOrDefaultAsync();
+		var viewModel = await this._dbContext
+			.Schools
+			.Where(s => s.Id.ToString() == id)
+			.Select(s => new SchoolViewModel
+			{
+				Id = s.Id.ToString(),
+				Name = s.Name,
+				Address = s.Address,
+				Email = s.Email,
+				PhoneNumber = s.PhoneNumber,
+				IsActive = s.IsActive
+			})
+			.AsNoTracking()
+			.FirstOrDefaultAsync();
 
-			return viewModel;
-		}
-
-		return null;
+		return viewModel;
 	}
 
-	// Editing school
+// Editing school
 	public async Task<bool> EditSchoolAsync(string id, SchoolViewModel model)
 	{
 		var schoolForEdit = await this._dbContext
@@ -178,10 +168,11 @@ public class SchoolService : ISchoolService
 
 			return true;
 		}
+
 		return false;
 	}
 
-	public async Task<bool> IsNotNullOrEmptyInputAsync(string id, SchoolViewModel? model)
+	public async Task<bool> IsNotNullOrEmptyInputAsync(string? id, SchoolViewModel? model)
 	{
 		if (string.IsNullOrEmpty(id))
 		{
@@ -195,5 +186,4 @@ public class SchoolService : ISchoolService
 
 		return true;
 	}
-
 }
