@@ -13,7 +13,7 @@ public static class CustomMessageConstants
 	public static class School
 	{
 		public const string ALREADY_ADDED_MESSAGE = "School \"{0}\" is already added.";
-		
+
 		public const string SUCCESSFULLY_ADDED_MESSAGE = "Successfully added School \"{0}\".";
 
 		public const string ADDITION_ERROR_MESSAGE = "An error occurred while adding the school.";
@@ -23,10 +23,16 @@ public static class CustomMessageConstants
 		public const string EDIT_ERROR_MESSAGE = "An error occurred while editing the school.";
 
 		public const string SUCCESSFULLY_DELETED_MESSAGE = "School successfully deleted.";
-		
+
 		public const string SUCCESSFULLY_SOFT_DELETED_MESSAGE = "Successfully soft deleted School : \"{0}\".";
 
 		public const string DELETION_ERROR_MESSAGE = "Failed to delete the school. Please try again later.";
+	}
 
+	public static class User
+	{
+		public const string ROLE_UPDATE_FAILED_MESSAGE = "Failed to update user role.";
+
+		public const string ROLE_UPDATE_SUCCESS_MESSAGE = "Successfully updated role.";
 	}
 }
