@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
 using ViewModels.Admin.User;
 using static Common.CustomMessageConstants.Common;
+using static Common.CustomMessageConstants.User;
 
 [Authorize(Roles = "Admin")]
 public class UserController : Controller
@@ -65,10 +66,10 @@ public class UserController : Controller
 		{
 			return this.BadRequest(INVALID_INPUT_MESSAGE);
 		}
-		
+
 		try
 		{
-			var userUpdateRoleViewModel = await this._userService.UpdateRole(id);
+			var userUpdateRoleViewModel = await this._userService.GetUserForUpdateRoleAsync(id);
 
 			if (userUpdateRoleViewModel == null)
 			{
@@ -84,8 +85,32 @@ public class UserController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> UpdateRoleConfirmed(string id)
+	public async Task<IActionResult> UpdateRoleConfirmed(string id, string roleId)
 	{
-		return null;
+		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null) &&
+		                    await this._userService.IsNotNullOrEmptyInputAsync(roleId, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		try
+		{
+			bool roleIsUpdatedSuccessfully = await this._userService.UpdateRoleAsync(id, roleId);
+
+			if (roleIsUpdatedSuccessfully)
+			{
+				this.TempData["RoleUpdateSuccessMessage"] = ROLE_UPDATE_SUCCESS_MESSAGE;
+
+				return this.RedirectToAction(nameof(this.All), "User");
+			}
+
+			return this.BadRequest(ROLE_UPDATE_FAILED_MESSAGE);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.All), "User"); // Can return custom error view
+		}
 	}
 }
