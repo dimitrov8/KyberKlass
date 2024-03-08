@@ -79,10 +79,11 @@ public class UserService : IUserService
 		return viewModel;
 	}
 
-	public async Task<UserUpdateRoleViewModel?> UpdateRole(string id)
+	public async Task<UserUpdateRoleViewModel?> GetUserForUpdateRoleAsync(string id)
 	{
 		var user = await this._dbContext
-			.Users.FirstOrDefaultAsync(u => u.Id.ToString() == id);
+			.Users
+			.FirstOrDefaultAsync(u => u.Id.ToString() == id);
 
 		if (user == null)
 		{
@@ -90,17 +91,9 @@ public class UserService : IUserService
 		}
 
 		IList<string>? userRoles = await this._userManager.GetRolesAsync(user);
-		var currentUserRole = userRoles.FirstOrDefault() ?? "No Role Assigned";
+		string currentUserRole = userRoles.FirstOrDefault() ?? "No Role Assigned";
 
-			var availableRoles = await this._roleManager
-			.Roles
-			.Select(r => new UserRolesViewModel
-			{
-				Id = r.Id.ToString(),
-				Name = r.Name
-			})
-			.AsNoTracking()
-			.ToArrayAsync();
+		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync();
 
 		var viewModel = new UserUpdateRoleViewModel
 		{
@@ -128,5 +121,66 @@ public class UserService : IUserService
 		}
 
 		return true;
+	}
+
+	public async Task<bool> UpdateRoleAsync(string id, string roleId)
+	{
+		var user = await this._dbContext
+			.Users
+			.FirstOrDefaultAsync(u => u.Id.ToString() == id);
+
+		if (user == null)
+		{
+			return false;
+		}
+
+
+		IdentityRole<Guid>? role = await this._roleManager
+			.Roles
+			.FirstOrDefaultAsync(r => r.Id.ToString() == roleId);
+
+		if (role == null)
+		{
+			return false;
+		}
+
+		// Check if the user already has the selected role
+		IList<string>? userRoles = await this._userManager.GetRolesAsync(user);
+
+		if (userRoles.Contains(role.Name))
+		{
+			return true; // User has the selected role, no need to override it
+		}
+
+		// Else if the user is being assigned different role to it's current 
+		foreach (string? userRole in userRoles)
+		{
+			var result = await this._userManager.RemoveFromRoleAsync(user, userRole); // Remove his current role
+
+			if (result.Succeeded == false) // If something happened and the role was unable to be removed from the user
+			{
+				return false; // Return false
+			}
+		}
+
+		// Tries to add the new role to the user
+		var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
+
+		return addResult.Succeeded; // Returns true if the role was successfully assigned to the user, else returns false
+	}
+
+	public async Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync() // Gets all roles and returns them as IEnumerable<UserRolesViewModel>
+	{
+		IEnumerable<UserRolesViewModel> allRoles = await this._roleManager
+			.Roles
+			.Select(r => new UserRolesViewModel
+			{
+				Id = r.Id.ToString(),
+				Name = r.Name
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		return allRoles;
 	}
 }
