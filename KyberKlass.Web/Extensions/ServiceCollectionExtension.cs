@@ -2,9 +2,6 @@
 
 using Data;
 using Data.Models;
-using DotNetEd.CoreAdmin;
-using DotNetEd.CoreAdmin.Controllers;
-using DotNetEd.CoreAdmin.ViewComponents;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services.Data;
