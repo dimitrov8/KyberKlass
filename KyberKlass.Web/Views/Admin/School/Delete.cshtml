@@ -6,7 +6,7 @@
 
 <div class="container">
 	<h1>@ViewData["Title"]</h1>
-	<hr />
+	<hr/>
 
 	<div class="row">
 		<div class="col-md-8">
@@ -29,7 +29,7 @@
 			</dl>
 
 			<form asp-controller="School" asp-action="DeleteConfirmed" method="post">
-				<input type="hidden" asp-for="Id" />
+				<input type="hidden" asp-for="Id"/>
 				<button type="submit" class="btn btn-danger">Delete</button>
 				<a href="@Url.Action("All", "School")" class="btn btn-secondary ml-2">Back to List</a>
 			</form>

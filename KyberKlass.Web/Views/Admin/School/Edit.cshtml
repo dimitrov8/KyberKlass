@@ -1,64 +1,64 @@
 ﻿@model AddSchoolFormModel
 
 @{
-    ViewData["Title"] = "Edit School";
+	ViewData["Title"] = "Edit School";
 }
 
 <div class="container">
-    @if (TempData["ErrorMessage"] != null)
-    {
-            <div class="alert alert-danger" role="alert">
-            @TempData["ErrorMessage"]
-            </div>
-    }
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="alert alert-danger" role="alert">
+			@TempData["ErrorMessage"]
+		</div>
+	}
 
-    <h1>@ViewData["Title"]</h1>
-    <hr />
+	<h1>@ViewData["Title"]</h1>
+	<hr/>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-controller="School" asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
+	<div class="row">
+		<div class="col-md-6">
+			<form asp-controller="School" asp-action="Edit">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<input type="hidden" asp-for="Id"/>
 
-                <div class="mb-3">
-                    <label for="@Model.Name" class="form-label">Name</label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+				<div class="mb-3">
+					<label for="@Model.Name" class="form-label">Name</label>
+					<input asp-for="Name" class="form-control"/>
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
 
-                <div class="mb-3">
-                    <label for="@Model.Address" class="form-label">Address</label>
-                    <input asp-for="Address" class="form-control" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
+				<div class="mb-3">
+					<label for="@Model.Address" class="form-label">Address</label>
+					<input asp-for="Address" class="form-control"/>
+					<span asp-validation-for="Address" class="text-danger"></span>
+				</div>
 
-                <div class="mb-3">
-                    <label for="@Model.Email" class="form-label">Email</label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+				<div class="mb-3">
+					<label for="@Model.Email" class="form-label">Email</label>
+					<input asp-for="Email" class="form-control"/>
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
 
-                <div class="mb-3">
-                    <label for="@Model.PhoneNumber" class="form-label">Phone Number</label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
+				<div class="mb-3">
+					<label for="@Model.PhoneNumber" class="form-label">Phone Number</label>
+					<input asp-for="PhoneNumber" class="form-control"/>
+					<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+				</div>
 
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" asp-for="IsActive" />
-                    <label class="form-check-label" for="@Model.IsActive">Is Active</label>
-                </div>
+				<div class="form-check mb-3">
+					<input class="form-check-input" type="checkbox" asp-for="IsActive"/>
+					<label class="form-check-label" for="@Model.IsActive">Is Active</label>
+				</div>
 
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="@Url.Action("All", "School")" class="btn btn-secondary">Back to List</a>
-            </form>
-        </div>
-    </div>
+				<button type="submit" class="btn btn-primary">Save</button>
+				<a href="@Url.Action("All", "School")" class="btn btn-secondary">Back to List</a>
+			</form>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }
