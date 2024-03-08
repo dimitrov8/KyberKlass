@@ -1,20 +1,18 @@
-﻿namespace KyberKlass.Services.Data.Interfaces
+﻿namespace KyberKlass.Services.Data.Interfaces;
+
+using Web.ViewModels.Admin.User;
+
+public interface IUserService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Web.ViewModels.Admin.User;
+	Task<List<UserViewModel>> AllAsync();
 
-    public interface IUserService
-    {
-        Task<List<UserViewModel>> AllAsync();
+	Task<UserDetailsViewModel?> GetUserDetailsAsync(string id);
 
-        Task<UserDetailsViewModel?> GetUserDetailsAsync(string id);
+	Task<UserUpdateRoleViewModel?> GetUserForUpdateRoleAsync(string id);
 
-        Task<UserUpdateRoleViewModel?> UpdateRole(string id);
+	Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model);
 
-        Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model);
-	}
+	Task<bool> UpdateRoleAsync(string id, string roleId);
+
+	Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync();
 }
