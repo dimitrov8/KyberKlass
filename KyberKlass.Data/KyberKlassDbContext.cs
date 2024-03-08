@@ -1,6 +1,5 @@
 ﻿namespace KyberKlass.Data;
 
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
@@ -40,7 +39,7 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 				var parameter = Expression.Parameter(entityType.ClrType, "e");
 				var body = Expression.Equal(
 					Expression.Property(parameter, "IsActive"),
-					Expression.Constant(true)); 
+					Expression.Constant(true));
 
 				builder.Entity(entityType.ClrType)
 					.HasQueryFilter(Expression.Lambda(body, parameter));

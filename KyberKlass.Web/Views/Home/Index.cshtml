@@ -1,14 +1,12 @@
 ﻿@using KyberKlass.Data.Models
 @using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.SignalR
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 @{
 	if (User.IsInRole("Admin"))
 	{
-	ViewData["Title"] = "Admin Page";
-
+		ViewData["Title"] = "Admin Page";
 	}
 	else
 	{

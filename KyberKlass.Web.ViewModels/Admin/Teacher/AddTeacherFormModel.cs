@@ -1,6 +1,5 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.Teacher
+﻿namespace KyberKlass.Web.ViewModels.Admin.Teacher;
+
+public class AddTeacherFormModel
 {
-	public class AddTeacherFormModel
-	{
-	}
 }
