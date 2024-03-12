@@ -22,4 +22,6 @@ public interface ISchoolService
 	Task<bool> DeleteAsync(string? id);
 
 	Task<bool> IsNotNullOrEmptyInputAsync(string id, SchoolViewModel? model);
+
+	Task<SchoolViewModel?> GetByIdAsync(string id);
 }
