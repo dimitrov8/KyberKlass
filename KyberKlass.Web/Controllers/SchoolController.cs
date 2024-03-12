@@ -44,14 +44,14 @@ public class SchoolController : Controller
 
 		try
 		{
-			var school = await this._schoolService.ViewDetailsAsync(id);
+			var schoolModel = await this._schoolService.ViewDetailsAsync(id);
 
-			if (school == null)
+			if (schoolModel == null)
 			{
 				return this.NotFound();
 			}
 
-			return this.View(this.GetViewPath(nameof(this.Details)), school);
+			return this.View(this.GetViewPath(nameof(this.Details)), schoolModel);
 		}
 		catch (Exception)
 		{
