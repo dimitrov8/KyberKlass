@@ -1,4 +1,4 @@
-using KyberKlass.Web.Extensions;
+using KyberKlass.Web.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,14 +10,14 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-	app.UseMigrationsEndPoint();
-	app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
-	app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error");
 
-	app.UseHsts();
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -30,17 +30,17 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-	endpoints.MapControllerRoute(
-		"adminSchool",
-		"Admin/School/{action=Index}",
-		new { controller = "School" }
-	);
+    endpoints.MapControllerRoute(
+        "adminSchool",
+        "Admin/School/{action=Index}",
+        new { controller = "School" }
+    );
 
-	// Add other endpoint mappings here if needed
+    // Add other endpoint mappings here if needed
 
-	endpoints.MapControllerRoute(
-		"default",
-		"{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        "default",
+        "{controller=Home}/{action=Index}/{id?}");
 });
 
 app.MapRazorPages();
