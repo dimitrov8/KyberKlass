@@ -8,9 +8,9 @@ public class ClassroomCreateFormModel
 {
     public ClassroomCreateFormModel()
     {
-        this.Students = new HashSet<UserBasicVIewModel>();
-        this.UnassignedTeachers = new HashSet<UserBasicVIewModel>();
-        this.SelectedStudents = new HashSet<UserBasicVIewModel>();
+        this.Students = new HashSet<UserBasicViewModel>();
+        this.UnassignedTeachers = new HashSet<UserBasicViewModel>();
+        this.SelectedStudents = new HashSet<UserBasicViewModel>();
     }
 
     [Required(ErrorMessage = "Classroom name is required.")]
@@ -26,9 +26,9 @@ public class ClassroomCreateFormModel
     [Required]
     public string SchoolId { get; set; } = null!;
 
-    public ICollection<UserBasicVIewModel> UnassignedTeachers { get; set; }
+    public ICollection<UserBasicViewModel> UnassignedTeachers { get; set; }
 
-    public ICollection<UserBasicVIewModel> Students { get; set; }
+    public ICollection<UserBasicViewModel> Students { get; set; }
 
-    public ICollection<UserBasicVIewModel> SelectedStudents { get; set; }
+    public ICollection<UserBasicViewModel> SelectedStudents { get; set; }
 }
