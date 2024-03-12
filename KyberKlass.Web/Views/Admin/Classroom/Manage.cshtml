@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ManageClassroomsViewModel
+
+<h2>Manage Classrooms for @Model.SchoolName</h2>
+
+<!-- Display existing classrooms -->
+@if (Model.Classrooms.Any())
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<!-- Other classroom properties -->
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var classroom in Model.Classrooms)
+		{
+			<tr>
+				<td>@classroom.Name</td>
+				<!-- Display other classroom properties -->
+			</tr>
+		}
+		</tbody>
+	</table>
+}
+else
+{
+	<p>No classrooms found.</p>
+}
+
+<!-- Add Classroom button -->
+<a asp-controller="Classroom" asp-action="Create" asp-route-schoolId="@Model.SchoolId" class="btn btn-success">Add Classroom</a>
