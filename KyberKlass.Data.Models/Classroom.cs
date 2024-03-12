@@ -38,6 +38,12 @@ public class Classroom
 
 	public ICollection<Grade> Grades { get; set; }
 
+	[Required]
+	public Guid SchoolId { get; set; }
+
+	[ForeignKey(nameof(SchoolId))]
+	public School School { get; set; } = null!;
+
 	public override string ToString()
 	{
 		return this.Name;
