@@ -97,11 +97,16 @@ public class UserController : Controller
 
 		try
 		{
-			bool roleIsUpdatedSuccessfully = await this._userService.UpdateRoleAsync(id, roleId);
+			string? updatedRoleName = await this._userService.UpdateRoleAsync(id, roleId);
 
-			if (roleIsUpdatedSuccessfully)
+			if (string.IsNullOrEmpty(updatedRoleName) == false)
 			{
 				this.TempData["RoleUpdateSuccessMessage"] = ROLE_UPDATE_SUCCESS_MESSAGE;
+
+				if (updatedRoleName == "Teacher")
+				{
+					return this.RedirectToAction(nameof(this.All), "Teacher");
+				}
 
 				return this.RedirectToAction(nameof(this.All), "User");
 			}
