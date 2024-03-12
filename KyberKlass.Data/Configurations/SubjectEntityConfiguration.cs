@@ -9,6 +9,6 @@ public class SubjectEntityConfiguration : IEntityTypeConfiguration<Subject>
 	public void Configure(EntityTypeBuilder<Subject> builder)
 	{
 		builder
-			.HasQueryFilter(s => s.Teacher.IsWorking);
+			.HasQueryFilter(s => s.Teacher.IsActive);
 	}
 }
