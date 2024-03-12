@@ -2,28 +2,52 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using static Common.EntityValidations.BaseUser;
 
 public class ApplicationUser : IdentityUser<Guid>
 {
-	[Required]
-	[MaxLength(MAX_NAME_LENGTH)]
-	public string FirstName { get; set; } = null!;
+    [Required]
+    [MaxLength(MAX_NAME_LENGTH)]
+    public string FirstName { get; set; } = null!;
 
-	[Required]
-	[MaxLength(MAX_NAME_LENGTH)]
-	public string LastName { get; set; } = null!;
+    [Required]
+    [MaxLength(MAX_NAME_LENGTH)]
+    public string LastName { get; set; } = null!;
 
-	[Required]
-	[Column(TypeName = "DATE")]
-	[DataType(DataType.Date)]
-	[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-	public DateTime BirthDate { get; set; }
+    [Required]
+    [Column(TypeName = "DATE")]
+    [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    public DateTime BirthDate { get; set; }
 
-	[Required]
-	public string Address { get; set; } = null!;
+    [Required]
+    public string Address { get; set; } = null!;
 
-	[Required]
-	public bool IsActive { get; set; } = true;
+    public IdentityRole<Guid>? Role { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; } = true;
+
+    public string GetFullName()
+    {
+        return $"{this.FirstName} {this.LastName}";
+    }
+
+    public string GetBirthDate()
+    {
+        return $"{this.BirthDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}";
+    }
+
+    public string GetStatus()
+    {
+        return this.IsActive ? "True" : "False";
+    }
+
+    public async Task<string> GetRoleAsync(UserManager<ApplicationUser> userManager)
+    {
+        var userRoles = await userManager.GetRolesAsync(this);
+        return userRoles.FirstOrDefault() ?? "No Role Assigned";
+    }
 }
