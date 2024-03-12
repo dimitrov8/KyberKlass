@@ -73,7 +73,7 @@ public class TeacherService : ITeacherService
     /// <returns>
     /// A collection of user basic view models representing unassigned teachers, or null if no unassigned teachers are found.
     /// </returns>
-    public async Task<IEnumerable<UserBasicVIewModel>?> GetUnassignedTeachersAsync()
+    public async Task<IEnumerable<UserBasicViewModel>?> GetUnassignedTeachersAsync()
     {
         IList<ApplicationUser>? allTeachers = await this._userManager.GetUsersInRoleAsync("Teacher");
 
@@ -86,9 +86,9 @@ public class TeacherService : ITeacherService
             .Select(c => c.TeacherId)
             .ToListAsync();
 
-        List<UserBasicVIewModel> unassignedTeachers = allTeachers
+        List<UserBasicViewModel> unassignedTeachers = allTeachers
             .Where(t => assignedTeacherIds.Contains(t.Id) == false)
-            .Select(t => new UserBasicVIewModel
+            .Select(t => new UserBasicViewModel
             {
                 Id = t.Id.ToString(),
                 Name = t.GetFullName()

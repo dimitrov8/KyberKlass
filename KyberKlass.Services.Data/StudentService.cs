@@ -26,7 +26,7 @@ public class StudentService : IStudentService
     /// A collection of UserBasicVIewModel objects representing the unassigned students, 
     /// or null if there are no unassigned students found.
     /// </returns>
-    public async Task<IEnumerable<UserBasicVIewModel>?> GetUnassignedStudentsAsync()
+    public async Task<IEnumerable<UserBasicViewModel>?> GetUnassignedStudentsAsync()
     {
         IList<ApplicationUser>? allStudents = await this._userManager.GetUsersInRoleAsync("Student");  // Retrieve all users assigned the role of "Student"
 
@@ -40,9 +40,9 @@ public class StudentService : IStudentService
             .Select(s => s.Id)
             .ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
 
-        List<UserBasicVIewModel> unassignedStudents = allStudents
+        List<UserBasicViewModel> unassignedStudents = allStudents
             .Where(s => assignedStudentIds.Contains(s.Id) == false)
-            .Select(s => new UserBasicVIewModel
+            .Select(s => new UserBasicViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.GetFullName()
