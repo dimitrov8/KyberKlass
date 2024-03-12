@@ -13,7 +13,7 @@ public class Teacher
 	public Guid Id { get; set; }
 
 	[Required]
-	public bool IsWorking { get; set; } = true;
+	public bool IsActive { get; set; } = true;
 
 	public ICollection<Subject> Subjects { get; set; }
 }
