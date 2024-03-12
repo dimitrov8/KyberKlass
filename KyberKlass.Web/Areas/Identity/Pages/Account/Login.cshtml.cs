@@ -12,10 +12,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class LoginModel : PageModel
 {
 	private readonly SignInManager<ApplicationUser> _signInManager;
+	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-	public LoginModel(SignInManager<ApplicationUser> signInManager)
+	public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
 	{
 		this._signInManager = signInManager;
+		this._userManager = userManager;
+		this._roleManager = roleManager;
 	}
 
 	[BindProperty]
@@ -71,6 +75,14 @@ public class LoginModel : PageModel
 
 			if (result.Succeeded)
 			{
+				var user = await this._userManager.FindByEmailAsync(this.Input.Email);
+
+				if (user != null)
+				{
+					var roleName = (await this._userManager.GetRolesAsync(user)).FirstOrDefault();
+					user.Role = await this._roleManager.FindByNameAsync(roleName);
+				}
+
 				return this.RedirectToAction("Index", "Home");
 			}
 
