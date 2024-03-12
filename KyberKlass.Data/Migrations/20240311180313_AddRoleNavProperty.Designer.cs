@@ -4,6 +4,7 @@ using KyberKlass.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KyberKlass.Data.Migrations
 {
     [DbContext(typeof(KyberKlassDbContext))]
-    partial class KyberKlassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311180313_AddRoleNavProperty")]
+    partial class AddRoleNavProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +155,7 @@ namespace KyberKlass.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KYBERKLASS.COM",
                             NormalizedUserName = "ADMIN@KYBERKLASS.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBlmdB0LkZU4eo20caNs50COjIozKcjATtj6XvFz9uNZZGFqLMaaj3uhXb75yn4uOA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAYSotWbJgn3pJz0rGKOt4BtDHzL6//HHquTRYVFXYQx+pzbAqnHGnin3JX5cj1ktA==",
                             PhoneNumber = "08888888888",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
@@ -176,7 +178,7 @@ namespace KyberKlass.Data.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
-                    b.Property<Guid>("SchoolId")
+                    b.Property<Guid?>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TeacherId")
@@ -268,7 +270,7 @@ namespace KyberKlass.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("47895c27-0ae0-4b02-850d-a0e2d83fead3"),
+                            Id = new Guid("66c7de80-aa2b-492d-b6d2-619d5b605f5e"),
                             Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
                             Email = "st@example.com",
                             IsActive = true,
@@ -277,7 +279,7 @@ namespace KyberKlass.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5cb7619e-5352-4afa-81f7-e0ce19996506"),
+                            Id = new Guid("2a3711a1-8ffa-463d-aee0-915980c5f7ff"),
                             Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                             Email = "schoolb@ez.com",
                             IsActive = true,
@@ -344,7 +346,7 @@ namespace KyberKlass.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsWorking")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -383,28 +385,28 @@ namespace KyberKlass.Data.Migrations
                         new
                         {
                             Id = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
-                            ConcurrencyStamp = "4d4ffc47-e424-4c8e-9ae5-05bc6ef6a7e9",
+                            ConcurrencyStamp = "143e7e7c-9e63-4317-8ca1-447028a132a8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("67e8f892-cfbd-4981-a43e-2901a7143305"),
-                            ConcurrencyStamp = "05c4895a-09eb-4813-a99b-33358999e379",
+                            Id = new Guid("05186331-8cf3-4368-b5ec-82f7f8c7be30"),
+                            ConcurrencyStamp = "415906f6-22e8-4a81-a806-995004af3b29",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = new Guid("d5021d56-2f2f-4ad8-b751-e49b5ae00bc6"),
-                            ConcurrencyStamp = "e330e852-ac70-42fe-be76-05bbd11bae1c",
+                            Id = new Guid("f96134f7-4cc8-498f-be62-28c4634cd90a"),
+                            ConcurrencyStamp = "d2562752-92bc-4049-9b6d-47400f3546fa",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("4439af4a-5d05-4da4-a7d6-5ba771b4d3d6"),
-                            ConcurrencyStamp = "e53f7965-2e1f-4398-a628-859fe07d1ea0",
+                            Id = new Guid("68aebce1-de96-4bfa-8ec5-b74a9305991f"),
+                            ConcurrencyStamp = "fe586d32-a01a-4bdb-bbe7-1f2c4d8d3188",
                             Name = "Guardian",
                             NormalizedName = "GUARDIAN"
                         });
@@ -542,19 +544,15 @@ namespace KyberKlass.Data.Migrations
 
             modelBuilder.Entity("KyberKlass.Data.Models.Classroom", b =>
                 {
-                    b.HasOne("KyberKlass.Data.Models.School", "School")
+                    b.HasOne("KyberKlass.Data.Models.School", null)
                         .WithMany("Classrooms")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SchoolId");
 
                     b.HasOne("KyberKlass.Data.Models.Teacher", "Teacher")
                         .WithMany()
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("School");
 
                     b.Navigation("Teacher");
                 });
