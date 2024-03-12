@@ -14,7 +14,7 @@ public class UserDetailsViewModel
 
 	public string Email { get; set; } = null!;
 
-	public string? Role { get; set; }
+    public string Role { get; set; } = null!;
 
 	public string IsActive { get; set; } = null!;
 }
