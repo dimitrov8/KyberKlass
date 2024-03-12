@@ -12,7 +12,7 @@ public interface IUserService
 
 	Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model);
 
-	Task<bool> UpdateRoleAsync(string id, string roleId);
+	Task<string?> UpdateRoleAsync(string id, string roleId);
 
 	Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync();
 }
