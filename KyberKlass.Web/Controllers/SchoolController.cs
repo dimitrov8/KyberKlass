@@ -103,7 +103,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Edit(string id)
 	{
-		bool isValidInput = await this._schoolService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -130,7 +130,7 @@ public class SchoolController : Controller
 	[HttpPost]
 	public async Task<IActionResult> Edit(string id, SchoolViewModel model)
 	{
-		bool isValidInput = await this._schoolService.IsNotNullOrEmptyInputAsync(id, model);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -173,7 +173,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Delete(string id)
 	{
-		bool isValidInput = await this._schoolService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{

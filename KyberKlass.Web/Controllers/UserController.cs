@@ -1,6 +1,7 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
 using Data;
+using KyberKlass.Web.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
@@ -35,7 +36,7 @@ public class UserController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
-		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -62,7 +63,7 @@ public class UserController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Edit(string id)
 	{
-		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -89,7 +90,7 @@ public class UserController : Controller
 	[HttpPost]
 	public async Task<IActionResult> Edit(string id, UserEditFormModel model)
 	{
-		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, model);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -132,7 +133,7 @@ public class UserController : Controller
 	[HttpGet]
 	public async Task<IActionResult> UpdateRole(string id)
 	{
-		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -159,8 +160,8 @@ public class UserController : Controller
 	[HttpPost]
 	public async Task<IActionResult> UpdateRoleConfirmed(string id, string roleId)
 	{
-		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null) &&
-		                    await this._userService.IsNotNullOrEmptyInputAsync(roleId, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null) &&
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(roleId, null);
 
 		if (isValidInput == false)
 		{
