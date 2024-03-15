@@ -21,56 +21,56 @@
 		</tr>
 		</thead>
 		<tbody>
-			@foreach (var user in Model)
-			{
-				<tr>
-					<td>@user.Id</td>
-					<td>@user.Email</td>
-					<td>@user.FullName</td>
-					<td>@user.Role</td>
-					<td>
-						<input type="checkbox" disabled @(user.IsActive ? "checked" : "")/>
-					</td>
-					<td>
-						<!-- Details button -->
-						<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
-						</form>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td>@user.Id</td>
+				<td>@user.Email</td>
+				<td>@user.FullName</td>
+				<td>@user.Role</td>
+				<td>
+					<input type="checkbox" disabled @(user.IsActive ? "checked" : "")/>
+				</td>
+				<td>
+					<!-- Details button -->
+					<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+					</form>
 
-						<!-- Update Role button -->
-						<form asp-controller="User" asp-action="UpdateRole" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
-						</form>
+					<!-- Update Role button -->
+					<form asp-controller="User" asp-action="UpdateRole" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
+					</form>
 
-						<!-- Delete button -->
-						<form asp-controller="User" asp-action="Delete" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
-						</form>
-					</td>
-				</tr>
-			}
+					<!-- Delete button -->
+					<form asp-controller="User" asp-action="Delete" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
+					</form>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 
 	@* Include necessary scripts for DataTables.js and DataTables.Export *@
 
 	@section scripts
-		{
-			<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-			<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-			<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-			<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-			<script src="~/plugins/jszip/jszip.min.js"></script>
-			<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
-			<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+	{
+		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+		<script src="~/plugins/jszip/jszip.min.js"></script>
+		<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+		<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 	}
 
 	<script>

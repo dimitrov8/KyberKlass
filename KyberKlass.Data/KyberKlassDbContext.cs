@@ -24,6 +24,8 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	public DbSet<Student> Students { get; set; } = null!;
 
+	public DbSet<Guardian> Guardians { get; set; } = null!;
+
 	public DbSet<Absence> Absences { get; set; } = null!;
 
 	protected override void OnModelCreating(ModelBuilder builder)
@@ -45,7 +47,6 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 					.HasQueryFilter(Expression.Lambda(body, parameter));
 			}
 		}
-
 
 		base.OnModelCreating(builder);
 	}

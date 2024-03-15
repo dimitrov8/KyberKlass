@@ -4,5 +4,5 @@ using Web.ViewModels.Admin.User;
 
 public interface IStudentService
 {
-    Task<IEnumerable<UserBasicViewModel>?> GetUnassignedStudentsAsync();
+	Task<IEnumerable<UserBasicViewModel>> GetUnassignedStudentsAsync();
 }

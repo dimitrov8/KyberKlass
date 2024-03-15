@@ -30,7 +30,7 @@ public class Classroom
 	public Teacher Teacher { get; set; } = null!;
 
 	[Required]
-	public bool IsActive { get; set; } = false;
+	public bool IsActive { get; set; } = true;
 
 	public ICollection<Student> Students { get; set; }
 

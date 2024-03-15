@@ -1,5 +1,7 @@
 ﻿namespace KyberKlass.Web.ViewModels.Admin.User;
 
+using Guardian;
+
 public class UserDetailsViewModel
 {
 	public string Id { get; set; } = null!;
@@ -14,7 +16,10 @@ public class UserDetailsViewModel
 
 	public string Email { get; set; } = null!;
 
-    public string Role { get; set; } = null!;
+	public string Role { get; set; } = null!;
 
 	public string IsActive { get; set; } = null!;
+
+	// Additional property for guardian information
+	public GuardianViewModel? Guardian { get; set; }
 }

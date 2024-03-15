@@ -79,7 +79,7 @@ public class LoginModel : PageModel
 
 				if (user != null)
 				{
-					var roleName = (await this._userManager.GetRolesAsync(user)).FirstOrDefault();
+					string roleName = (await this._userManager.GetRolesAsync(user)).FirstOrDefault();
 					user.Role = await this._roleManager.FindByNameAsync(roleName);
 				}
 

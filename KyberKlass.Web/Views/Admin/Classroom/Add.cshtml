@@ -1,0 +1,59 @@
+﻿@model AddClassroomViewModel
+
+<h2>Create Classroom</h2>
+
+<form asp-controller="Classroom" asp-action="Add" method="post" onsubmit="return validateForm()">
+	<div class="form-group">
+		<label asp-for="Name">Classroom Name:</label>
+		<input asp-for="Name" class="form-control"/>
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+
+	<div class="form-group">
+		<label asp-for="TeacherId">Teacher:</label>
+		<select asp-for="TeacherId" class="form-control" id="teacherDropdown" onchange="updateTeacherId()">
+			<option value="">-- Select Teacher --</option>
+			@foreach (var teacher in Model.UnassignedTeachers)
+			{
+				<option value="@teacher.Id">@teacher.Name</option>
+			}
+		</select>
+		<span asp-validation-for="TeacherId" class="text-danger"></span>
+	</div>
+
+	<div class="form-group">
+		<label>Students:</label>
+		<select asp-for="SelectedStudents" multiple class="form-control">
+			@foreach (var student in Model.Students)
+			{
+				<option value="@student.Id">@student.Name</option>
+			}
+		</select>
+		<span asp-validation-for="SelectedStudents" class="text-danger"></span>
+		<small class="form-text text-muted">Hold down Ctrl (or Command on Mac) to select multiple students.</small>
+	</div>
+
+	<input type="hidden" asp-for="SchoolId"/>
+
+	<button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+	<script>
+            function updateTeacherId() {
+                var selectedTeacherId = document.getElementById("teacherDropdown").value;
+                document.getElementById("teacherId").value = selectedTeacherId; // Update the hidden input field with the selected teacher ID
+            }
+
+            function validateForm() {
+                var teacherId = document.getElementById("TeacherId").value;
+                if (teacherId === '') {
+                    document.getElementById("teacherAlert").style.display = "block";
+                    return false;
+                } else {
+                    document.getElementById("teacherAlert").style.display = "none";
+                    return true;
+                }
+            }
+        </script>
+}

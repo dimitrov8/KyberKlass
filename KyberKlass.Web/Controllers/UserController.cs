@@ -1,5 +1,6 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
+using Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
@@ -11,8 +12,9 @@ using static Common.CustomMessageConstants.User;
 public class UserController : Controller
 {
 	private readonly IUserService _userService;
+	private const string CONTROLLER_NAME = "User";
 
-	public UserController(IUserService userService)
+	public UserController(IUserService userService, KyberKlassDbContext dbContext)
 	{
 		this._userService = userService;
 	}
@@ -42,7 +44,7 @@ public class UserController : Controller
 
 		try
 		{
-			var userDetailsViewModel = await this._userService.GetUserDetailsAsync(id);
+			var userDetailsViewModel = await this._userService.GetDetailsAsync(id);
 
 			if (userDetailsViewModel == null)
 			{
@@ -53,7 +55,77 @@ public class UserController : Controller
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "User");
+			return this.RedirectToAction(nameof(this.All));
+		}
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> Edit(string id)
+	{
+		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		try
+		{
+			var userViewModel = await this._userService.GetForEditAsync(id);
+
+			if (userViewModel == null)
+			{
+				return this.NotFound();
+			}
+
+			return this.View(this.GetViewPath(nameof(this.Edit)), userViewModel);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.All));
+		}
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> Edit(string id, UserEditFormModel model)
+	{
+		bool isValidInput = await this._userService.IsNotNullOrEmptyInputAsync(id, model);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		if (this.ModelState.IsValid == false)
+		{
+			this.TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
+
+			return this.View(this.GetViewPath(nameof(Edit)), model);
+		}
+
+		try
+		{
+			bool editSuccessfully = true;
+
+			if (editSuccessfully)
+			{
+				if (model.IsActive == false)
+				{
+					this.TempData["SuccessDeleteMessage"] = string.Format(SUCCESSFULLY_SOFT_DELETED_MESSAGE, model.Id);
+				}
+				else
+				{
+					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_APPLIED_CHANGES_MESSAGE, model.Id);
+				}
+			}
+
+			return this.RedirectToAction(nameof(this.All));
+		}
+		catch (Exception)
+		{
+			this.ModelState.AddModelError(string.Empty, string.Format(EDIT_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
+
+			return this.View(this.GetViewPath(nameof(Edit)), model);
 		}
 	}
 
@@ -69,7 +141,7 @@ public class UserController : Controller
 
 		try
 		{
-			var userUpdateRoleViewModel = await this._userService.GetUserForUpdateRoleAsync(id);
+			var userUpdateRoleViewModel = await this._userService.GetForUpdateRoleAsync(id);
 
 			if (userUpdateRoleViewModel == null)
 			{
@@ -80,7 +152,7 @@ public class UserController : Controller
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "User");
+			return this.RedirectToAction(nameof(this.All));
 		}
 	}
 
@@ -103,19 +175,24 @@ public class UserController : Controller
 			{
 				this.TempData["RoleUpdateSuccessMessage"] = ROLE_UPDATE_SUCCESS_MESSAGE;
 
-				if (updatedRoleName == "Teacher")
-				{
-					return this.RedirectToAction(nameof(this.All), "Teacher");
-				}
+				//await this.CreateRecordForUser(id, updatedRoleName);
 
-				return this.RedirectToAction(nameof(this.All), "User");
+				switch (updatedRoleName)
+				{
+					case "Teacher":
+						return this.RedirectToAction(nameof(this.All), "Teacher");
+					case "Student":
+					case "Guardian":
+					case "Admin":
+						return this.RedirectToAction(nameof(this.All));
+				}
 			}
 
 			return this.BadRequest(ROLE_UPDATE_FAILED_MESSAGE);
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "User"); // Can return custom error view
+			return this.RedirectToAction(nameof(this.All)); // Can return custom error view
 		}
 	}
 }

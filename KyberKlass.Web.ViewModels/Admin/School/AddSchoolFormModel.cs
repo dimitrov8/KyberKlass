@@ -26,5 +26,5 @@ public class AddSchoolFormModel
 	public string PhoneNumber { get; set; } = null!;
 
 	[Required]
-	public bool IsActive { get; set; }
+	public bool IsActive { get; set; } = true;
 }

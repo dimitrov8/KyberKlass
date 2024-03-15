@@ -1,5 +1,6 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
@@ -11,7 +12,7 @@ using static Common.CustomMessageConstants.School;
 public class SchoolController : Controller
 {
 	private readonly ISchoolService _schoolService;
-
+	private const string CONTROLLER_NAME = "School";
 
 	public SchoolController(ISchoolService schoolService)
 	{
@@ -35,7 +36,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
-		bool isValidInput = await this._schoolService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -55,7 +56,7 @@ public class SchoolController : Controller
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "School"); // Maybe return custom error view
+			return this.RedirectToAction(nameof(this.All)); // Maybe return custom error view
 		}
 	}
 
@@ -79,13 +80,13 @@ public class SchoolController : Controller
 		{
 			bool addedSuccessfully = await this._schoolService.AddAsync(model);
 
-			if (!addedSuccessfully)
+			if (addedSuccessfully == false)
 			{
-				this.TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, model.Name);
+				this.TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 			else
 			{
-				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, model.Name);
+				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 
 			return this.RedirectToAction(nameof(this.All));
@@ -111,18 +112,18 @@ public class SchoolController : Controller
 
 		try
 		{
-			var school = await this._schoolService.GetForEditAsync(id);
+			var schoolViewModel = await this._schoolService.GetForEditAsync(id);
 
-			if (school == null)
+			if (schoolViewModel == null)
 			{
 				return this.NotFound();
 			}
 
-			return this.View(this.GetViewPath(nameof(this.Edit)), school);
+			return this.View(this.GetViewPath(nameof(this.Edit)), schoolViewModel);
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "School");
+			return this.RedirectToAction(nameof(this.All));
 		}
 	}
 
@@ -145,7 +146,7 @@ public class SchoolController : Controller
 
 		try
 		{
-			bool editSuccessfully = await this._schoolService.EditSchoolAsync(id, model);
+			bool editSuccessfully = await this._schoolService.EditAsync(id, model);
 
 			if (editSuccessfully)
 			{
@@ -192,14 +193,14 @@ public class SchoolController : Controller
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "School");
+			return this.RedirectToAction(nameof(this.All));
 		}
 	}
 
 	[HttpPost]
 	public async Task<IActionResult> DeleteConfirmed(string id)
 	{
-		bool isValidInput = await this._schoolService.IsNotNullOrEmptyInputAsync(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -221,7 +222,7 @@ public class SchoolController : Controller
 		}
 		catch (Exception)
 		{
-			return this.RedirectToAction(nameof(this.All), "School");
+			return this.RedirectToAction(nameof(this.All));
 		}
 	}
 }

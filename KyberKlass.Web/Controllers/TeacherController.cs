@@ -1,28 +1,27 @@
-﻿namespace KyberKlass.Web.Controllers
+﻿namespace KyberKlass.Web.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
+using Services.Data.Interfaces;
+using ViewModels.Admin.User;
+
+public class TeacherController : Controller
 {
-	using Microsoft.AspNetCore.Mvc;
-	using Services.Data.Interfaces;
-	using ViewModels.Admin.User;
+	private readonly ITeacherService _teacherService;
 
-	public class TeacherController : Controller
+	public TeacherController(ITeacherService teacherService)
 	{
-		private readonly ITeacherService _teacherService;
+		this._teacherService = teacherService;
+	}
 
-		public TeacherController(ITeacherService teacherService)
-		{
-			this._teacherService = teacherService;
-		}
+	private string GetViewPath(string viewName)
+	{
+		return $"~/Views/Admin/Teacher/{viewName}.cshtml";
+	}
 
-		private string GetViewPath(string viewName)
-		{
-			return $"~/Views/Admin/Teacher/{viewName}.cshtml";
-		}
+	public async Task<IActionResult> All()
+	{
+		List<UserViewModel>? allTeachersViewModel = await this._teacherService.AllAsync();
 
-		public async Task<IActionResult> All()
-		{
-			List<UserViewModel>? allTeachersViewModel = await this._teacherService.AllAsync();
-
-			return this.View(this.GetViewPath(nameof(this.All)), allTeachersViewModel);
-		}
+		return this.View(this.GetViewPath(nameof(this.All)), allTeachersViewModel);
 	}
 }

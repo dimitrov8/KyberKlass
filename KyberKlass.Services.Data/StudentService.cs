@@ -7,53 +7,47 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.User;
 
-
 public class StudentService : IStudentService
 {
-    private readonly KyberKlassDbContext _dbContext;
-    private readonly UserManager<ApplicationUser> _userManager;
+	private readonly KyberKlassDbContext _dbContext;
+	private readonly UserManager<ApplicationUser> _userManager;
 
-    public StudentService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
-    {
-        this._dbContext = dbContext;
-        this._userManager = userManager;
-    }
+	public StudentService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
+	{
+		this._dbContext = dbContext;
+		this._userManager = userManager;
+	}
 
-    /// <summary>
-    /// Retrieves a list of unassigned students from the database.
-    /// </summary>
-    /// <returns>
-    /// A collection of UserBasicVIewModel objects representing the unassigned students, 
-    /// or null if there are no unassigned students found.
-    /// </returns>
-    public async Task<IEnumerable<UserBasicViewModel>?> GetUnassignedStudentsAsync()
-    {
-        IList<ApplicationUser>? allStudents = await this._userManager.GetUsersInRoleAsync("Student");  // Retrieve all users assigned the role of "Student"
+	/// <summary>
+	///     Retrieves a collection of basic user view models representing unassigned students asynchronously.
+	/// </summary>
+	/// <returns>
+	///     A collection of user basic view models representing unassigned students.
+	///     If no unassigned students are found, an empty collection is returned.
+	/// </returns>
+	public async Task<IEnumerable<UserBasicViewModel>> GetUnassignedStudentsAsync()
+	{
+		IList<ApplicationUser> allStudents = await this._userManager.GetUsersInRoleAsync("Student"); // Retrieve all users assigned the role of "Student"
 
-        if (allStudents.Any() == false) // Check if there are any students found
-        {
-            return null;
-        }
+		if (allStudents.Any() == false) // Check if there are any students found
+		{
+			return Enumerable.Empty<UserBasicViewModel>();
+		}
 
-        List<Guid> assignedStudentIds = await this._dbContext.Classrooms
-            .SelectMany(c => c.Students)
-            .Select(s => s.Id)
-            .ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
+		List<Guid> assignedStudentIds = await this._dbContext.Classrooms
+			.SelectMany(c => c.Students)
+			.Select(s => s.Id)
+			.ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
 
-        List<UserBasicViewModel> unassignedStudents = allStudents
-            .Where(s => assignedStudentIds.Contains(s.Id) == false)
-            .Select(s => new UserBasicViewModel
-            {
-                Id = s.Id.ToString(),
-                Name = s.GetFullName()
-            })
-            .ToList(); // Filter out the unassigned students
+		List<UserBasicViewModel> unassignedStudents = allStudents
+			.Where(s => assignedStudentIds.Contains(s.Id) == false)
+			.Select(s => new UserBasicViewModel
+			{
+				Id = s.Id.ToString(),
+				Name = s.GetFullName()
+			})
+			.ToList(); // Filter out the unassigned students
 
-        if (unassignedStudents.Any() == false) // Check if there are any unassigned students found
-        {
-            return null;
-        }
-
-        return unassignedStudents; // Return the collection of unassigned students
-    }
+		return unassignedStudents; // Return the collection of unassigned students
+	}
 }

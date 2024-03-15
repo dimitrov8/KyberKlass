@@ -23,5 +23,5 @@ public class SchoolViewModel
 
 	public bool IsActive { get; set; }
 
-	public ICollection<ClassroomViewModel> Classrooms { get; set; } 
+	public ICollection<ClassroomViewModel> Classrooms { get; set; }
 }

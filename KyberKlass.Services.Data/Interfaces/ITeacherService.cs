@@ -2,9 +2,9 @@
 
 using Web.ViewModels.Admin.User;
 
-public interface ITeacherService 
+public interface ITeacherService
 {
 	Task<List<UserViewModel>?> AllAsync();
 
-    Task<IEnumerable<UserBasicViewModel>?> GetUnassignedTeachersAsync();
+	Task<IEnumerable<UserBasicViewModel>> GetUnassignedTeachersAsync();
 }

@@ -1,18 +1,21 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
+using KyberKlass.Data.Models;
 using Web.ViewModels.Admin.User;
 
 public interface IUserService
 {
 	Task<List<UserViewModel>> AllAsync();
 
-	Task<UserDetailsViewModel?> GetUserDetailsAsync(string id);
+	Task<UserDetailsViewModel?> GetDetailsAsync(string id);
 
-	Task<UserUpdateRoleViewModel?> GetUserForUpdateRoleAsync(string id);
-
-	Task<bool> IsNotNullOrEmptyInputAsync(string id, UserViewModel? model);
+	Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id);
 
 	Task<string?> UpdateRoleAsync(string id, string roleId);
 
 	Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync();
+
+	Task<UserEditFormModel?> GetForEditAsync(string id);
+
+	Task<ApplicationUser?> GetUserById(string id);
 }
