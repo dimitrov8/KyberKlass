@@ -27,4 +27,8 @@
     <ProjectReference Include="..\KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\dist\css\alt\" />
+  </ItemGroup>
+
 </Project>
