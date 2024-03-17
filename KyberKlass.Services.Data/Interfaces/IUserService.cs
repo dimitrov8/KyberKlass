@@ -17,5 +17,7 @@ public interface IUserService
 
 	Task<UserEditFormModel?> GetForEditAsync(string id);
 
+	Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model);
+
 	Task<ApplicationUser?> GetUserById(string id);
 }

@@ -1,11 +1,13 @@
 ﻿namespace KyberKlass.Services.Data;
 
+using System.Globalization;
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.User;
+using static Common.FormattingConstants;
 
 public class UserService : IUserService
 {
@@ -273,8 +275,30 @@ public class UserService : IUserService
 
 		return allRoles;
 	}
+    public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
+    {
+        var user = await this.GetUserById(id);
 
-	public async Task<UserEditFormModel?> GetForEditAsync(string id)
+        if (user == null)
+        {
+            return null;
+        }
+
+        user.FirstName = model.FirstName;
+		user.LastName = model.LastName;
+        user.BirthDate = DateTime.ParseExact(model.BirthDate, BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture);
+		user.Address = model.Address;
+        user.PhoneNumber = model.PhoneNumber;
+		user.Email = model.Email.ToLower();
+        user.NormalizedEmail = model.Email.ToUpper();
+        user.IsActive = model.IsActive;
+
+        await this._dbContext.SaveChangesAsync();
+
+        return model;
+    }
+
+    public async Task<UserEditFormModel?> GetForEditAsync(string id)
 	{
 		var user = await this.GetUserById(id);
 
