@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\dist\**" />
+    <Content Remove="wwwroot\dist\**" />
+    <EmbeddedResource Remove="wwwroot\dist\**" />
+    <None Remove="wwwroot\dist\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.20" />
@@ -25,10 +32,6 @@
     <ProjectReference Include="..\KyberKlass.Services.Data\KyberKlass.Services.Data.csproj" />
     <ProjectReference Include="..\KyberKlass.Web.Infrastructure\KyberKlass.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\dist\css\alt\" />
   </ItemGroup>
 
 </Project>
