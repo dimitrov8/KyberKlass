@@ -2,7 +2,7 @@
 
 public static class EntityValidations
 {
-	public static class BaseUser
+    public static class BaseUser
 	{
 		public const int MIN_NAME_LENGTH = 2;
 		public const int MAX_NAME_LENGTH = 30;
