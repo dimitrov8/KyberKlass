@@ -9,20 +9,44 @@
 <div class="container">
 	<h1 class="mt-5">@ViewData["Title"]</h1>
 	<hr/>
-	 
-	@await Html.PartialAsync("~/Views/Admin/User/Shared/_Details.cshtml", Model);
-	
-	@if (Model is { Role: "Student",Guardian: not null })
+
+	<dl class="row mt-5">
+		<dt class="col-sm-2">Id:</dt>
+		<dd class="col-sm-10">@Model.Id</dd>
+
+		<dt class="col-sm-2">Full Name:</dt>
+		<dd class="col-sm-10">@Model.FullName</dd>
+
+		<dt class="col-sm-2">Birth Date:</dt>
+		<dd class="col-sm-10">@Model.BirthDate</dd>
+
+		<dt class="col-sm-2">Address:</dt>
+		<dd class="col-sm-10">@Model.Address</dd>
+
+		<dt class="col-sm-2">Phone Number:</dt>
+		<dd class="col-sm-10">@Model.PhoneNumber</dd>
+
+		<dt class="col-sm-2">Email:</dt>
+		<dd class="col-sm-10">@Model.Email</dd>
+
+		<dt class="col-sm-2">Role:</dt>
+		<dd class="col-sm-10">@Model.Role</dd>
+
+		<dt class="col-sm-2">IsActive:</dt>
+		<dd class="col-sm-10">@Model.IsActive</dd>
+
+		@if (Model is { Role: "Student", Guardian: not null })
 		{
-			<dt class="col-sm-2">Guardian Name:</dt>
-			<dd class="col-sm-10">@Model.Guardian.FullName</dd>
+				<dt class="col-sm-2">Guardian Name:</dt>
+				<dd class="col-sm-10">@Model.Guardian.FullName</dd>
 
-			<dt class="col-sm-2">Guardian Email:</dt>
-			<dd class="col-sm-10">@Model.Guardian.Email</dd>
+				<dt class="col-sm-2">Guardian Email:</dt>
+				<dd class="col-sm-10">@Model.Guardian.Email</dd>
 
-			<dt class="col-sm-2">Guardian Phone Number:</dt>
-			<dd class="col-sm-10">@Model.Guardian.PhoneNumber</dd>
+				<dt class="col-sm-2">Guardian Phone Number:</dt>
+				<dd class="col-sm-10">@Model.Guardian.PhoneNumber</dd>
 		}
+	</dl>
 
 	<div class="mt-5">
 		<a class="btn btn-warning" asp-controller="User" asp-action="UpdateRole" asp-route-id="@Model.Id">Update Role</a>
