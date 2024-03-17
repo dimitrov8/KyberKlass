@@ -4,6 +4,7 @@ using Data;
 using KyberKlass.Web.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using Services.Data.Interfaces;
 using ViewModels.Admin.User;
 using static Common.CustomMessageConstants.Common;
@@ -105,11 +106,10 @@ public class UserController : Controller
 		}
 
 		try
-		{
-			// TODO 
-			bool editSuccessfully = true;
+        {
+            var userToEdit = await this._userService.EditAsync(id, model);
 
-			if (editSuccessfully)
+			if (userToEdit != null)
 			{
 				if (model.IsActive == false)
 				{
