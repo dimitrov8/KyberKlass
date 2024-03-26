@@ -138,4 +138,11 @@ public class ClassroomController : Controller
             return this.View(this.GetViewPath(nameof(Add)), model);
 		}
 	}
+
+    public async Task<IActionResult> GetClassrooms()
+    {
+        var classrooms = await this._classroomService.GetAllSchoolClassroomsAsync();
+
+        return this.Json(classrooms);
+    }
 }
