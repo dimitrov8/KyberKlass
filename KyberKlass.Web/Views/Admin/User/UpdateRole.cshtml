@@ -6,6 +6,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+<div class="alert alert-danger" role="alert">
+	@TempData["ErrorMessage"]
+</div>
+}
+
 <div class="container">
     <h1 class="mt-5">@ViewData["Title"]</h1>
     <hr />
