@@ -9,10 +9,7 @@ public class StudentEntityConfiguration : IEntityTypeConfiguration<Student>
 	public void Configure(EntityTypeBuilder<Student> builder)
 	{
 		builder
-			.HasQueryFilter(s => s.IsActive);
-
-		builder
-			.HasQueryFilter(s => s.Classroom.IsActive);
+			.HasQueryFilter(s => s.ApplicationUser.IsActive);
 
 		builder
 			.HasMany(s => s.Absences)
