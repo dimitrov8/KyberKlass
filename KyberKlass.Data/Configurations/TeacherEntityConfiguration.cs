@@ -9,7 +9,7 @@ public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>
 	public void Configure(EntityTypeBuilder<Teacher> builder)
 	{
 		builder
-			.HasQueryFilter(t => t.IsActive);
+			.HasQueryFilter(t => t.ApplicationUser.IsActive);
 
 		builder
 			.HasMany(t => t.Subjects)
