@@ -169,38 +169,34 @@ public class UserController : Controller
 
         try
         {
-          
+
             var userUpdateRoleViewModel = await this._userService.GetForUpdateRoleAsync(id); // Retrieve the user viewmodel
 
-            string? previousRole = userUpdateRoleViewModel?.PreviousRoleName; // Gets the name of the role before the update
+            string? currentRole = userUpdateRoleViewModel?.PreviousRoleName; // Gets the name of the role before the update
             var roleToUpdateTo = await this._userService.GetRoleNameByIdAsync(roleId); // Get the name of the role which we want to update to
 
-            if (roleToUpdateTo != null) // If user has a role
+            if (roleToUpdateTo != null && currentRole == "Teacher") // If user wants to update to a valid role and his current role is "Teacher"
             {
-                // Check if the user's previous role is 'Teacher'
-                if (previousRole == "Teacher")
-                {
-                    // Checks if teacher is assigned to a classroom
-                    var isTeacherAssignedToClassroom = await this._userService.IsTeacherAssignedToClassroomAsync(id);
+                // Checks if teacher is assigned to a classroom
+                var isTeacherAssignedToClassroom = await this._userService.IsTeacherAssignedToClassroomAsync(id);
 
-                    if (isTeacherAssignedToClassroom) // If teacher is assigned
-                    {
-                        // Display a message to change the classroom teacher
-                        this.TempData["ErrorMessage"] = FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE;
-                        return this.RedirectToAction(nameof(this.UpdateRole), new { id });
-                    }
+                if (isTeacherAssignedToClassroom) // If teacher is assigned
+                {
+                    // Display a message to change the classroom teacher
+                    this.TempData["ErrorMessage"] = FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE;
+                    return this.RedirectToAction(nameof(this.UpdateRole), new { id });
                 }
             }
 
-            string? updatedRoleName = await this._userService.UpdateRoleAsync(id, roleId, guardianId, classroomId);
+            bool successfulRoleUpdate = await this._userService.UpdateRoleAsync(id, roleId, guardianId, classroomId);
 
-            if (string.IsNullOrEmpty(updatedRoleName) == false)
+            if (successfulRoleUpdate)
             {
                 this.TempData["RoleUpdateSuccessMessage"] = ROLE_UPDATE_SUCCESS_MESSAGE;
 
                 //await this.CreateRecordForUser(id, updatedRoleName);
 
-                return this.RedirectToAction(updatedRoleName switch
+                return this.RedirectToAction(roleToUpdateTo switch
                 {
                     "Teacher" => nameof(this.All),
                     "Student" or "Guardian" or "Admin" => nameof(this.All),

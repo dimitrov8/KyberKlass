@@ -11,7 +11,7 @@ public interface IUserService
 	
     Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id);
 	
-    Task<string?> UpdateRoleAsync(string id, string roleId, string? guardianId, string? classroomId);
+    Task<bool> UpdateRoleAsync(string id, string roleId, string? guardianId, string? classroomId);
 	
     Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync();
 	

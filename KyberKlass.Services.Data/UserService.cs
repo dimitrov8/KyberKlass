@@ -225,27 +225,27 @@ public class UserService : IUserService
 		await this._dbContext.SaveChangesAsync();
 	}
 
-	public async Task<string?> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
+	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
 	{
 		var user = await this.GetUserById(userId);
 		if (user == null)
-			return null;
+			return false;
 
 		IdentityRole<Guid>? role = await this._roleManager.Roles.FirstOrDefaultAsync(r => r.Id == Guid.Parse(roleId));
 		if (role == null)
-			return null;
+			return false;
 
 		string currentRoleName = await user.GetRoleAsync(this._userManager);
 		if (currentRoleName == role.Name)
-			return role.Name;
+			return true;
 
 		var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
         if (removeResult.Succeeded == false)
-			return null;
+			return false;
 
 		var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
 		if (addResult.Succeeded == false)
-			return null;
+			return false;
 
 		user.Role = role;
 		await this._dbContext.SaveChangesAsync();
@@ -253,7 +253,7 @@ public class UserService : IUserService
 		await this.UpdateUserRoleTableAsync(user, role.Name, guardianId, classroomId);
 		await this.RemoveUserFromCurrentRoleTableAsync(user, currentRoleName);
 
-		return role.Name;
+		return true;
 	}
 
 	/// <summary>
