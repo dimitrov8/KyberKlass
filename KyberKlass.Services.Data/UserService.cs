@@ -6,7 +6,6 @@ using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
 
@@ -26,7 +25,7 @@ public class UserService : IUserService
     }
 
 	private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
-	{
+    {
 		this._dbContext.Students.Add(new Student
 		{
 			Id = user.Id,
@@ -127,6 +126,8 @@ public class UserService : IUserService
 			return null; // Return null if the user is not found
 		}
 
+        var currentRoleName = await user.GetRoleAsync(this._userManager);
+
 		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
 
 		// Create a view model for updating user role
@@ -136,7 +137,8 @@ public class UserService : IUserService
 			FullName = user.GetFullName(),
 			Email = user.Email,
 			IsActive = user.IsActive,
-			CurrentRoleName = await user.GetRoleAsync(this._userManager), // Retrieve the user's current role asynchronously
+			PreviousRoleName = currentRoleName,
+			CurrentRoleName = currentRoleName,
 			AvailableRoles = availableRoles, // Assign available roles to the view model
         };
 
@@ -158,7 +160,16 @@ public class UserService : IUserService
 		return guardianViewModels;
 	}
 
-	private async Task UpdateUserRoleTableAsync(ApplicationUser user, string roleName, string? guardianId, string? classroomId)
+    public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
+    {
+        // Check if the user with the provided userId is assigned to any classroom as a teacher
+        var isAssigned = await this._dbContext.Classrooms
+            .AnyAsync(c => c.TeacherId == Guid.Parse(userId));
+
+        return isAssigned;
+    }
+
+    private async Task UpdateUserRoleTableAsync(ApplicationUser user, string roleName, string? guardianId, string? classroomId)
 	{
 		switch (roleName)
 		{
@@ -317,4 +328,12 @@ public class UserService : IUserService
 			.Users
 			.FindAsync(Guid.Parse(id));
 	}
+
+    public async Task<string?> GetRoleNameByIdAsync(string id)
+    {
+        var role = await this._roleManager.FindByIdAsync(id);
+		var roleName = role.Name;
+
+        return roleName;
+    }
 }

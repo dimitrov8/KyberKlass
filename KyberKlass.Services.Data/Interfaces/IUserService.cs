@@ -22,4 +22,8 @@ public interface IUserService
     Task<ApplicationUser?> GetUserById(string id);
     
     Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync();
-}
+
+    Task<bool> IsTeacherAssignedToClassroomAsync(string userId);
+
+    Task<string?> GetRoleNameByIdAsync(string id);
+}   
