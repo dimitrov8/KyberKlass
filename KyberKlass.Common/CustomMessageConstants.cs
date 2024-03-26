@@ -38,5 +38,9 @@ public static class CustomMessageConstants
 		public const string SUCCESSFULLY_APPLIED_CHANGES_MESSAGE = "Successfully applied changes for User with Id: \"{0}\".";
 
 		public const string SUCCESSFULLY_SOFT_DELETED_MESSAGE = "Successfully soft deleted User with Id: \"{0}\".";
-	}
+
+        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Cannot update role. User is assigned as a teacher in a classroom. " +
+                                                                             "Please change the teacher in the affected classroom before trying to update role.";		
+
+    }
 }
