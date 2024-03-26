@@ -10,18 +10,17 @@ public class Student
 		this.Grades = new HashSet<Grade>();
 		this.Absences = new HashSet<Absence>();
 	}
-
 	[Key]
+	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
+
+	public ApplicationUser ApplicationUser { get; set; } = null!;
 
 	[Required]
 	public Guid GuardianId { get; set; }
 
 	[ForeignKey(nameof(GuardianId))]
 	public Guardian Guardian { get; set; } = null!;
-
-	[Required]
-	public bool IsActive { get; set; } = true;
 
 	[Required]
 	public Guid ClassroomId { get; set; }
