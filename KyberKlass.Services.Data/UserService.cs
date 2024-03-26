@@ -6,6 +6,7 @@ using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
 
@@ -14,12 +15,41 @@ public class UserService : IUserService
 	private readonly KyberKlassDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+	private readonly IClassroomService _classroomService;
 
-	public UserService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+	public UserService(KyberKlassDbContext dbContext,
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole<Guid>> roleManager,
+        IClassroomService classroomService)
 	{
 		this._dbContext = dbContext;
 		this._userManager = userManager;
 		this._roleManager = roleManager;
+        this._classroomService = classroomService;
+    }
+
+	private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
+	{
+		this._dbContext.Students.Add(new Student
+		{
+			Id = user.Id,
+			GuardianId = guardianId != null ? Guid.Parse(guardianId) : default,
+			ClassroomId = classroomId != null ? Guid.Parse(classroomId) : default
+		});
+
+		await this._dbContext.SaveChangesAsync();
+	}
+
+	private async Task UpdateTeacherAsync(ApplicationUser user)
+	{
+		this._dbContext.Teachers.Add(new Teacher { Id = user.Id });
+		await this._dbContext.SaveChangesAsync();
+	}
+
+	private async Task UpdateGuardianAsync(ApplicationUser user)
+	{
+		this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
+		await this._dbContext.SaveChangesAsync();
 	}
 
 	public async Task<List<UserViewModel>> AllAsync()
@@ -101,7 +131,6 @@ public class UserService : IUserService
 		}
 
 		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
-		IEnumerable<UserBasicViewModel> availableGuardians = await this.GetAllGuardiansAsync();
 
 		// Create a view model for updating user role
 		var viewModel = new UserUpdateRoleViewModel
@@ -112,13 +141,12 @@ public class UserService : IUserService
 			IsActive = user.IsActive,
 			CurrentRoleName = await user.GetRoleAsync(this._userManager), // Retrieve the user's current role asynchronously
 			AvailableRoles = availableRoles, // Assign available roles to the view model
-			AvailableGuardians = availableGuardians // Assign available guardians to the view model
-		};
+        };
 
 		return viewModel;
 	}
 
-	private async Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync()
+	public async Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync()
 	{
 		IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
 
@@ -133,18 +161,18 @@ public class UserService : IUserService
 		return guardianViewModels;
 	}
 
-	private async Task UpdateUserRoleTableAsync(ApplicationUser user, string roleName)
+	private async Task UpdateUserRoleTableAsync(ApplicationUser user, string roleName, string? guardianId, string? classroomId)
 	{
 		switch (roleName)
 		{
 			case "Teacher":
-				this._dbContext.Teachers.Add(new Teacher { Id = user.Id });
+				await this.UpdateTeacherAsync(user);
 				break;
 			case "Guardian":
-				this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
+				await this.UpdateGuardianAsync(user);
 				break;
 			case "Student":
-				this._dbContext.Students.Add(new Student { Id = user.Id });
+				await this.UpdateStudentAsync(user, guardianId, classroomId);
 				break;
 		}
 
@@ -189,72 +217,35 @@ public class UserService : IUserService
 		await this._dbContext.SaveChangesAsync();
 	}
 
-	/// <summary>
-	///     Updates the role of a user identified by the provided ID.
-	///     If the user's current role matches the selected role, no changes are made.
-	///     Otherwise, the user is removed from all current roles and added to the new role.
-	///     The Role property of ApplicationUser is updated if necessary, and changes are saved to the database.
-	///     Returns the name of the updated role if successful; otherwise, returns null.
-	/// </summary>
-	/// <param name="id">The ID of the user to update.</param>
-	/// <param name="roleId">The ID of the new role.</param>
-	/// <returns>The name of the updated role if successful; otherwise, null.</returns>
-	public async Task<string?> UpdateRoleAsync(string id, string roleId)
+	public async Task<string?> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
 	{
-		var user = await this.GetUserById(id);
-
+		var user = await this.GetUserById(userId);
 		if (user == null)
-		{
 			return null;
-		}
 
-		// Use the GetRoleAsync method from ApplicationUser to get the user's role
-		IdentityRole<Guid>? role = await this._roleManager
-			.Roles
-			.FirstOrDefaultAsync(r => r.Id == Guid.Parse(id));
-
+		IdentityRole<Guid>? role = await this._roleManager.Roles.FirstOrDefaultAsync(r => r.Id == Guid.Parse(roleId));
 		if (role == null)
-		{
 			return null;
-		}
 
-		// Get the user's current role using your GetRoleAsync method
-		string? currentRoleName = await user.GetRoleAsync(this._userManager);
-
+		string currentRoleName = await user.GetRoleAsync(this._userManager);
 		if (currentRoleName == role.Name)
-		{
-			return role.Name; // User already has the selected role, no need to update
-		}
-
-		// Remove the user from all current roles
-		var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
-
-		if (!removeResult.Succeeded)
-		{
-			return null; // Return null if unable to remove user from current roles
-		}
-
-		// Add the user to the new role
-		var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
-
-		if (addResult.Succeeded)
-		{
-			// Update the Role property of ApplicationUser (if necessary)
-			user.Role = role;
-
-			// Save changes to update the Role property in the database
-			await this._dbContext.SaveChangesAsync();
-
-			// Update the corresponding table based on the new role
-			await this.UpdateUserRoleTableAsync(user, role.Name);
-
-			// Remove the user from the corresponding table based on the current role
-			await this.RemoveUserFromCurrentRoleTableAsync(user, currentRoleName);
-
 			return role.Name;
-		}
 
-		return null; // Return null if unable to add role
+		var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
+        if (removeResult.Succeeded == false)
+			return null;
+
+		var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
+		if (addResult.Succeeded == false)
+			return null;
+
+		user.Role = role;
+		await this._dbContext.SaveChangesAsync();
+
+		await this.UpdateUserRoleTableAsync(user, role.Name, guardianId, classroomId);
+		await this.RemoveUserFromCurrentRoleTableAsync(user, currentRoleName);
+
+		return role.Name;
 	}
 
 	/// <summary>
@@ -275,30 +266,31 @@ public class UserService : IUserService
 
 		return allRoles;
 	}
-    public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
-    {
-        var user = await this.GetUserById(id);
 
-        if (user == null)
-        {
-            return null;
-        }
+	public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
+	{
+		var user = await this.GetUserById(id);
 
-        user.FirstName = model.FirstName;
+		if (user == null)
+		{
+			return null;
+		}
+
+		user.FirstName = model.FirstName;
 		user.LastName = model.LastName;
-        user.BirthDate = DateTime.ParseExact(model.BirthDate, BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture);
+		user.BirthDate = DateTime.ParseExact(model.BirthDate, BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture);
 		user.Address = model.Address;
-        user.PhoneNumber = model.PhoneNumber;
+		user.PhoneNumber = model.PhoneNumber;
 		user.Email = model.Email.ToLower();
-        user.NormalizedEmail = model.Email.ToUpper();
-        user.IsActive = model.IsActive;
+		user.NormalizedEmail = model.Email.ToUpper();
+		user.IsActive = model.IsActive;
 
-        await this._dbContext.SaveChangesAsync();
+		await this._dbContext.SaveChangesAsync();
 
-        return model;
-    }
+		return model;
+	}
 
-    public async Task<UserEditFormModel?> GetForEditAsync(string id)
+	public async Task<UserEditFormModel?> GetForEditAsync(string id)
 	{
 		var user = await this.GetUserById(id);
 
