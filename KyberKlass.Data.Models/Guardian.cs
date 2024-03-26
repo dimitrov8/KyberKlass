@@ -11,13 +11,10 @@ public class Guardian
 	}
 
 	[Key]
+	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
 
+	public ApplicationUser ApplicationUser { get; set; } = null!;
+
 	public ICollection<Student> Students { get; set; }
-
-	[ForeignKey(nameof(Id))]
-	public ApplicationUser User { get; set; } = null!;
-
-	[Required]
-	public bool IsActive { get; set; } = true;
 }
