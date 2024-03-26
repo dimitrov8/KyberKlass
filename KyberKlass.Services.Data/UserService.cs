@@ -11,154 +11,151 @@ using static Common.FormattingConstants;
 
 public class UserService : IUserService
 {
-	private readonly KyberKlassDbContext _dbContext;
-	private readonly UserManager<ApplicationUser> _userManager;
-	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly KyberKlassDbContext _dbContext;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-	public UserService(KyberKlassDbContext dbContext,
+    public UserService(KyberKlassDbContext dbContext,
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole<Guid>> roleManager)
-	{
-		this._dbContext = dbContext;
-		this._userManager = userManager;
-		this._roleManager = roleManager;
+    {
+        this._dbContext = dbContext;
+        this._userManager = userManager;
+        this._roleManager = roleManager;
     }
 
-	private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
+    private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
     {
-		this._dbContext.Students.Add(new Student
-		{
-			Id = user.Id,
-			GuardianId = guardianId != null ? Guid.Parse(guardianId) : default,
-			ClassroomId = classroomId != null ? Guid.Parse(classroomId) : default
-		});
+        this._dbContext.Students.Add(new Student
+        {
+            Id = user.Id,
+            GuardianId = guardianId != null ? Guid.Parse(guardianId) : default,
+            ClassroomId = classroomId != null ? Guid.Parse(classroomId) : default
+        });
+    }
 
-		await this._dbContext.SaveChangesAsync();
-	}
+    private async Task UpdateTeacherAsync(ApplicationUser user)
+    {
 
-	private async Task UpdateTeacherAsync(ApplicationUser user)
-	{
-		this._dbContext.Teachers.Add(new Teacher { Id = user.Id });
-		await this._dbContext.SaveChangesAsync();
-	}
+    }
 
-	private async Task UpdateGuardianAsync(ApplicationUser user)
-	{
-		this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
-		await this._dbContext.SaveChangesAsync();
-	}
+    private async Task UpdateGuardianAsync(ApplicationUser user)
+    {
+        this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
+        await this._dbContext.SaveChangesAsync();
+    }
 
-	public async Task<List<UserViewModel>> AllAsync()
-	{
-		var usersWithRoles = await this._dbContext.Users
-			.Select(user => new
-			{
-				User = user,
-				Roles = this._dbContext.UserRoles
-					.Where(ur => ur.UserId == user.Id)
-					.Join(this._dbContext.Roles,
-						ur => ur.RoleId,
-						role => role.Id,
-						(ur, role) => role.Name)
-					.ToList()
-			})
-			.ToListAsync();
+    public async Task<List<UserViewModel>> AllAsync()
+    {
+        var usersWithRoles = await this._dbContext.Users
+            .Select(user => new
+            {
+                User = user,
+                Roles = this._dbContext.UserRoles
+                    .Where(ur => ur.UserId == user.Id)
+                    .Join(this._dbContext.Roles,
+                        ur => ur.RoleId,
+                        role => role.Id,
+                        (ur, role) => role.Name)
+                    .ToList()
+            })
+            .ToListAsync();
 
-		List<UserViewModel> userViewModels = usersWithRoles
-			.Select(u => new UserViewModel
-			{
-				Id = u.User.Id.ToString(),
-				FullName = u.User.GetFullName(),
-				Email = u.User.Email,
-				Role = u.Roles.FirstOrDefault() ?? "No Role Assigned",
-				IsActive = u.User.IsActive
-			})
-			.ToList();
+        List<UserViewModel> userViewModels = usersWithRoles
+            .Select(u => new UserViewModel
+            {
+                Id = u.User.Id.ToString(),
+                FullName = u.User.GetFullName(),
+                Email = u.User.Email,
+                Role = u.Roles.FirstOrDefault() ?? "No Role Assigned",
+                IsActive = u.User.IsActive
+            })
+            .ToList();
 
-		return userViewModels; // TODO Make this method better
-	}
+        return userViewModels; // TODO Make this method better
+    }
 
-	/// <summary>
-	///     Retrieves details of a user asynchronously based on the provided ID.
-	/// </summary>
-	/// <param name="id">The ID of the user to retrieve details for.</param>
-	/// <returns>
-	///     A user details view model representing the specified user, or null if the user is not found.
-	/// </returns>
-	public async Task<UserDetailsViewModel?> GetDetailsAsync(string id)
-	{
-		var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
+    /// <summary>
+    ///     Retrieves details of a user asynchronously based on the provided ID.
+    /// </summary>
+    /// <param name="id">The ID of the user to retrieve details for.</param>
+    /// <returns>
+    ///     A user details view model representing the specified user, or null if the user is not found.
+    /// </returns>
+    public async Task<UserDetailsViewModel?> GetDetailsAsync(string id)
+    {
+        var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
 
-		if (user == null)
-		{
-			return null; // Return null if the user is not found
-		}
+        if (user == null)
+        {
+            return null; // Return null if the user is not found
+        }
 
-		// Map user details to a view model
-		var viewModel = new UserDetailsViewModel
-		{
-			Id = user.Id.ToString(),
-			FullName = user.GetFullName(),
-			BirthDate = user.GetBirthDate(),
-			Address = user.Address,
-			PhoneNumber = user.PhoneNumber,
-			Email = user.Email,
-			Role = await user.GetRoleAsync(this._userManager), // Retrieve the user's role asynchronously
-			IsActive = user.GetStatus()
-		};
+        // Map user details to a view model
+        var viewModel = new UserDetailsViewModel
+        {
+            Id = user.Id.ToString(),
+            FullName = user.GetFullName(),
+            BirthDate = user.GetBirthDate(),
+            Address = user.Address,
+            PhoneNumber = user.PhoneNumber,
+            Email = user.Email,
+            Role = await user.GetRoleAsync(this._userManager), // Retrieve the user's role asynchronously
+            IsActive = user.GetStatus()
+        };
 
-		return viewModel;
-	}
+        return viewModel;
+    }
 
-	/// <summary>
-	///     Retrieves a user asynchronously for updating their role based on the provided ID.
-	/// </summary>
-	/// <param name="id">The ID of the user to retrieve for updating their role.</param>
-	/// <returns>
-	///     A user update role view model representing the specified user, or null if the user is not found.
-	/// </returns>
-	public async Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id)
-	{
-		var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
+    /// <summary>
+    ///     Retrieves a user asynchronously for updating their role based on the provided ID.
+    /// </summary>
+    /// <param name="id">The ID of the user to retrieve for updating their role.</param>
+    /// <returns>
+    ///     A user update role view model representing the specified user, or null if the user is not found.
+    /// </returns>
+    public async Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id)
+    {
+        var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
 
-		if (user == null)
-		{
-			return null; // Return null if the user is not found
-		}
+        if (user == null)
+        {
+            return null; // Return null if the user is not found
+        }
 
         var currentRoleName = await user.GetRoleAsync(this._userManager);
 
-		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
+        IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
 
-		// Create a view model for updating user role
-		var viewModel = new UserUpdateRoleViewModel
-		{
-			Id = user.Id.ToString(),
-			FullName = user.GetFullName(),
-			Email = user.Email,
-			IsActive = user.IsActive,
-			PreviousRoleName = currentRoleName,
-			CurrentRoleName = currentRoleName,
-			AvailableRoles = availableRoles, // Assign available roles to the view model
+        // Create a view model for updating user role
+        var viewModel = new UserUpdateRoleViewModel
+        {
+            Id = user.Id.ToString(),
+            FullName = user.GetFullName(),
+            Email = user.Email,
+            IsActive = user.IsActive,
+            PreviousRoleName = currentRoleName,
+            CurrentRoleName = currentRoleName,
+            AvailableRoles = availableRoles, // Assign available roles to the view model
         };
 
-		return viewModel;
-	}
+        return viewModel;
+    }
 
-	public async Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync()
-	{
-		IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
+    public async Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync()
+    {
+        IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
 
-		List<UserBasicViewModel> guardianViewModels = guardians
-			.Select(g => new UserBasicViewModel
-			{
-				Id = g.Id.ToString(),
-				Name = g.GetFullName()
-			})
-			.ToList();
+        List<UserBasicViewModel> guardianViewModels = guardians
+            .Select(g => new UserBasicViewModel
+            {
+                Id = g.Id.ToString(),
+                Name = g.GetFullName()
+            })
+            .ToList();
 
-		return guardianViewModels;
-	}
+        return guardianViewModels;
+    }
 
     public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
     {
@@ -169,170 +166,177 @@ public class UserService : IUserService
         return isAssigned;
     }
 
-    private async Task UpdateUserRoleTableAsync(ApplicationUser user, string roleName, string? guardianId, string? classroomId)
-	{
-		switch (roleName)
-		{
-			case "Teacher":
-				await this.UpdateTeacherAsync(user);
-				break;
-			case "Guardian":
-				await this.UpdateGuardianAsync(user);
-				break;
-			case "Student":
-				await this.UpdateStudentAsync(user, guardianId, classroomId);
-				break;
-		}
+    public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
+    {
+        var user = await this.GetUserById(userId);
+        if (user == null)
+            return false;
 
-		// Save changes to insert the user into the respective table
-		await this._dbContext.SaveChangesAsync();
-	}
+        IdentityRole<Guid>? role = await this._roleManager.FindByIdAsync(roleId);
+        if (role == null)
+            return false;
 
-	private async Task RemoveUserFromCurrentRoleTableAsync(ApplicationUser user, string currentRoleName)
-	{
-		switch (currentRoleName)
-		{
-			case "Teacher":
-				var teacherToRemove = await this._dbContext.Teachers.FindAsync(user.Id);
+        string currentRoleName = await user.GetRoleAsync(this._userManager);
+        if (currentRoleName == role.Name)
+            return true;
 
-				if (teacherToRemove != null)
-				{
-					this._dbContext.Teachers.Remove(teacherToRemove);
-				}
+        // Start a transaction
+        await using var transaction = await this._dbContext.Database.BeginTransactionAsync();
 
-				break;
-			case "Guardian":
-				var guardianToRemove = await this._dbContext.Guardians.FindAsync(user.Id);
+        try
+        {
+            // Update user's role in the identity system
+            var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
+            if (!removeResult.Succeeded)
+            {
+                // Roll back transaction if removing roles fails
+                await transaction.RollbackAsync();
+                return false;
+            }
 
-				if (guardianToRemove != null)
-				{
-					this._dbContext.Guardians.Remove(guardianToRemove);
-				}
+            var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
+            if (!addResult.Succeeded)
+            {
+                // Roll back transaction if adding roles fails
+                await transaction.RollbackAsync();
+                return false;
+            }
 
-				break;
-			case "Student":
-				var studentToRemove = await this._dbContext.Students.FindAsync(user.Id);
+            user.Role = role;
 
-				if (studentToRemove != null)
-				{
-					this._dbContext.Students.Remove(studentToRemove);
-				}
+            // Update user role-related tables in the database
+            // Remove user from the current role table based on the previous role
+            switch (currentRoleName)
+            {
+                case "Teacher":
+                    var teacherToRemove = await this._dbContext.Teachers.FindAsync(user.Id);
+                    if (teacherToRemove != null)
+                        this._dbContext.Teachers.Remove(teacherToRemove);
+                    break;
+                case "Guardian":
+                    var guardianToRemove = await this._dbContext.Guardians.FindAsync(user.Id);
+                    if (guardianToRemove != null)
+                        this._dbContext.Guardians.Remove(guardianToRemove);
+                    break;
+                case "Student":
+                    var studentToRemove = await this._dbContext.Students.FindAsync(user.Id);
+                    if (studentToRemove != null)
+                        this._dbContext.Students.Remove(studentToRemove);
+                    break;
+            }
 
-				break;
-		}
+            // Update user role table based on the new role
+            switch (role.Name)
+            {
+                case "Teacher":
+                    this._dbContext.Teachers.Add(new Teacher { Id = user.Id });
+                    break;
+                case "Guardian":
+                    this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
+                    break;
+                case "Student":
+                    this._dbContext.Students.Add(new Student
+                    {
+                        Id = user.Id,
+                        GuardianId = Guid.Parse(guardianId!),
+                        ClassroomId = Guid.Parse(classroomId!),
+                    });
+                    break;
+            }
 
-		// Save changes to remove the user from the respective table
-		await this._dbContext.SaveChangesAsync();
-	}
+            // Save changes to commit removal and addition of user from/to role tables
+            await this._dbContext.SaveChangesAsync();
 
-	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
-	{
-		var user = await this.GetUserById(userId);
-		if (user == null)
-			return false;
+            // Commit the transaction
+            await transaction.CommitAsync();
 
-		IdentityRole<Guid>? role = await this._roleManager.Roles.FirstOrDefaultAsync(r => r.Id == Guid.Parse(roleId));
-		if (role == null)
-			return false;
+            return true;
+        }
+        catch (Exception)
+        {
+            // Roll back transaction in case of any exception
+            await transaction.RollbackAsync();
+            return false;
+        }
+    }
 
-		string currentRoleName = await user.GetRoleAsync(this._userManager);
-		if (currentRoleName == role.Name)
-			return true;
+    /// <summary>
+    ///     Retrieves all roles from the database and returns them as an enumerable collection of UserRolesViewModel objects.
+    /// </summary>
+    /// <returns>An enumerable collection of UserRolesViewModel objects representing all roles.</returns>
+    public async Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync()
+    {
+        IEnumerable<UserRolesViewModel> allRoles = await this._roleManager
+            .Roles
+            .Select(r => new UserRolesViewModel
+            {
+                Id = r.Id.ToString(),
+                Name = r.Name
+            })
+            .AsNoTracking()
+            .ToArrayAsync(); // Retrieve all roles from the RoleManager and map them to UserRolesViewModel objects
 
-		var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
-        if (removeResult.Succeeded == false)
-			return false;
+        return allRoles;
+    }
 
-		var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
-		if (addResult.Succeeded == false)
-			return false;
+    public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
+    {
+        var user = await this.GetUserById(id);
 
-		user.Role = role;
-		await this._dbContext.SaveChangesAsync();
+        if (user == null)
+        {
+            return null;
+        }
 
-		await this.UpdateUserRoleTableAsync(user, role.Name, guardianId, classroomId);
-		await this.RemoveUserFromCurrentRoleTableAsync(user, currentRoleName);
+        user.FirstName = model.FirstName;
+        user.LastName = model.LastName;
+        user.BirthDate = DateTime.ParseExact(model.BirthDate, BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture);
+        user.Address = model.Address;
+        user.PhoneNumber = model.PhoneNumber;
+        user.Email = model.Email.ToLower();
+        user.NormalizedEmail = model.Email.ToUpper();
+        user.IsActive = model.IsActive;
 
-		return true;
-	}
+        await this._dbContext.SaveChangesAsync();
 
-	/// <summary>
-	///     Retrieves all roles from the database and returns them as an enumerable collection of UserRolesViewModel objects.
-	/// </summary>
-	/// <returns>An enumerable collection of UserRolesViewModel objects representing all roles.</returns>
-	public async Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync()
-	{
-		IEnumerable<UserRolesViewModel> allRoles = await this._roleManager
-			.Roles
-			.Select(r => new UserRolesViewModel
-			{
-				Id = r.Id.ToString(),
-				Name = r.Name
-			})
-			.AsNoTracking()
-			.ToArrayAsync(); // Retrieve all roles from the RoleManager and map them to UserRolesViewModel objects
+        return model;
+    }
 
-		return allRoles;
-	}
+    public async Task<UserEditFormModel?> GetForEditAsync(string id)
+    {
+        var user = await this.GetUserById(id);
 
-	public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
-	{
-		var user = await this.GetUserById(id);
+        if (user == null)
+        {
+            return null;
+        }
 
-		if (user == null)
-		{
-			return null;
-		}
+        var viewModel = new UserEditFormModel
+        {
+            Id = user.Id.ToString(),
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            BirthDate = user.GetBirthDate(),
+            Address = user.Address,
+            PhoneNumber = user.PhoneNumber,
+            Email = user.Email,
+            IsActive = user.IsActive
+        };
 
-		user.FirstName = model.FirstName;
-		user.LastName = model.LastName;
-		user.BirthDate = DateTime.ParseExact(model.BirthDate, BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture);
-		user.Address = model.Address;
-		user.PhoneNumber = model.PhoneNumber;
-		user.Email = model.Email.ToLower();
-		user.NormalizedEmail = model.Email.ToUpper();
-		user.IsActive = model.IsActive;
+        return viewModel;
+    }
 
-		await this._dbContext.SaveChangesAsync();
-
-		return model;
-	}
-
-	public async Task<UserEditFormModel?> GetForEditAsync(string id)
-	{
-		var user = await this.GetUserById(id);
-
-		if (user == null)
-		{
-			return null;
-		}
-
-		var viewModel = new UserEditFormModel
-		{
-			Id = user.Id.ToString(),
-			FirstName = user.FirstName,
-			LastName = user.LastName,
-			BirthDate = user.GetBirthDate(),
-			Address = user.Address,
-			PhoneNumber = user.PhoneNumber,
-			Email = user.Email,
-			IsActive = user.IsActive
-		};
-
-		return viewModel;
-	}
-
-	public async Task<ApplicationUser?> GetUserById(string id)
-	{
-		return await this._dbContext
-			.Users
-			.FindAsync(Guid.Parse(id));
-	}
+    public async Task<ApplicationUser?> GetUserById(string id)
+    {
+        return await this._dbContext
+            .Users
+            .FindAsync(Guid.Parse(id));
+    }
 
     public async Task<string?> GetRoleNameByIdAsync(string id)
     {
         var role = await this._roleManager.FindByIdAsync(id);
-		var roleName = role.Name;
+        var roleName = role.Name;
 
         return roleName;
     }
