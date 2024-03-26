@@ -1,6 +1,7 @@
 ﻿namespace KyberKlass.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Teacher
 {
@@ -10,10 +11,10 @@ public class Teacher
 	}
 
 	[Key]
+	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
 
-	[Required]
-	public bool IsActive { get; set; } = true;
+	public ApplicationUser ApplicationUser { get; set; } = null!;
 
 	public ICollection<Subject> Subjects { get; set; }
 }
