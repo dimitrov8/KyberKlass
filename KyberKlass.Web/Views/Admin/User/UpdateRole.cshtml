@@ -106,6 +106,7 @@
           $("#guardianDropdownContainer").show();
                     $("#classroomDropdownContainer").show();
             loadGuardians();
+            loadClassrooms();
                 } else {
          $("#guardianDropdownContainer").hide();
                     $("#classroomDropdownContainer").hide();
@@ -155,19 +156,24 @@
             // AJAX call to load classrooms based on the selected role
             var selectedRoleId = document.getElementById("roleDropdown").value;
             $.ajax({
-                url: "/User/GetClassrooms",
+                url: "/Classroom/GetClassrooms",
             type: "GET",
             data: {roleId: selectedRoleId },
-            success: function (data) {
-                // Populate the classroom dropdown with the retrived data
-                $("#classroomDropdownContainer").html(data);
+           success: function (data) {
+                    console.log(data); // Print data to console to inspect received data
+                    // Populate the classrooms dropdown with the retrieved data
+                        var dropdown = $("#classroomDropdownContainer select");
+                    dropdown.empty();
+                    dropdown.append('<option value="">-- Select Classroom --</option>');
+                    $.each(data, function (index, item) {
+                        dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                    });
                 },
-            error: function (xhr, status, error) {
-                console.log("Error loading classrooms:", error);
+                error: function (xhr, status, error) {
+                    console.log("Error loading classrooms:", error);
                 }
             });
         }
-
 
             function updateGuardianId() {
         var selectedGuardianId = $("#guardianDropdownContainer select").val();
