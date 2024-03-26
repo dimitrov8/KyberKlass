@@ -9,7 +9,7 @@ public class GradeEntityConfiguration : IEntityTypeConfiguration<Grade>
 	public void Configure(EntityTypeBuilder<Grade> builder)
 	{
 		builder
-			.HasQueryFilter(g => g.Student.IsActive);
+			.HasQueryFilter(g => g.Student.ApplicationUser.IsActive);
 
 		builder
 			.HasOne(g => g.Student)
