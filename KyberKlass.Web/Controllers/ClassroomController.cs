@@ -53,22 +53,14 @@ public class ClassroomController : Controller
 
 			IEnumerable<ClassroomViewModel> classrooms = await this._classroomService.GetClassroomsAsync(schoolId);
 
-			ClassroomViewModel[] classroomsViewModel = classrooms
-				.Select(c => new ClassroomViewModel
-				{
-					Id = c.Id,
-					Name = c.Name
-				})
-				.ToArray();
-
-			var schoolModel = new ManageClassroomsViewModel
+			var viewModel = new ManageClassroomsViewModel
 			{
-				SchoolId = school.Id,
+				SchoolId = schoolId,
 				SchoolName = school.Name,
-				Classrooms = classroomsViewModel
+				Classrooms = classrooms.ToList()
 			};
 
-			return this.View(this.GetViewPath(nameof(this.Manage)), schoolModel);
+			return this.View(this.GetViewPath(nameof(this.Manage)), viewModel);
 		}
 		catch (Exception)
 		{
@@ -90,7 +82,7 @@ public class ClassroomController : Controller
 		IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
 
 		var viewModel = new AddClassroomViewModel
-		{
+		{ 
 			SchoolId = schoolId,
 			UnassignedTeachers = unassignedTeachers,
 			Students = unassignedStudents
@@ -105,7 +97,15 @@ public class ClassroomController : Controller
 	{
 		if (this.ModelState.IsValid == false)
 		{
-			return this.View(this.GetViewPath(nameof(Add)), model);
+            // Repopulate unassigned teachers
+            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+            model.UnassignedTeachers = unassignedTeachers;
+
+            // Repopulate unassigned students
+            IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
+            model.Students = unassignedStudents;
+
+            return this.View(this.GetViewPath(nameof(Add)), model);
 		}
 
 		try
@@ -121,13 +121,21 @@ public class ClassroomController : Controller
 				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 
-			return this.RedirectToAction(nameof(this.Manage));
+			return this.RedirectToAction(nameof(this.Manage), new {schoolId = model.SchoolId});
 		}
 		catch (Exception)
 		{
 			this.ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
 
-			return this.View(this.GetViewPath(nameof(Add)), model);
+            // Repopulate unassigned teachers
+            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+            model.UnassignedTeachers = unassignedTeachers;
+
+            // Repopulate unassigned students
+            IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
+            model.Students = unassignedStudents;
+
+            return this.View(this.GetViewPath(nameof(Add)), model);
 		}
 	}
 }

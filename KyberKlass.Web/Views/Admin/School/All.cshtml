@@ -49,7 +49,7 @@ else if (TempData["ErrorMessage"] != null)
 				<td>@school.Email</td>
 				<td>@school.PhoneNumber</td>
 				<td>
-					<input type="checkbox" disabled @(school.IsActive ? "checked" : "")/>
+					<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(school.IsActive ? "checked" : "")/>
 				</td>
 				<td>
 					<!-- Edit button -->
@@ -100,20 +100,5 @@ else if (TempData["ErrorMessage"] != null)
 	}
 
 	<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
 </script>
 </div>

@@ -68,7 +68,8 @@ public class SchoolService : ISchoolService
 				Name = s.Name,
 				Address = s.Address,
 				Email = s.Email,
-				PhoneNumber = s.PhoneNumber
+				PhoneNumber = s.PhoneNumber,
+				IsActive = true
 			})
 			.AsNoTracking()
 			.ToArrayAsync();

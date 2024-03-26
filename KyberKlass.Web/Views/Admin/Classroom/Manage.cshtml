@@ -3,14 +3,15 @@
 
 <h2>Manage Classrooms for @Model.SchoolName</h2>
 
-<!-- Display existing classrooms -->
 @if (Model.Classrooms.Any())
 {
 	<table class="table">
 		<thead>
 		<tr>
-			<th>Name</th>
-			<!-- Other classroom properties -->
+			<th>Classroom Name</th>
+			<th>Teacher</th>
+			<th>Number of Students</th>
+			<th></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -18,7 +19,11 @@
 		{
 			<tr>
 				<td>@classroom.Name</td>
-				<!-- Display other classroom properties -->
+				<td>@classroom.TeacherName</td>
+				<td>@classroom.StudentsCount</td>
+				<td>
+					<a asp-controller="Classroom" asp-action="Details" asp-route-id="@classroom.Id" class="btn btn-info">View Details</a>
+				</td>
 			</tr>
 		}
 		</tbody>
@@ -29,5 +34,4 @@ else
 	<p>No classrooms found.</p>
 }
 
-<!-- Add Classroom button -->
 <a asp-controller="Classroom" asp-action="Add" asp-route-schoolId="@Model.SchoolId" class="btn btn-success">Add Classroom</a>

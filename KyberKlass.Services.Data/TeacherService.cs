@@ -46,7 +46,7 @@ public class TeacherService : ITeacherService
 				.Where(user => this._dbContext
 					.UserRoles
 					.Any(userRole => userRole.UserId == user.Id && userRole.RoleId == teacherRoleId))
-				.Include(user => user.Role)
+				//.Include(user => user.Role)
 				.AsNoTracking()
 				.ToListAsync();
 

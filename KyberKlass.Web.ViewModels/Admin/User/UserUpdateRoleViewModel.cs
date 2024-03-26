@@ -9,7 +9,7 @@ public class UserUpdateRoleViewModel
 	{
 		this.AvailableRoles = new HashSet<UserRolesViewModel>();
 		this.AvailableGuardians = new HashSet<UserBasicViewModel>();
-		this.AvailableClassrooms = new HashSet<ClassroomViewModel>();
+		this.AvailableClassrooms = new HashSet<ClassroomBasicViewModel>();
 	}
 
 	public string Id { get; set; } = null!;
@@ -35,5 +35,5 @@ public class UserUpdateRoleViewModel
 	public IEnumerable<UserBasicViewModel> AvailableGuardians { get; set; }
 
 	// Additional property to hold available classrooms (only for students)
-	public IEnumerable<ClassroomViewModel> AvailableClassrooms { get; set; }
+	public IEnumerable<ClassroomBasicViewModel> AvailableClassrooms { get; set; }
 }

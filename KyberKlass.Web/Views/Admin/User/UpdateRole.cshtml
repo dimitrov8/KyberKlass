@@ -8,7 +8,7 @@
 
 <div class="container">
     <h1 class="mt-5">@ViewData["Title"]</h1>
-    <hr/>
+    <hr />
 
     <dl class="row mt-5">
         <dt class="col-sm-2">Id:</dt>
@@ -29,7 +29,7 @@
 
     <!-- Dropdown to select role -->
     <div class="mb-3">
-        <label asp-for="@Model.RoleId" class="form-label">Select a role:</label>
+        <label asp-for="@Model.RoleId" class="form-label">Select a role</label>
         <select asp-for="@Model.RoleId" class="form-control" id="roleDropdown" onchange="updateRoleId()">
             <option value="">-- Select role --</option>
             @foreach (var role in Model.AvailableRoles)
@@ -40,23 +40,29 @@
         <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
     </div>
 
+    <!-- Alert for role selection -->
+    <div id="roleAlert" class="alert alert-danger" style="display: none;">
+        Please select a role.
+    </div>
+
     <!-- Dropdown to select guardian (only displayed for "Student" role) -->
     <div id="guardianDropdownContainer" class="mb-3" style="display: none;">
-        <label asp-for="@Model.GuardianId" class="form-label">Select a guardian:</label>
-        <select asp-for="@Model.GuardianId" class="form-control">
+        <label asp-for="@Model.GuardianId" class="form-label">Select a guardian</label>
+        <select asp-for="@Model.GuardianId" class="form-control" onchange="updateGuardianId()">
             <option value="">-- Select Guardian --</option>
-            @foreach (var guardian in Model.AvailableGuardians)
-            {
-                    <option value="@guardian.Id">@guardian.Name</option>
-            }
         </select>
         <span asp-validation-for="@Model.GuardianId" class="text-danger"></span>
     </div>
 
+    <!-- Alert for guardian selection -->
+    <div id="guardianAlert" class="alert alert-danger" style="display: none;">
+        Please select a guardian.
+    </div>
+
     <!-- Dropdown to select classroom (only displayed for "Student" role) -->
     <div id="classroomDropdownContainer" class="mb-3" style="display: none;">
-        <label asp-for="@Model.ClassroomId" class="form-label">Select a classroom:</label>
-        <select asp-for="@Model.ClassroomId" class="form-control">
+        <label asp-for="@Model.ClassroomId" class="form-label">Select a classroom</label>
+        <select asp-for="@Model.ClassroomId" class="form-control" onchange="updateClassroomId()">
             <option value="">-- Select classroom --</option>
             @foreach (var classroom in Model.AvailableClassrooms)
             {
@@ -66,16 +72,19 @@
         <span asp-validation-for="@Model.ClassroomId" class="text-danger"></span>
     </div>
 
-    <!-- Alert if role is not selected -->
-    <div class="alert alert-danger" id="roleAlert" style="display: none;">
-        Please select a role.
+    <!-- Alert for classroom selection -->
+    <div id="classroomAlert" class="alert alert-danger" style="display: none;">
+        Please select a classroom.
     </div>
 
     <!-- Form submission buttons -->
     <div class="mt-5">
-        <form id="updateRoleForm" asp-controller="User" asp-action="UpdateRoleConfirmed" method="post" onsubmit="return validateForm()">
-            <input type="hidden" asp-for="@Model.Id"/>
-            <input type="hidden" id="roleId" name="roleId" value="@Model.RoleId"/>
+        <form id="updateRoleForm" asp-controller="User" asp-action="UpdateRoleConfirmed" method="post"
+            onsubmit="return validateForm()">
+            <input type="hidden" asp-for="@Model.Id" />
+            <input type="hidden" id="roleId" name="roleId" value="@Model.RoleId" />
+            <input type="hidden" id="guardianId" name="guardianId" />
+            <input type="hidden" id="classroomId" name="classroomId" />
             <button type="submit" class="btn btn-warning">Update Role</button>
             <a class="btn btn-secondary" asp-controller="User" asp-action="All">Back to List</a>
         </form>
@@ -83,32 +92,127 @@
 </div>
 
 @section Scripts {
-        <script>
+	<script>
             function updateRoleId() {
                 var selectedRoleId = document.getElementById("roleDropdown").value;
-                document.getElementById("roleId").value = selectedRoleId;
+            console.log("Selected Role ID: " + selectedRoleId);
+            document.getElementById("roleId").value = selectedRoleId;
 
-                var selectedRoleName = document.getElementById("roleDropdown").options[document.getElementById("roleDropdown").selectedIndex].text;
+            var selectedRoleName = document.getElementById("roleDropdown").options[document.getElementById("roleDropdown").selectedIndex].text;
+            console.log("Selected Role Name: " + selectedRoleName);
 
-                // Show guardian dropdown and classroom dropdown if role is "Student"
-                if (selectedRoleName === 'Student') {
-                    document.getElementById("guardianDropdownContainer").style.display = "block";
-                    document.getElementById("classroomDropdownContainer").style.display = "block";
+            // Show guardian dropdown and classroom dropdown if role is "Student"
+            if (selectedRoleName === 'Student') {
+          $("#guardianDropdownContainer").show();
+                    $("#classroomDropdownContainer").show();
+            loadGuardians();
                 } else {
-                    document.getElementById("guardianDropdownContainer").style.display = "none";
-                    document.getElementById("classroomDropdownContainer").style.display = "none";
+         $("#guardianDropdownContainer").hide();
+                    $("#classroomDropdownContainer").hide();
                 }
+
+            if (selectedRoleName !== 'Student') {
+                $("#guardianId").val(''); // Clear guardianId when role is not Student
+                    $("#classroomId").val(''); // Clear classroomId when role is not Student
+                }
+
+            // Hide alerts initially
+               $("#roleAlert").hide();
+                $("#guardianAlert").hide();
+                $("#classroomAlert").hide();
+            }
+
+    function loadGuardians() {
+        var selectedRoleId = $("#roleDropdown").val();
+        $.ajax({
+            url: "/User/GetGuardians",
+            type: "GET",
+            data: { roleId: selectedRoleId },
+            success: function (data) {
+                console.log(data); // Print data to console to inspect received data
+                // Populate the guardian dropdown with the retrieved data
+                var dropdown = $("#guardianDropdownContainer select");
+                dropdown.empty();
+                dropdown.append('<option value="">-- Select Guardian --</option>');
+                $.each(data, function (index, item) {
+                    dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log("Error loading guardians:", error);
+            }
+        });
+    }
+
+
+        // Call updateRoleId when the page is loaded or when the role dropdown changes
+        $(document).ready(function () {
+            updateRoleId(); // Trigger initial update
+            $("#roleDropdown").change(updateRoleId);
+        });
+
+            function loadClassrooms() {
+            // AJAX call to load classrooms based on the selected role
+            var selectedRoleId = document.getElementById("roleDropdown").value;
+            $.ajax({
+                url: "/User/GetClassrooms",
+            type: "GET",
+            data: {roleId: selectedRoleId },
+            success: function (data) {
+                // Populate the classroom dropdown with the retrived data
+                $("#classroomDropdownContainer").html(data);
+                },
+            error: function (xhr, status, error) {
+                console.log("Error loading classrooms:", error);
+                }
+            });
+        }
+
+
+            function updateGuardianId() {
+        var selectedGuardianId = $("#guardianDropdownContainer select").val();
+        $("#guardianId").val(selectedGuardianId); // Assign the selected guardian ID to the hidden input field
+        console.log("Selected Guardian ID: " + selectedGuardianId);
+
+        // Hide the guardian alert if a guardian is selected
+        $("#guardianAlert").hide();
+    }
+
+            function updateClassroomId() {
+                var selectedClassroomDropdown = document.getElementById("classroomDropdownContainer");
+            if (selectedClassroomDropdown) {
+                    var selectedClassroomId = selectedClassroomDropdown.querySelector('select').value;
+            document.getElementById("classroomId").value = selectedClassroomId; // Assign the selected classroom ID to the hidden input field
+            console.log("Selected Classroom ID: " + selectedClassroomId);
+                }
+
+            // Hide the classroom alert if a classroom is selected
+            document.getElementById("guardianAlert").style.display = "none";
             }
 
             function validateForm() {
                 var roleId = document.getElementById("roleId").value;
-                if (roleId === '') {
-                    document.getElementById("roleAlert").style.display = "block";
-                    return false;
-                } else {
-                    document.getElementById("roleAlert").style.display = "none";
-                    return true;
+            var selectedRoleName = document.getElementById("roleDropdown").options[document.getElementById("roleDropdown").selectedIndex].text;
+            var guardianId = document.getElementById("guardianId").value;
+            var classroomId = document.getElementById("classroomId").value;
+
+            if (!roleId) {
+                document.getElementById("roleAlert").style.display = "block";
+            return false;
                 }
+
+            if (selectedRoleName === 'Student' && !guardianId) {
+                document.getElementById("guardianAlert").style.display = "block";
+            return false;
+                }
+
+            if (selectedRoleName === 'Student' && !classroomId) {
+                document.getElementById("classroomAlert").style.display = "block";
+            return false;
+                }
+
+            document.getElementById("updateRoleForm").submit();
+            return true;
             }
         </script>
 }
