@@ -20,6 +20,8 @@ public class UserUpdateRoleViewModel
 
 	public bool IsActive { get; set; }
 
+	public string? PreviousRoleName { get; set; }
+
 	public string? CurrentRoleName { get; set; }
 
 	[Required(ErrorMessage = "Please select a role.")]
