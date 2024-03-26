@@ -28,7 +28,9 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public IdentityRole<Guid>? Role { get; set; }
 
-    [Required]
+    public Guardian? Guardian { get; set; } // TODO MAYBE REMOVE
+
+	[Required]
     public bool IsActive { get; set; } = true;
 
     public string GetFullName()
