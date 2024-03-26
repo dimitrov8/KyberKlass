@@ -15,17 +15,14 @@ public class UserService : IUserService
 	private readonly KyberKlassDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-	private readonly IClassroomService _classroomService;
 
 	public UserService(KyberKlassDbContext dbContext,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager,
-        IClassroomService classroomService)
+        RoleManager<IdentityRole<Guid>> roleManager)
 	{
 		this._dbContext = dbContext;
 		this._userManager = userManager;
 		this._roleManager = roleManager;
-        this._classroomService = classroomService;
     }
 
 	private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
