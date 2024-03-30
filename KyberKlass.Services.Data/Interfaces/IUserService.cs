@@ -25,5 +25,7 @@ public interface IUserService
 
     Task<bool> IsTeacherAssignedToClassroomAsync(string userId);
 
+    Task<bool> IsGuardianAssignedToStudentAsync(string userId);
+
     Task<string?> GetRoleNameByIdAsync(string id);
 }   
