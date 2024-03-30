@@ -6,6 +6,7 @@ using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin.Guardian;
 using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
 
@@ -22,27 +23,6 @@ public class UserService : IUserService
         this._dbContext = dbContext;
         this._userManager = userManager;
         this._roleManager = roleManager;
-    }
-
-    private async Task UpdateStudentAsync(ApplicationUser user, string? guardianId, string? classroomId)
-    {
-        this._dbContext.Students.Add(new Student
-        {
-            Id = user.Id,
-            GuardianId = guardianId != null ? Guid.Parse(guardianId) : default,
-            ClassroomId = classroomId != null ? Guid.Parse(classroomId) : default
-        });
-    }
-
-    private async Task UpdateTeacherAsync(ApplicationUser user)
-    {
-
-    }
-
-    private async Task UpdateGuardianAsync(ApplicationUser user)
-    {
-        this._dbContext.Guardians.Add(new Guardian { Id = user.Id });
-        await this._dbContext.SaveChangesAsync();
     }
 
     public async Task<List<UserViewModel>> AllAsync()
@@ -104,6 +84,41 @@ public class UserService : IUserService
             IsActive = user.GetStatus()
         };
 
+        if (viewModel.Role == "Student")
+        {
+            var guardian = await this._dbContext
+                .Guardians
+                .Include(g => g.ApplicationUser)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Students.Any(s => s.Id == user.Id));
+
+            if (guardian != null)
+            {
+                viewModel.Guardian = new GuardianViewModel
+                {
+                    FullName = guardian.ApplicationUser.GetFullName(),
+                    Address = guardian.ApplicationUser.Address,
+                    Email = guardian.ApplicationUser.Email,
+                    PhoneNumber = guardian.ApplicationUser.PhoneNumber
+                };
+            }
+        }
+        else if (viewModel.Role == "Guardian")
+        {
+            IEnumerable<UserBasicViewModel> students = await this._dbContext
+                .Students
+                .Where(s => s.Guardian.Id == user.Id)
+                .Select(s => new UserBasicViewModel
+                {
+                    Id = s.Id.ToString(),
+                    Name = s.ApplicationUser.GetFullName()
+                })
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            viewModel.Students = students;
+        }
+
         return viewModel;
     }
 
@@ -125,6 +140,8 @@ public class UserService : IUserService
 
         var currentRoleName = await user.GetRoleAsync(this._userManager);
 
+  
+
         IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
 
         // Create a view model for updating user role
@@ -138,6 +155,20 @@ public class UserService : IUserService
             CurrentRoleName = currentRoleName,
             AvailableRoles = availableRoles, // Assign available roles to the view model
         };
+        if (currentRoleName == "Guardian")
+        {
+            IEnumerable<UserBasicViewModel> students = await this._dbContext.Students
+                .Where(s => s.Guardian.Id == user.Id)
+                .Select(s => new UserBasicViewModel
+                {
+                    Id = s.Id.ToString(),
+                    Name = s.ApplicationUser.GetFullName()
+                })
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            viewModel.Students = students;
+        }
 
         return viewModel;
     }
@@ -166,6 +197,14 @@ public class UserService : IUserService
         return isAssigned;
     }
 
+    public async Task<bool> IsGuardianAssignedToStudentAsync(string userId)
+    {
+        var isAssigned = await this._dbContext.Students
+            .AnyAsync(s => s.Guardian.Id == Guid.Parse(userId));
+
+        return isAssigned;
+    }
+
     public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
     {
         var user = await this.GetUserById(userId);
@@ -179,6 +218,16 @@ public class UserService : IUserService
         string currentRoleName = await user.GetRoleAsync(this._userManager);
         if (currentRoleName == role.Name)
             return true;
+
+        if (currentRoleName == "Guardian")
+        {
+            var guardian = await this._dbContext.Guardians.FindAsync(user.Id);
+
+            if (guardian != null && guardian.Students.Any())
+            {
+                return false;
+            }
+        }
 
         // Start a transaction
         await using var transaction = await this._dbContext.Database.BeginTransactionAsync();
