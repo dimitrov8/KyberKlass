@@ -18,21 +18,45 @@
     <hr />
 
     <dl class="row mt-5">
-        <dt class="col-sm-2">Id:</dt>
-        <dd class="col-sm-10">@Model.Id</dd>
+	    <dt class="col-sm-2">Id:</dt>
+	    <dd class="col-sm-10">@Model.Id</dd>
 
-        <dt class="col-sm-2">Full Name:</dt>
-        <dd class="col-sm-10">@Model.FullName</dd>
+	    <dt class="col-sm-2">Full Name:</dt>
+	    <dd class="col-sm-10">@Model.FullName</dd>
 
-        <dt class="col-sm-2">Email:</dt>
-        <dd class="col-sm-10">@Model.Email</dd>
+	    <dt class="col-sm-2">Email:</dt>
+	    <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Is Active:</dt>
-        <dd class="col-sm-10">@Model.IsActive</dd>
+	    <dt class="col-sm-2">Is Active:</dt>
+	    <dd class="col-sm-10">@Model.IsActive</dd>
 
-        <dt class="col-sm-2">Current Role:</dt>
-        <dd class="col-sm-10">@Model.CurrentRoleName</dd>
+	    <dt class="col-sm-2">Current Role:</dt>
+	    <dd class="col-sm-10">@Model.CurrentRoleName</dd>
     </dl>
+    
+    <!-- Section for displaying assigned students if the user is a guardian -->
+    @if (Model is { CurrentRoleName: "Guardian",Students: not null } && Model.Students.Any())
+    {
+	    <h4 class="mt-2">Students Assigned to this Guardian:</h4>
+	    <table class="table">
+		    <thead>
+		    <tr>
+			    <th>ID</th>
+			    <th>Full Name</th>
+		    </tr>
+		    </thead>
+		    <tbody>
+		    @foreach (var student in Model.Students)
+		    {
+			    <tr>
+				    <td>@student.Id</td>
+				    <td>@student.Name</td>
+			    </tr>
+		    }
+		    </tbody>
+	    </table>
+    }
+</div>
 
     <!-- Dropdown to select role -->
     <div class="mb-3">
