@@ -24,6 +24,8 @@ public class UserUpdateRoleViewModel
 
 	public string? CurrentRoleName { get; set; }
 
+	public IEnumerable<UserBasicViewModel>? Students { get; set; }
+
 	[Required(ErrorMessage = "Please select a role.")]
 	public string? RoleId { get; set; }
 
