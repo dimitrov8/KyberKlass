@@ -22,4 +22,6 @@ public class UserDetailsViewModel
 
 	// Additional property for guardian information
 	public GuardianViewModel? Guardian { get; set; }
+
+	public IEnumerable<UserBasicViewModel>? Students { get; set; }
 }
