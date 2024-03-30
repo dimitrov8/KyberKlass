@@ -187,6 +187,16 @@ public class UserController : Controller
                     return this.RedirectToAction(nameof(this.UpdateRole), new { id });
                 }
             }
+            else if (roleToUpdateTo != null && currentRole == "Guardian")
+            {
+                var isGuardianAssignedToStudent = await this._userService.IsGuardianAssignedToStudentAsync(id);
+
+                if (isGuardianAssignedToStudent)
+                {
+                    this.TempData["ErrorMessage"] = FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE;
+                    return this.RedirectToAction(nameof(this.UpdateRole), new { id });
+                }
+            }
 
             bool successfulRoleUpdate = await this._userService.UpdateRoleAsync(id, roleId, guardianId, classroomId);
 
