@@ -39,8 +39,13 @@ public static class CustomMessageConstants
 
 		public const string SUCCESSFULLY_SOFT_DELETED_MESSAGE = "Successfully soft deleted User with Id: \"{0}\".";
 
-        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Cannot update role. User is assigned as a teacher in a classroom. " +
-                                                                             "Please change the teacher in the affected classroom before trying to update role.";		
+        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a teacher in a classroom. " +
+                                                                             "Please reassign the classroom teacher before attempting to update the role.";
+
+        
+        public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a guardian for one or more students. " +
+                                                                              "Please reassign the guardian for the affected student(s) before attempting to update the role.";
+
 
     }
 }
