@@ -8,7 +8,7 @@ public interface IClassroomService
 
 	Task<IEnumerable<ClassroomViewModel>> GetClassroomsAsync(string schoolId);
 
-    Task<IEnumerable<ClassroomBasicViewModel>> GetAllSchoolClassroomsAsync();
+	Task<IEnumerable<ClassroomBasicViewModel>> GetAllSchoolClassroomsAsync();
 
 	Task<bool> AddAsync(AddClassroomViewModel model);
 }
