@@ -5,25 +5,13 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (TempData["RoleUpdateSuccessMessage"] != null)
-{
-	<div class="alert alert-success" role="alert">
-		@TempData["RoleUpdateSuccessMessage"]
-	</div>
-}
-
-@if (TempData["SuccessDeleteMessage"] != null)
-{
-	<div class="alert alert-secondary" role="alert">
-		@TempData["SuccessDeleteMessage"]
-	</div>
-}
-else if (TempData["SuccessMessage"] != null)
+@if (TempData["SuccessMessage"] != null)
 {
 	<div class="alert alert-success" role="alert">
 		@TempData["SuccessMessage"]
 	</div>
 }
+
 else if (TempData["ErrorMessage"] != null)
 {
 	<div class="alert alert-danger" role="alert">
@@ -43,7 +31,7 @@ else if (TempData["ErrorMessage"] != null)
 			<th>Full Name</th>
 			<th>Role</th>
 			<th>IsActive</th>
-			<th style="width: 250px;">Actions</th>
+			<th style="width: 440px;">Actions</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -76,6 +64,15 @@ else if (TempData["ErrorMessage"] != null)
 						<input type="hidden" name="id" value="@user.Id"/>
 						<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
 					</form>
+
+					@if (user.Role == "Student")
+					{
+						<!-- Change Guardian button (showed only if a user is assigned as a student) -->
+						<form asp-controller="Student" asp-action="ChangeGuardian" method="get" style="display : inline;">
+							<input type="hidden" name="id" value="@user.Id"/>
+							<button type="submit" class="btn btn-success btn-sm fw-bold">Change Guardian</button>
+						</form>
+					}
 
 					<!-- Delete button -->
 					<form asp-controller="User" asp-action="Delete" method="get" style="display : inline;">
