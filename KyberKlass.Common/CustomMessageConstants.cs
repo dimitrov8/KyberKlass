@@ -35,17 +35,24 @@ public static class CustomMessageConstants
 
 		public const string ROLE_UPDATE_SUCCESS_MESSAGE = "Successfully updated role.";
 
-		public const string SUCCESSFULLY_APPLIED_CHANGES_MESSAGE = "Successfully applied changes for User with Id: \"{0}\".";
+		public const string SUCCESSFULLY_APPLIED_CHANGES_MESSAGE = "Successfully applied changes for User with ID: \"{0}\".";
 
-		public const string SUCCESSFULLY_SOFT_DELETED_MESSAGE = "Successfully soft deleted User with Id: \"{0}\".";
+		public const string SUCCESSFULLY_SOFT_DELETED_MESSAGE = "Successfully soft deleted User with ID: \"{0}\".";
 
-        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a teacher in a classroom. " +
-                                                                             "Please reassign the classroom teacher before attempting to update the role.";
-
-        
-        public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a guardian for one or more students. " +
-                                                                              "Please reassign the guardian for the affected student(s) before attempting to update the role.";
+		public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a teacher in a classroom. " +
+																			 "Please reassign the classroom teacher before attempting to update the role.";
 
 
-    }
+		public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a guardian for one or more students. " +
+																			  "Please reassign the guardian for the affected student(s) before attempting to update the role.";
+	}
+
+	public static class Student
+	{
+		public const string SUCCESSFULLY_CHANGED_GUARDIAN = "Successfully changed guardian for student with ID: {0}.";
+
+		public const string FAILED_TO_CHANGE_GUARDIAN = "Failed to changed guardian for student with ID: {0}.";
+
+		public const string GUARDIAN_ALREADY_SET = "You cannot change your guardian to the current guardian because it is already set.";
+	}
 }
