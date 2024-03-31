@@ -1,15 +1,8 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.Classroom
+﻿namespace KyberKlass.Web.ViewModels.Admin.Classroom;
+
+public class ClassroomBasicViewModel
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+	public string Id { get; set; } = null!;
 
-    public class ClassroomBasicViewModel
-    {
-        public string Id { get; set; } = null!;
-
-        public string Name { get; set; } = null!;
-    }
+	public string Name { get; set; } = null!;
 }

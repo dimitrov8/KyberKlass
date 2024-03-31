@@ -20,8 +20,8 @@ public class AddClassroomViewModel
 	[Required(ErrorMessage = "Please select a teacher")]
 	public string TeacherId { get; set; } = null!;
 
-    [Required]
-    public bool IsActive { get; set; } = true;
+	[Required]
+	public bool IsActive { get; set; } = true;
 
 	[Required]
 	public string SchoolId { get; set; } = null!;
