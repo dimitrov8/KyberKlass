@@ -18,11 +18,12 @@ public static class ServiceCollectionExtension
 
 		services.AddAuthorization();
 
-		services.AddScoped<ISchoolService, SchoolService>();
 		services.AddScoped<IUserService, UserService>();
+		services.AddScoped<ISchoolService, SchoolService>();
+		services.AddScoped<IClassroomService, ClassroomService>();
 		services.AddScoped<ITeacherService, TeacherService>();
 		services.AddScoped<IStudentService, StudentService>();
-		services.AddScoped<IClassroomService, ClassroomService>();
+		services.AddScoped<IGuardianService, GuardianService>();
 
 		return services;
 	}
