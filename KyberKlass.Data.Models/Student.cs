@@ -10,6 +10,7 @@ public class Student
 		this.Grades = new HashSet<Grade>();
 		this.Absences = new HashSet<Absence>();
 	}
+
 	[Key]
 	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
