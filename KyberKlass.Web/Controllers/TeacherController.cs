@@ -18,6 +18,7 @@ public class TeacherController : Controller
 		return $"~/Views/Admin/Teacher/{viewName}.cshtml";
 	}
 
+	[HttpGet]
 	public async Task<IActionResult> All()
 	{
 		List<UserViewModel>? allTeachersViewModel = await this._teacherService.AllAsync();
