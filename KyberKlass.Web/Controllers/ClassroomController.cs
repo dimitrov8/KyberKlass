@@ -82,7 +82,7 @@ public class ClassroomController : Controller
 		IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
 
 		var viewModel = new AddClassroomViewModel
-		{ 
+		{
 			SchoolId = schoolId,
 			UnassignedTeachers = unassignedTeachers,
 			Students = unassignedStudents
@@ -97,15 +97,15 @@ public class ClassroomController : Controller
 	{
 		if (this.ModelState.IsValid == false)
 		{
-            // Repopulate unassigned teachers
-            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
-            model.UnassignedTeachers = unassignedTeachers;
+			// Repopulate unassigned teachers
+			IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+			model.UnassignedTeachers = unassignedTeachers;
 
-            // Repopulate unassigned students
-            IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
-            model.Students = unassignedStudents;
+			// Repopulate unassigned students
+			IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
+			model.Students = unassignedStudents;
 
-            return this.View(this.GetViewPath(nameof(Add)), model);
+			return this.View(this.GetViewPath(nameof(Add)), model);
 		}
 
 		try
@@ -121,28 +121,28 @@ public class ClassroomController : Controller
 				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 
-			return this.RedirectToAction(nameof(this.Manage), new {schoolId = model.SchoolId});
+			return this.RedirectToAction(nameof(this.Manage), new { schoolId = model.SchoolId });
 		}
 		catch (Exception)
 		{
 			this.ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
 
-            // Repopulate unassigned teachers
-            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
-            model.UnassignedTeachers = unassignedTeachers;
+			// Repopulate unassigned teachers
+			IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+			model.UnassignedTeachers = unassignedTeachers;
 
-            // Repopulate unassigned students
-            IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
-            model.Students = unassignedStudents;
+			// Repopulate unassigned students
+			IEnumerable<UserBasicViewModel> unassignedStudents = await this._studentService.GetUnassignedStudentsAsync();
+			model.Students = unassignedStudents;
 
-            return this.View(this.GetViewPath(nameof(Add)), model);
+			return this.View(this.GetViewPath(nameof(Add)), model);
 		}
 	}
 
-    public async Task<IActionResult> GetClassrooms()
-    {
-        var classrooms = await this._classroomService.GetAllSchoolClassroomsAsync();
+	public async Task<IActionResult> GetClassrooms()
+	{
+		IEnumerable<ClassroomBasicViewModel> classrooms = await this._classroomService.GetAllSchoolClassroomsAsync();
 
-        return this.Json(classrooms);
-    }
+		return this.Json(classrooms);
+	}
 }

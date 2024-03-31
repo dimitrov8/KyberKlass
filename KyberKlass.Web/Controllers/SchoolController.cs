@@ -152,7 +152,7 @@ public class SchoolController : Controller
 			{
 				if (model.IsActive == false)
 				{
-					this.TempData["SuccessDeleteMessage"] = string.Format(SUCCESSFULLY_SOFT_DELETED_MESSAGE, model.Name);
+					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_SOFT_DELETED_MESSAGE, model.Name);
 				}
 				else
 				{
@@ -213,7 +213,7 @@ public class SchoolController : Controller
 
 			if (successfullyDeleted)
 			{
-				this.TempData["SuccessDeleteMessage"] = SUCCESSFULLY_DELETED_MESSAGE;
+				this.TempData["SuccessMessage"] = SUCCESSFULLY_DELETED_MESSAGE;
 
 				return this.RedirectToAction(nameof(this.All));
 			}
