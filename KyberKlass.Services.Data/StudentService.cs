@@ -5,17 +5,33 @@ using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin.Student;
 using Web.ViewModels.Admin.User;
 
 public class StudentService : IStudentService
 {
 	private readonly KyberKlassDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly IUserService _userService;
+	private readonly IGuardianService _guardianService;
 
-	public StudentService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
+	public StudentService(KyberKlassDbContext dbContext,
+		UserManager<ApplicationUser> userManager,
+		IUserService userService,
+		IGuardianService guardianService)
 	{
 		this._dbContext = dbContext;
 		this._userManager = userManager;
+		this._userService = userService;
+		this._guardianService = guardianService;
+	}
+
+	public Task<Student?> GetById(string id)
+	{
+		return this._dbContext
+			.Students
+			.Include(s => s.Guardian)
+			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
 	}
 
 	/// <summary>
@@ -49,5 +65,44 @@ public class StudentService : IStudentService
 			.ToList(); // Filter out the unassigned students
 
 		return unassignedStudents; // Return the collection of unassigned students
+	}
+
+	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
+	{
+		var userDetails = await this._userService.GetDetailsAsync(userId);
+		IEnumerable<UserBasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
+
+		var viewModel = new StudentChangeGuardianViewModel
+		{
+			UserDetails = userDetails,
+			AvailableGuardians = availableGuardians
+		};
+
+		return viewModel;
+	}
+
+	public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)
+	{
+		Student? student = await this.GetById(userId);
+		Guardian? newGuardian = await this._guardianService.GetById(guardianId);
+
+		if (student == null || newGuardian == null)
+		{
+			return false;
+		}
+
+		var previousGuardianId = student.Guardian.Id;
+
+		if (previousGuardianId == newGuardian.Id)
+		{
+			return false;
+		}
+
+		student.GuardianId = Guid.Empty;
+		student.GuardianId = newGuardian.Id;
+
+		await this._dbContext.SaveChangesAsync();
+
+		return true;
 	}
 }
