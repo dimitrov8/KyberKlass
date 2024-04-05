@@ -110,22 +110,31 @@ public class ClassroomController : Controller
 
 		try
 		{
-			bool addedSuccessfully = await this._classroomService.AddAsync(model);
+			bool alreadyExists = await this._classroomService.ClassroomExistsInSchool(model.Name, model.SchoolId);
 
-			if (addedSuccessfully == false)
+			if (alreadyExists)
 			{
 				this.TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 			else
 			{
-				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
+				bool addedSuccessfully = await this._classroomService.AddAsync(model);
+
+				if (addedSuccessfully == false)
+				{
+					this.TempData["ErrorMessage"] = string.Format(UNABLE_TO_ADD_MESSAGE, CONTROLLER_NAME.ToLower());
+				}
+				else
+				{
+					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
+				}
 			}
 
 			return this.RedirectToAction(nameof(this.Manage), new { schoolId = model.SchoolId });
 		}
 		catch (Exception)
 		{
-			this.ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
+			this.ModelState.AddModelError(string.Empty, string.Format(ADDITION_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
 
 			// Repopulate unassigned teachers
 			IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
