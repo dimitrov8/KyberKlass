@@ -7,7 +7,7 @@ public class ClassroomViewModel
 {
 	public ClassroomViewModel()
 	{
-		this.Students = new HashSet<UserBasicViewModel>();
+		this.Students = new HashSet<BasicViewModel>();
 	}
 
 	public string Id { get; set; } = null!;
@@ -16,7 +16,7 @@ public class ClassroomViewModel
 
 	public string TeacherName { get; set; } = null!;
 
-	public ICollection<UserBasicViewModel> Students { get; set; }
+	public ICollection<BasicViewModel> Students { get; set; }
 
 	public int StudentsCount => this.Students.Count;
 }
