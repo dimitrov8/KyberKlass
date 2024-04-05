@@ -36,7 +36,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
-		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+		 bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
