@@ -23,5 +23,11 @@ public class SchoolViewModel
 
 	public bool IsActive { get; set; }
 
-	public ICollection<ClassroomViewModel> Classrooms { get; set; }
+	[Display(Name = "Total Classrooms")]
+	public int TotalClassrooms => this.Classrooms.Count();
+
+	[Display(Name = "Total Students")]
+	public int TotalStudents => this.Classrooms.Sum(s => s.StudentsCount);
+
+	public IEnumerable<ClassroomViewModel> Classrooms { get; set; }
 }
