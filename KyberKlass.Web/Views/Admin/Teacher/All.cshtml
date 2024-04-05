@@ -12,7 +12,7 @@
 	<table id="id" class="table table-bordered table-striped">
 		<thead>
 		<tr>
-			<th>Id</th>
+			<th>ID</th>
 			<th>Email</th>
 			<th>Full Name</th>
 			<th>Role</th>
@@ -55,8 +55,12 @@
 		</tbody>
 	</table>
 
-	@* Include necessary scripts for DataTables.js and DataTables.Export *@
+	@if (!Model.Any())
+	{
+		<p>No users found.</p>
+	}
 
+	@* Include necessary scripts for DataTables.js and DataTables.Export *@
 	@section scripts
 	{
 		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -72,7 +76,4 @@
 		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 	}
-
-	<script>
-</script>
 </div>

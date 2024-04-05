@@ -1,6 +1,8 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
+using Common;
 using Infrastructure.Extensions;
+using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
@@ -111,11 +113,11 @@ public class UserController : Controller
 			{
 				if (model.IsActive == false)
 				{
-					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_SOFT_DELETED_MESSAGE, model.Id);
+					this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE,CONTROLLER_NAME, model.Id);
 				}
 				else
 				{
-					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_APPLIED_CHANGES_MESSAGE, model.Id);
+					this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE,CONTROLLER_NAME, model.Id);
 				}
 			}
 
@@ -221,7 +223,7 @@ public class UserController : Controller
 
 	public async Task<IActionResult> GetGuardians(string roleId)
 	{
-		IEnumerable<UserBasicViewModel> guardians = await this._userService.GetAllGuardiansAsync();
+		IEnumerable<BasicViewModel> guardians = await this._userService.GetAllGuardiansAsync();
 
 		return this.Json(guardians);
 	}

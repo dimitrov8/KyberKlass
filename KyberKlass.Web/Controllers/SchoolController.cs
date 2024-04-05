@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
 using ViewModels.Admin.School;
 using static Common.CustomMessageConstants.Common;
-using static Common.CustomMessageConstants.School;
 
 [Authorize(Roles = "Admin")]
 public class SchoolController : Controller
@@ -86,7 +85,7 @@ public class SchoolController : Controller
 			}
 			else
 			{
-				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
+				this.TempData["SuccessMessage"] = string.Format(ADDITION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Name);
 			}
 
 			return this.RedirectToAction(nameof(this.All));
@@ -152,11 +151,11 @@ public class SchoolController : Controller
 			{
 				if (model.IsActive == false)
 				{
-					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_SOFT_DELETED_MESSAGE, model.Name);
+					this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE,CONTROLLER_NAME, model.Id);
 				}
 				else
 				{
-					this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_APPLIED_CHANGES, model.Name);
+					this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE,CONTROLLER_NAME, model.Name);
 				}
 			}
 
@@ -213,7 +212,7 @@ public class SchoolController : Controller
 
 			if (successfullyDeleted)
 			{
-				this.TempData["SuccessMessage"] = SUCCESSFULLY_DELETED_MESSAGE;
+				this.TempData["SuccessMessage"] = string.Empty;
 
 				return this.RedirectToAction(nameof(this.All));
 			}
