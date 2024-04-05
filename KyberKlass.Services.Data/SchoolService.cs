@@ -4,7 +4,9 @@ using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.School;
+using Web.ViewModels.Admin.User;
 
 /// <summary>
 ///     Provides functionality to interact with school data in the database.
@@ -60,8 +62,16 @@ public class SchoolService : ISchoolService
 	/// <returns>An enumerable collection of school view models.</returns>
 	public async Task<IEnumerable<SchoolViewModel>> AllAsync()
 	{
-		IEnumerable<SchoolViewModel> schools = await this._dbContext
+		var schools = await this._dbContext
 			.Schools
+			.Include(s => s.Classrooms)
+			.ThenInclude(c => c.Teacher.ApplicationUser)
+			.Include(s => s.Classrooms)
+			.ThenInclude(c => c.Students)
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		var viewModel = schools
 			.Select(s => new SchoolViewModel
 			{
 				Id = s.Id.ToString(),
@@ -69,12 +79,24 @@ public class SchoolService : ISchoolService
 				Address = s.Address,
 				Email = s.Email,
 				PhoneNumber = s.PhoneNumber,
-				IsActive = true
-			})
-			.AsNoTracking()
-			.ToArrayAsync();
+				IsActive = s.IsActive,
+				Classrooms = s.Classrooms
+					.Select(c => new ClassroomViewModel
+					{
+						Id = c.Id.ToString(),
+						Name = c.Name,
+						TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+						Students = c.Students
+							.Select(st => new UserBasicViewModel
+							{
+								Id = st.Id.ToString(),
+								Name = st.ApplicationUser.GetFullName()
+							})
+							.ToArray()
+					})
+			});
 
-		return schools; // Return the collection of schools
+		return viewModel; // Return the collection of schools with their classrooms
 	}
 
 	/// <summary>
@@ -162,6 +184,7 @@ public class SchoolService : ISchoolService
 	{
 		var viewModel = await this._dbContext
 			.Schools
+			.Where(s => s.Id == Guid.Parse(id))
 			.Select(s => new SchoolViewModel
 			{
 				Id = s.Id.ToString(),
@@ -169,10 +192,25 @@ public class SchoolService : ISchoolService
 				Address = s.Address,
 				Email = s.Email,
 				PhoneNumber = s.PhoneNumber,
-				IsActive = s.IsActive
+				IsActive = s.IsActive,
+				Classrooms = s.Classrooms
+					.Select(c => new ClassroomViewModel
+					{
+						Id = c.Id.ToString(),
+						Name = c.Name,
+						TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+						Students = c.Students
+							.Select(st => new UserBasicViewModel
+							{
+								Id = st.Id.ToString(),
+								Name = st.ApplicationUser.GetFullName()
+							})
+							.ToArray()
+					})
+					.ToArray()
 			})
 			.AsNoTracking()
-			.FirstOrDefaultAsync(s => s.Id == id);
+			.FirstOrDefaultAsync();
 
 		return viewModel;
 	}
