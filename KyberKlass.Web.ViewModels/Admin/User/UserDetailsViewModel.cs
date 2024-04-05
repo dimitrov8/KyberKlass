@@ -4,6 +4,11 @@ using Guardian;
 
 public class UserDetailsViewModel
 {
+	public UserDetailsViewModel()
+	{
+		this.Students = new HashSet<BasicViewModel>();
+	}
+
 	public string Id { get; set; } = null!;
 
 	public string FullName { get; set; } = null!;
@@ -23,5 +28,5 @@ public class UserDetailsViewModel
 	// Additional property for guardian information
 	public GuardianViewModel? Guardian { get; set; }
 
-	public IEnumerable<UserBasicViewModel>? Students { get; set; }
+	public IEnumerable<BasicViewModel>? Students { get; set; }
 }

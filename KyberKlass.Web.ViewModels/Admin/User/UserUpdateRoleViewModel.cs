@@ -2,14 +2,15 @@
 
 using System.ComponentModel.DataAnnotations;
 using Classroom;
+using KyberKlass.Web.ViewModels.Admin;
 
 public class UserUpdateRoleViewModel
 {
 	public UserUpdateRoleViewModel()
 	{
 		this.AvailableRoles = new HashSet<UserRolesViewModel>();
-		this.AvailableGuardians = new HashSet<UserBasicViewModel>();
-		this.AvailableClassrooms = new HashSet<ClassroomBasicViewModel>();
+		this.AvailableGuardians = new HashSet<BasicViewModel>();
+		this.AvailableClassrooms = new HashSet<BasicViewModel>();
 	}
 
 	public string Id { get; set; } = null!;
@@ -24,7 +25,7 @@ public class UserUpdateRoleViewModel
 
 	public string? CurrentRoleName { get; set; }
 
-	public IEnumerable<UserBasicViewModel>? Students { get; set; }
+	public IEnumerable<BasicViewModel>? Students { get; set; }
 
 	[Required(ErrorMessage = "Please select a role.")]
 	public string? RoleId { get; set; }
@@ -36,8 +37,8 @@ public class UserUpdateRoleViewModel
 	public IEnumerable<UserRolesViewModel> AvailableRoles { get; set; }
 
 	// Additional property to hold available guardians (only for students)
-	public IEnumerable<UserBasicViewModel> AvailableGuardians { get; set; }
+	public IEnumerable<BasicViewModel> AvailableGuardians { get; set; }
 
 	// Additional property to hold available classrooms (only for students)
-	public IEnumerable<ClassroomBasicViewModel> AvailableClassrooms { get; set; }
+	public IEnumerable<BasicViewModel> AvailableClassrooms { get; set; }
 }
