@@ -3,6 +3,7 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.User;
@@ -40,7 +41,7 @@ public class ClassroomService : IClassroomService
 				Name = c.Name,
 				TeacherName = c.Teacher.ApplicationUser.GetFullName(),
 				Students = c.Students
-					.Select(s => new UserBasicViewModel()
+					.Select(s => new BasicViewModel
 					{
 						Id = s.Id.ToString(),
 						Name = s.ApplicationUser.GetFullName()
@@ -76,7 +77,7 @@ public class ClassroomService : IClassroomService
 			Name = c.Name,
 			TeacherName = c.Teacher.ApplicationUser.GetFullName(),
 			Students = c.Students // todo classrooms
-				.Select(s => new UserBasicViewModel
+				.Select(s => new BasicViewModel
 				{
 					Id = s.Id.ToString(),
 					Name = s.ApplicationUser.GetFullName()
@@ -87,11 +88,11 @@ public class ClassroomService : IClassroomService
 		return classroomViewModels;
 	}
 
-	public async Task<IEnumerable<ClassroomBasicViewModel>> GetAllSchoolClassroomsAsync()
+	public async Task<IEnumerable<BasicViewModel>> GetAllSchoolClassroomsAsync()
 	{
-		IEnumerable<ClassroomBasicViewModel> allClassrooms = await this._dbContext
+		IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
 			.Classrooms
-			.Select(c => new ClassroomBasicViewModel
+			.Select(c => new BasicViewModel
 			{
 				Id = c.Id.ToString(),
 				Name = c.Name
@@ -159,12 +160,40 @@ public class ClassroomService : IClassroomService
 	/// <param name="classroomName">The name of the classroom.</param>
 	/// <param name="schoolId">The ID of the school.</param>
 	/// <returns>True if the classroom exists in the school; otherwise, false.</returns>
-	public async Task<bool> ClassroomExistsInSchool(string classroomName, string schoolId)
+	public async Task<bool> ClassroomExistsInSchoolAsync(string classroomName, string schoolId)
 	{
 		return await this._dbContext
 			.Classrooms
-			.AsNoTracking()
-			.AnyAsync(c => c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
+			.AnyAsync(c => c != null && c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
 		// Check if any classroom with the given name and school ID exists in the database
+	}
+
+	public  async Task<bool> DeleteAsync(string classroomId)
+	{
+		var classroomToDelete = await this._dbContext.Classrooms.FindAsync(Guid.Parse(classroomId));
+
+		// If the classroom exists and there are no students in this classrooms
+		if (classroomToDelete != null && classroomToDelete.Students.Any() == false)
+		{
+			// Remove the classroom from the database
+			this._dbContext.Classrooms.Remove(classroomToDelete);
+			await this._dbContext.SaveChangesAsync();
+
+			return true; // Return true if the classroom is successfully deleted
+		}
+
+		return false; // Return false if the classroom to delete is not found
+	}
+
+	public async Task<BasicViewModel?> GetClassroomAsync(string id)
+	{
+		return await this._dbContext
+			.Classrooms
+			.Select(c => new BasicViewModel
+			{
+				Id = c!.Id.ToString(),
+				Name = c.Name
+			})
+			.FirstOrDefaultAsync(c => c.Id == id);
 	}
 }

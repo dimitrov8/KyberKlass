@@ -3,6 +3,7 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.Student;
@@ -41,13 +42,13 @@ public class StudentService : IStudentService
 	///     A collection of user basic view models representing unassigned students.
 	///     If no unassigned students are found, an empty collection is returned.
 	/// </returns>
-	public async Task<IEnumerable<UserBasicViewModel>> GetUnassignedStudentsAsync()
+	public async Task<IEnumerable<BasicViewModel>> GetUnassignedStudentsAsync()
 	{
 		IList<ApplicationUser> allStudents = await this._userManager.GetUsersInRoleAsync("Student"); // Retrieve all users assigned the role of "Student"
 
 		if (allStudents.Any() == false) // Check if there are any students found
 		{
-			return Enumerable.Empty<UserBasicViewModel>();
+			return Enumerable.Empty<BasicViewModel>();
 		}
 
 		List<Guid> assignedStudentIds = await this._dbContext.Classrooms
@@ -55,9 +56,9 @@ public class StudentService : IStudentService
 			.Select(s => s.Id)
 			.ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
 
-		List<UserBasicViewModel> unassignedStudents = allStudents
+		List<BasicViewModel> unassignedStudents = allStudents
 			.Where(s => assignedStudentIds.Contains(s.Id) == false)
-			.Select(s => new UserBasicViewModel
+			.Select(s => new BasicViewModel
 			{
 				Id = s.Id.ToString(),
 				Name = s.GetFullName()
@@ -70,7 +71,7 @@ public class StudentService : IStudentService
 	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
 	{
 		var userDetails = await this._userService.GetDetailsAsync(userId);
-		IEnumerable<UserBasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
+		IEnumerable<BasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
 
 		var viewModel = new StudentChangeGuardianViewModel
 		{

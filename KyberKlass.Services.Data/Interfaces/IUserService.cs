@@ -1,6 +1,7 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
+using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
 public interface IUserService
@@ -21,7 +22,7 @@ public interface IUserService
 
 	Task<ApplicationUser?> GetUserById(string id);
 
-	Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync();
+	Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync();
 
 	Task<bool> IsTeacherAssignedToClassroomAsync(string userId);
 

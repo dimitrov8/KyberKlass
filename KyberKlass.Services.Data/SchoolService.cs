@@ -3,6 +3,7 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.School;
@@ -87,7 +88,7 @@ public class SchoolService : ISchoolService
 						Name = c.Name,
 						TeacherName = c.Teacher.ApplicationUser.GetFullName(),
 						Students = c.Students
-							.Select(st => new UserBasicViewModel
+							.Select(st => new BasicViewModel
 							{
 								Id = st.Id.ToString(),
 								Name = st.ApplicationUser.GetFullName()
@@ -200,7 +201,7 @@ public class SchoolService : ISchoolService
 						Name = c.Name,
 						TeacherName = c.Teacher.ApplicationUser.GetFullName(),
 						Students = c.Students
-							.Select(st => new UserBasicViewModel
+							.Select(st => new BasicViewModel
 							{
 								Id = st.Id.ToString(),
 								Name = st.ApplicationUser.GetFullName()
