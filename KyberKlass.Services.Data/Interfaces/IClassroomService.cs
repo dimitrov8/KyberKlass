@@ -11,4 +11,6 @@ public interface IClassroomService
 	Task<IEnumerable<ClassroomBasicViewModel>> GetAllSchoolClassroomsAsync();
 
 	Task<bool> AddAsync(AddClassroomViewModel model);
+
+	Task<bool> ClassroomExistsInSchool(string classroomName, string schoolId);
 }

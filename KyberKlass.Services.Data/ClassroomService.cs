@@ -5,6 +5,7 @@ using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin.Classroom;
+using Web.ViewModels.Admin.User;
 
 /// <summary>
 ///     Service class responsible for managing classrooms.
@@ -12,17 +13,14 @@ using Web.ViewModels.Admin.Classroom;
 public class ClassroomService : IClassroomService
 {
 	private readonly KyberKlassDbContext _dbContext;
-	private readonly ISchoolService _schoolService;
 
 	/// <summary>
 	///     Constructor for ClassroomService.
 	/// </summary>
 	/// <param name="dbContext">The database context.</param>
-	/// <param name="schoolService">The service for managing schools.</param>
-	public ClassroomService(KyberKlassDbContext dbContext, ISchoolService schoolService)
+	public ClassroomService(KyberKlassDbContext dbContext)
 	{
 		this._dbContext = dbContext;
-		this._schoolService = schoolService;
 	}
 
 	/// <summary>
@@ -32,19 +30,31 @@ public class ClassroomService : IClassroomService
 	/// <returns>A view model containing classrooms for the school.</returns>
 	public async Task<ManageClassroomsViewModel> GetManageClassroomsAsync(string schoolId)
 	{
-		var school = await this._schoolService.GetByIdAsync(schoolId); // Retrieve the school
-		IEnumerable<ClassroomViewModel> classrooms = await this.GetClassroomsAsync(schoolId); // Retrieve classrooms for the school
+		var school = await this._dbContext.Schools.FindAsync(Guid.Parse(schoolId)); // Retrieve the school
+		IEnumerable<ClassroomViewModel> classrooms = await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == school!.Id)
+			.Select(c => new ClassroomViewModel
+			{
+				Id = c.Id.ToString(),
+				Name = c.Name,
+				TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+				Students = c.Students
+					.Select(s => new UserBasicViewModel()
+					{
+						Id = s.Id.ToString(),
+						Name = s.ApplicationUser.GetFullName()
+					})
+					.ToArray()
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
 
 		return new ManageClassroomsViewModel
 		{
 			SchoolId = schoolId,
 			SchoolName = school!.Name,
 			Classrooms = classrooms
-				.Select(c => new ClassroomViewModel
-				{
-					Id = c.Id,
-					Name = c.Name
-				})
 		}; // Create and return a view model containing classrooms
 	}
 
@@ -55,6 +65,7 @@ public class ClassroomService : IClassroomService
 			.Classrooms
 			.Where(c => c.SchoolId == Guid.Parse(schoolId))
 			.Include(c => c.Students)
+			.ThenInclude(s => s.ApplicationUser)
 			.Include(u => u.Teacher.ApplicationUser)
 			.AsNoTracking()
 			.ToArrayAsync();
@@ -64,7 +75,13 @@ public class ClassroomService : IClassroomService
 			Id = c.Id.ToString(),
 			Name = c.Name,
 			TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-			StudentsCount = c.Students.Count()
+			Students = c.Students // todo classrooms
+				.Select(s => new UserBasicViewModel
+				{
+					Id = s.Id.ToString(),
+					Name = s.ApplicationUser.GetFullName()
+				})
+				.ToArray()
 		});
 
 		return classroomViewModels;
@@ -92,19 +109,19 @@ public class ClassroomService : IClassroomService
 	/// <returns>True if the classroom was added successfully; otherwise, false.</returns>
 	public async Task<bool> AddAsync(AddClassroomViewModel model)
 	{
-		var newSchool = await this._schoolService.GetByIdAsync(model.SchoolId); // Retrieve the school by ID
+		var newSchool = await this._dbContext.Schools.FindAsync(Guid.Parse(model.SchoolId)); // Retrieve the school by ID
 
 		if (newSchool == null)
 		{
 			return false; // If the school doesn't exist, return false
 		}
 
-		bool classRoomExists = await this.ClassroomExistsInSchool(model.Name, model.SchoolId); // Check if the classroom already exists in the school
+		//bool classRoomExists = await this.ClassroomExistsInSchool(model.Name, model.SchoolId); // Check if the classroom already exists in the school
 
-		if (classRoomExists)
-		{
-			return false; // If the classroom already exists, return false
-		}
+		//if (classRoomExists)
+		//{
+		//	return false; // If the classroom already exists, return false
+		//}
 
 		var schoolIdAsGuid = Guid.Parse(model.SchoolId);
 		var teacherIdAsGuid = Guid.Parse(model.TeacherId);
