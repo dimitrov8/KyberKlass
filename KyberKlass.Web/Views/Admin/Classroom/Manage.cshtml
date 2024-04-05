@@ -3,6 +3,20 @@
 
 <h2>Manage Classrooms for @Model.SchoolName</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+		<div class="alert alert-success" role="alert">
+		@TempData["SuccessMessage"]
+		</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+	<div class="alert alert-danger" role="alert">
+		@TempData["ErrorMessage"]
+	</div>
+}
+
 @if (Model.Classrooms.Any())
 {
 	<table class="table">
@@ -11,7 +25,7 @@
 			<th>Classroom Name</th>
 			<th>Teacher</th>
 			<th>Number of Students</th>
-			<th></th>
+			<th style="width: 350px;">Actions</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -23,6 +37,8 @@
 				<td>@classroom.StudentsCount</td>
 				<td>
 					<a asp-controller="Classroom" asp-action="Details" asp-route-id="@classroom.Id" class="btn btn-info">View Details</a>
+					<a asp-controller="Classroom" asp-action="Edit" asp-route-id="@classroom.Id" class="btn btn-warning">Edit</a>
+					<a asp-controller="Classroom" asp-action="Delete" asp-route-id="@classroom.Id" class="btn btn-danger">Delete</a>
 				</td>
 			</tr>
 		}
