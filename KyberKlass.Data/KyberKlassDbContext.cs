@@ -20,13 +20,9 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	public DbSet<Teacher> Teachers { get; set; } = null!;
 
-	public DbSet<Subject> Subjects { get; set; } = null!;
-
 	public DbSet<Student> Students { get; set; } = null!;
 
 	public DbSet<Guardian> Guardians { get; set; } = null!;
-
-	public DbSet<Absence> Absences { get; set; } = null!;
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
