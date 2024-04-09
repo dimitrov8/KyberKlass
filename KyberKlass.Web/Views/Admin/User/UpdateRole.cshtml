@@ -1,255 +1,316 @@
 ﻿@model UserUpdateRoleViewModel
 
 @{
-	ViewData["Title"] = "Update User Role";
+    ViewData["Title"] = "Update User Role";
 
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
-	<div class="alert alert-danger" role="alert">
-		@TempData["ErrorMessage"]
-	</div>
+            <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+            </div>
 }
 
 <div class="container">
-	<h1 class="mt-5">@ViewData["Title"]</h1>
-	<hr/>
+    <h1 class="mt-5">@ViewData["Title"]</h1>
+    <hr />
 
-	<dl class="row mt-5">
-		<dt class="col-sm-2">Id:</dt>
-		<dd class="col-sm-10">@Model.Id</dd>
+    <dl class="row mt-5">
+        <dt class="col-sm-2">Id:</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
 
-		<dt class="col-sm-2">Full Name:</dt>
-		<dd class="col-sm-10">@Model.FullName</dd>
+        <dt class="col-sm-2">Full Name:</dt>
+        <dd class="col-sm-10">@Model.FullName</dd>
 
-		<dt class="col-sm-2">Email:</dt>
-		<dd class="col-sm-10">@Model.Email</dd>
+        <dt class="col-sm-2">Email:</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
 
-		<dt class="col-sm-2">Is Active:</dt>
-		<dd class="col-sm-10">@Model.IsActive</dd>
+        <dt class="col-sm-2">Is Active:</dt>
+        <dd class="col-sm-10">@Model.IsActive</dd>
 
-		<dt class="col-sm-2">Current Role:</dt>
-		<dd class="col-sm-10">@Model.CurrentRoleName</dd>
-	</dl>
+        <dt class="col-sm-2">Current Role:</dt>
+        <dd class="col-sm-10">@Model.CurrentRoleName</dd>
+    </dl>
 
-	<!-- Section for displaying assigned students if the user is a guardian -->
-	@if (Model is { CurrentRoleName: "Guardian",Students: not null } && Model.Students.Any())
-	{
-		<h4 class="mt-2">Students Assigned to this Guardian:</h4>
-		<table class="table">
-			<thead>
-			<tr>
-				<th>ID</th>
-				<th>Full Name</th>
-			</tr>
-			</thead>
-			<tbody>
-			@foreach (var student in Model.Students)
-			{
-				<tr>
-					<td>@student.Id</td>
-					<td>@student.Name</td>
-				</tr>
-			}
-			</tbody>
-		</table>
-	}
+    <!-- Section for displaying assigned students if the user is a guardian -->
+    @if (Model is { CurrentRoleName: "Guardian", Students: not null } && Model.Students.Any())
+    {
+                <h4 class="mt-2">Students Assigned to this Guardian:</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                @foreach (var student in Model.Students)
+                {
+                                    <tr>
+                                        <td>@student.Id</td>
+                                        <td>@student.Name</td>
+                                    </tr>
+                }
+                    </tbody>
+                </table>
+    }
 </div>
 
 <!-- Dropdown to select role -->
-<div class="mb-3">
-	<label asp-for="@Model.RoleId" class="form-label">Select a role</label>
-	<select asp-for="@Model.RoleId" class="form-control" id="roleDropdown" onchange="updateRoleId()">
-		<option value="">-- Select role --</option>
-		@foreach (var role in Model.AvailableRoles)
-		{
-			<option value="@role.Id">@role.Name</option>
-		}
-	</select>
-	<span asp-validation-for="@Model.RoleId" class="text-danger"></span>
+<div id="roleDropdownContainer" class="mb-3">
+    <label asp-for="@Model.RoleId" class="form-label">Select a role</label>
+    <select asp-for="@Model.RoleId" class="form-control" onchange="updateRoleId()">
+        <option value="">-- Select --</option>
+        @foreach (var role in Model.AvailableRoles)
+        {
+                    <option value="@role.Id">@role.Name</option>
+        }
+    </select>
+    <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
 </div>
 
 <!-- Alert for role selection -->
 <div id="roleAlert" class="alert alert-danger" style="display: none;">
-	Please select a role.
+    Please select a role.
 </div>
 
 <!-- Dropdown to select guardian (only displayed for "Student" role) -->
 <div id="guardianDropdownContainer" class="mb-3" style="display: none;">
-	<label asp-for="@Model.GuardianId" class="form-label">Select a guardian</label>
-	<select asp-for="@Model.GuardianId" class="form-control" onchange="updateGuardianId()">
-		<option value="">-- Select Guardian --</option>
-	</select>
-	<span asp-validation-for="@Model.GuardianId" class="text-danger"></span>
+    <label asp-for="@Model.GuardianId" class="form-label">Select a guardian</label>
+    <select asp-for="@Model.GuardianId" class="form-control" onchange="updateGuardianId()">
+    </select>
+    <span asp-validation-for="@Model.GuardianId" class="text-danger"></span>
 </div>
 
 <!-- Alert for guardian selection -->
 <div id="guardianAlert" class="alert alert-danger" style="display: none;">
-	Please select a guardian.
+    Please select a guardian.
+</div>
+
+<!-- Dropdown to select school (only displayed for "Student" role) -->
+<div id="schoolDropdownContainer" class="mb-3" style="display: none;">
+    <label asp-for="@Model.SchoolId" class="form-label">Select a school</label>
+    <select asp-for="@Model.SchoolId" class="form-control" onchange="updateSchoolId()">
+        @foreach (var school in Model.AvailableSchools)
+        {
+                    <option value="@school.Id">@school.Name</option>
+        }
+    </select>
+    <span asp-validation-for="@Model.SchoolId" class="text-danger"></span>
+</div>
+
+<!-- Alert for school selection -->
+<div id="schoolAlert" class="alert alert-danger" style="display: none;">
+    Please select a school.
 </div>
 
 <!-- Dropdown to select classroom (only displayed for "Student" role) -->
 <div id="classroomDropdownContainer" class="mb-3" style="display: none;">
-	<label asp-for="@Model.ClassroomId" class="form-label">Select a classroom</label>
-	<select asp-for="@Model.ClassroomId" class="form-control" onchange="updateClassroomId()">
-		<option value="">-- Select classroom --</option>
-		@foreach (var classroom in Model.AvailableClassrooms)
-		{
-			<option value="@classroom.Id">@classroom.Name</option>
-		}
-	</select>
-	<span asp-validation-for="@Model.ClassroomId" class="text-danger"></span>
+    <label asp-for="@Model.ClassroomId" class="form-label">Select a classroom</label>
+    <select asp-for="@Model.ClassroomId" class="form-control" onchange="updateClassroomId()">
+        <option value="">-- Select --</option>
+        @foreach (var classroom in Model.AvailableClassrooms)
+        {
+                    <option value="@classroom.Id">@classroom.Name</option>
+        }
+    </select>
+    <span asp-validation-for="@Model.ClassroomId" class="text-danger"></span>
 </div>
 
 <!-- Alert for classroom selection -->
 <div id="classroomAlert" class="alert alert-danger" style="display: none;">
-	Please select a classroom.
+    Please select a classroom.
 </div>
 
 <!-- Form submission buttons -->
 <div class="mt-5">
-	<form id="updateRoleForm" asp-controller="User" asp-action="UpdateRoleConfirmed" method="post"
-	      onsubmit="return validateForm()">
-		<input type="hidden" asp-for="@Model.Id"/>
-		<input type="hidden" id="roleId" name="roleId" value="@Model.RoleId"/>
-		<input type="hidden" id="guardianId" name="guardianId"/>
-		<input type="hidden" id="classroomId" name="classroomId"/>
-		<button type="submit" class="btn btn-warning">Update Role</button>
-		<a class="btn btn-secondary" asp-controller="User" asp-action="All">Back to List</a>
-	</form>
+    <form id="updateRoleForm" asp-controller="User" asp-action="UpdateRoleConfirmed" method="post"
+        onsubmit="return validateForm()">
+        <input type="hidden" asp-for="@Model.Id" />
+        <input type="hidden" id="roleId" name="roleId" value="@Model.RoleId" />
+        <input type="hidden" id="guardianId" name="guardianId" />
+        <input type="hidden" id="schoolId" name="schoolId" />
+        <input type="hidden" id="classroomId" name="classroomId" />
+        <button type="submit" class="btn btn-warning">Update Role</button>
+        <a class="btn btn-secondary" asp-controller="User" asp-action="All">Back to List</a>
+    </form>
 </div>
 
 @section Scripts {
-	<script>
-            function updateRoleId() {
-                var selectedRoleId = document.getElementById("roleDropdown").value;
-            console.log("Selected Role ID: " + selectedRoleId);
-            document.getElementById("roleId").value = selectedRoleId;
+            <script>
+                var debounceTimer;
+                var $roleDropdown = $("#roleDropdownContainer select");
+                var $guardianDropdown = $("#guardianDropdownContainer select");
+                var $schoolDropdown = $("#schoolDropdownContainer select");
+                var $classroomDropdown = $("#classroomDropdownContainer select");
 
-            var selectedRoleName = document.getElementById("roleDropdown").options[document.getElementById("roleDropdown").selectedIndex].text;
-            console.log("Selected Role Name: " + selectedRoleName);
+                function updateRoleId() {
+             var selectedRoleId = $roleDropdown.val(); // Get the value of the selected option (role ID)
+                    console.log("Selected Role ID: " + selectedRoleId); // Log the selected role ID
+                    $("#roleId").val(selectedRoleId); 
 
-            // Show guardian dropdown and classroom dropdown if role is "Student"
-            if (selectedRoleName === 'Student') {
-          $("#guardianDropdownContainer").show();
+                var selectedRoleName = $roleDropdown.find("option:selected").text(); // Get the text of the selected option (role name)
+                    console.log("Selected Role: " + selectedRoleName); // Log the selected role name
+
+                    var isStudentRole = selectedRoleName === 'Student';
+
+                    $guardianDropdown.closest('.mb-3').toggle(isStudentRole);
+                    $schoolDropdown.closest('.mb-3').toggle(isStudentRole);
+                    $classroomDropdown.closest('.mb-3').toggle(isStudentRole);
+
+                     // Toggle the visibility of the classroom dropdown container based on the selected role
+                if (isStudentRole) {
+                    loadGuardiansAndSchools(); // Load data when the selected role is "Student"   
+                }
+
+                if (isStudentRole && $schoolDropdown.val()) {
                     $("#classroomDropdownContainer").show();
-            loadGuardians();
-            loadClassrooms();
+                    loadClassrooms(); // Load classrooms when school is selected
                 } else {
-         $("#guardianDropdownContainer").hide();
                     $("#classroomDropdownContainer").hide();
+                    resetDropdowns();
                 }
 
-            if (selectedRoleName !== 'Student') {
-                $("#guardianId").val(''); // Clear guardianId when role is not Student
-                    $("#classroomId").val(''); // Clear classroomId when role is not Student
+                    $(".alert").hide();
                 }
 
-            // Hide alerts initially
-               $("#roleAlert").hide();
-                $("#guardianAlert").hide();
-                $("#classroomAlert").hide();
-            }
-
-    function loadGuardians() {
-        var selectedRoleId = $("#roleDropdown").val();
-        $.ajax({
-            url: "/User/GetGuardians",
-            type: "GET",
-            data: { roleId: selectedRoleId },
-            success: function (data) {
-                console.log(data); // Print data to console to inspect received data
-                // Populate the guardian dropdown with the retrieved data
-                var dropdown = $("#guardianDropdownContainer select");
-                dropdown.empty();
-                dropdown.append('<option value="">-- Select Guardian --</option>');
-                $.each(data, function (index, item) {
-                    dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                // Call updateRoleId when the page is loaded or when the role dropdown changes
+                $(document).ready(function () {
+                    updateRoleId(); // Trigger initial update
+                    $roleDropdown.change(updateRoleId);
+                    $schoolDropdown.change(loadClassrooms); // Trigger loading of classrooms when school changes
                 });
-            },
-            error: function (xhr, status, error) {
-                console.log("Error loading guardians:", error);
-            }
-        });
-    }
 
+                function loadData() {
+                    var selectedRoleName = $roleDropdown.find("option:selected").text();
+                    var isStudentRole = selectedRoleName === 'Student';
 
-        // Call updateRoleId when the page is loaded or when the role dropdown changes
-        $(document).ready(function () {
-            updateRoleId(); // Trigger initial update
-            $("#roleDropdown").change(updateRoleId);
-        });
+                    if (isStudentRole) {
+                        loadGuardiansAndSchools();
+                    }
+                }
 
-            function loadClassrooms() {
-            // AJAX call to load classrooms based on the selected role
-            var selectedRoleId = document.getElementById("roleDropdown").value;
-            $.ajax({
-                url: "/Classroom/GetClassrooms",
-            type: "GET",
-            data: {roleId: selectedRoleId },
-           success: function (data) {
-                    console.log(data); // Print data to console to inspect received data
-                    // Populate the classrooms dropdown with the retrieved data
-                        var dropdown = $("#classroomDropdownContainer select");
-                    dropdown.empty();
-                    dropdown.append('<option value="">-- Select Classroom --</option>');
+                function loadGuardiansAndSchools() {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function () {
+                        $.ajax({
+                            url: "/User/GetGuardiansAndSchools",
+                            type: "GET",
+                            success: function (data) {
+                                updateDropdown($guardianDropdown, data.guardians);
+                                updateDropdown($schoolDropdown, data.schools);
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error loading data:", error);
+                            }
+                        });
+                    }, 300);
+                }
+
+                function updateDropdown($dropdown, data) {
+                        console.log("Updating dropdown with data:", data); // Log the data being used to update the dropdown
+                      $dropdown.empty(); // Clear existing options before adding new ones
+                $dropdown.append('<option value="">-- Select --</option>'); // Add a default option
                     $.each(data, function (index, item) {
-                        dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        $dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
                     });
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error loading classrooms:", error);
-                }
-            });
-        }
-
-            function updateGuardianId() {
-        var selectedGuardianId = $("#guardianDropdownContainer select").val();
-        $("#guardianId").val(selectedGuardianId); // Assign the selected guardian ID to the hidden input field
-        console.log("Selected Guardian ID: " + selectedGuardianId);
-
-        // Hide the guardian alert if a guardian is selected
-        $("#guardianAlert").hide();
-    }
-
-            function updateClassroomId() {
-                var selectedClassroomDropdown = document.getElementById("classroomDropdownContainer");
-            if (selectedClassroomDropdown) {
-                    var selectedClassroomId = selectedClassroomDropdown.querySelector('select').value;
-            document.getElementById("classroomId").value = selectedClassroomId; // Assign the selected classroom ID to the hidden input field
-            console.log("Selected Classroom ID: " + selectedClassroomId);
                 }
 
-            // Hide the classroom alert if a classroom is selected
-            document.getElementById("guardianAlert").style.display = "none";
-            }
-
-            function validateForm() {
-                var roleId = document.getElementById("roleId").value;
-            var selectedRoleName = document.getElementById("roleDropdown").options[document.getElementById("roleDropdown").selectedIndex].text;
-            var guardianId = document.getElementById("guardianId").value;
-            var classroomId = document.getElementById("classroomId").value;
-
-            if (!roleId) {
-                document.getElementById("roleAlert").style.display = "block";
-            return false;
+                function resetDropdowns() {
+                    $guardianDropdown.val('');
+                    $schoolDropdown.val('');
+                    $classroomDropdown.val('');
                 }
 
-            if (selectedRoleName === 'Student' && !guardianId) {
-                document.getElementById("guardianAlert").style.display = "block";
-            return false;
+                function loadClassrooms() {
+                    var selectedSchoolId = $schoolDropdown.val();
+                        console.log("Load classrooms with selected school ID: " + selectedSchoolId); // Log the selected school ID
+
+                    if (selectedSchoolId) {
+                        $.ajax({
+                            url: "/Classroom/GetSchoolClassrooms",
+                            type: "GET",
+                            data: { schoolId: selectedSchoolId },
+                            success: function (data) {
+                                     console.log("Received data:", data); // Log the received data
+                                    updateDropdown($classroomDropdown, data); // Check if data is properly passed to updateDropdown function
+                                           $("#classroomDropdownContainer").show(); // Show the classroom dropdown container
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error loading classrooms:", error);
+                            }
+                        });
+                    }
+                    else {
+                                // If the selected school ID is empty, hide the classroom dropdown container and reset the classrooms dropdown
+            $("#classroomDropdownContainer").hide();
+            $classroomDropdown.val('');
+            return;
+                    }
                 }
 
-            if (selectedRoleName === 'Student' && !classroomId) {
-                document.getElementById("classroomAlert").style.display = "block";
-            return false;
+                function updateGuardianId() {
+                    var selectedGuardianId = $guardianDropdown.val();
+                    console.log("Selected Guardian ID: " + selectedGuardianId);
+                    $("#guardianId").val(selectedGuardianId);
+
+                    var selectedGuardianName = $("#GuardianId option:selected").text();
+                    console.log("Selected Guardian Name: " + selectedGuardianName);
+
+                    // Hide the guardian alert if a guardian is selected
+                    $("#guardianAlert").hide();
                 }
 
-            document.getElementById("updateRoleForm").submit();
-            return true;
-            }
-        
-	</script>
+                function updateSchoolId() {
+                    var selectedSchoolId = $schoolDropdown.val();
+                    console.log("Selected School ID: " + selectedSchoolId);
+                    $("#schoolId").val(selectedSchoolId);
+
+                    // Hide the school alert if a school is selected
+                    $("#schoolAlert").hide();
+                }
+
+                function updateClassroomId() {
+                    var selectedClassroomId = $classroomDropdown.val();
+                    console.log("Selected Classroom ID: " + selectedClassroomId);
+                    $("#classroomId").val(selectedClassroomId);
+
+                    // Hide the classroom alert if a classroom is selected
+                    $("#classroomAlert").hide();
+                }
+
+                function validateForm() {
+                    var roleId = $("#roleId").val();
+                    var selectedRoleName = $roleDropdown.find("option:selected").text();
+                    var guardianId = $("#guardianId").val();
+                    var schoolId = $("#schoolId").val();
+                    var classroomId = $("#classroomId").val();
+
+                    if (!roleId) {
+                        $("#roleAlert").show();
+                        return false;
+                    }
+
+                    if (selectedRoleName === 'Student' && !guardianId) {
+                        $("#guardianAlert").show();
+                        return false;
+                    }
+
+                    if (selectedRoleName === 'Student' && !schoolId) {
+                        $("#schoolAlert").show();
+                        return false;
+                    }
+
+                    if (selectedRoleName === 'Student' && !classroomId) {
+                        $("#classroomAlert").show();
+                        return false;
+                    }
+
+                    $("#updateRoleForm").submit();
+                    return true;
+                }
+
+            </script>
 }
