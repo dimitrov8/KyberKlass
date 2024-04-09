@@ -1,5 +1,6 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
+using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.School;
 
 public interface ISchoolService
@@ -7,6 +8,8 @@ public interface ISchoolService
 	Task<bool> AddAsync(AddSchoolFormModel model);
 
 	Task<IEnumerable<SchoolViewModel>> AllAsync();
+
+    Task<IEnumerable<BasicViewModel>> GetSchoolsAsync();
 
 	Task<AddSchoolFormModel?> GetForEditAsync(string id);
 
