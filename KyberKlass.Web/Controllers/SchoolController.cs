@@ -4,6 +4,7 @@ using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
+using ViewModels.Admin;
 using ViewModels.Admin.School;
 using static Common.CustomMessageConstants.Common;
 
@@ -224,4 +225,12 @@ public class SchoolController : Controller
 			return this.RedirectToAction(nameof(this.All));
 		}
 	}
+
+	[HttpGet]
+	public async Task<IActionResult> GetSchools()
+    {
+        IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
+
+        return this.Json(allSchools);
+    }
 }
