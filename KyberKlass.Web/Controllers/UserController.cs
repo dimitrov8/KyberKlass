@@ -1,11 +1,11 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
-using Common;
 using Infrastructure.Extensions;
-using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Services.Data.Interfaces;
+using ViewModels.Admin;
 using ViewModels.Admin.User;
 using static Common.CustomMessageConstants.Common;
 using static Common.CustomMessageConstants.User;
@@ -14,12 +14,16 @@ using static Common.CustomMessageConstants.User;
 public class UserController : Controller
 {
 	private readonly IUserService _userService;
-	private const string CONTROLLER_NAME = "User";
+	private readonly ISchoolService _schoolService;
+	private readonly IClassroomService _classroomService;
+    private const string CONTROLLER_NAME = "User";
 
-	public UserController(IUserService userService)
+	public UserController(IUserService userService, ISchoolService schoolService, IClassroomService classroomService)
 	{
 		this._userService = userService;
-	}
+		this._schoolService = schoolService;
+        this._classroomService = classroomService;
+    }
 
 	private string GetViewPath(string viewName)
 	{
@@ -221,10 +225,18 @@ public class UserController : Controller
 		}
 	}
 
-	public async Task<IActionResult> GetGuardians(string roleId)
-	{
-		IEnumerable<BasicViewModel> guardians = await this._userService.GetAllGuardiansAsync();
+	[HttpGet]
+	public async Task<IActionResult> GetGuardiansAndSchools()
+    {
+        IEnumerable<BasicViewModel> guardians = await this._userService.GetAllGuardiansAsync(); // Fetch guardians
+        IEnumerable<BasicViewModel> schools = await this._schoolService.GetSchoolsAsync(); // Fetch schools
 
-		return this.Json(guardians);
-	}
+        var data = new
+        {
+            Guardians = guardians,
+            Schools = schools,
+        };
+
+        return this.Json(data);
+    }
 }
