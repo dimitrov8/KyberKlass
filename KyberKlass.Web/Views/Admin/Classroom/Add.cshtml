@@ -25,21 +25,8 @@
 		Please select a teacher.
 	</div>
 
-	<div class="form-group">
-		<label>Students</label>
-		<select asp-for="SelectedStudents" multiple class="form-control" id="studentDropdown" onchange="updateSelectedStudents()">
-			@foreach (var student in Model.Students)
-			{
-				<option value="@student.Id">@student.Name</option>
-			}
-		</select>
-		<span asp-validation-for="SelectedStudents" class="text-danger"></span>
-		<small class="form-text text-muted">Hold down Ctrl (or Command on Mac) to select multiple students.</small>
-	</div>
-
 	<input type="hidden" asp-for="SchoolId"/>
 	<input type="hidden" id="teacherId" name="TeacherId"/>
-	<input type="hidden" id="selectedStudents" name="SelectedStudents"/>
 
 	<button type="submit" class="btn btn-primary">Create</button>
 </form>
@@ -51,12 +38,6 @@
             document.getElementById("teacherId").value = selectedTeacherId; // Update the hidden input field with the selected teacher ID
             console.log("Selected Teacher ID: " + selectedTeacherId);
         }
-
-          function updateSelectedStudents() {
-        var selectedStudents = Array.from(document.getElementById("studentDropdown").selectedOptions).map(option => option.value);
-        document.getElementById("selectedStudents").value = JSON.stringify(selectedStudents);
-        console.log("Selected Student IDs: " + JSON.stringify(selectedStudents));
-    }
 
         function validateForm() {
             var teacherId = document.getElementById("TeacherId").value;
