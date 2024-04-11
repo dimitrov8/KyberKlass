@@ -10,5 +10,11 @@ public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>
 	{
 		builder
 			.HasQueryFilter(t => t.ApplicationUser.IsActive);
+
+		builder
+			.HasMany(t => t.Subjects)
+			.WithOne(s => s.Teacher)
+			.HasForeignKey(s => s.TeacherId)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }
