@@ -10,6 +10,7 @@ public class School
     {
         this.Id = Guid.NewGuid();
         this.Classrooms = new HashSet<Classroom>();
+        this.Students = new HashSet<Student>();
     }
 
     [Key]
@@ -35,4 +36,6 @@ public class School
     public bool IsActive { get; set; } = true;
 
     public ICollection<Classroom> Classrooms { get; set; }
+
+    public ICollection<Student> Students { get; set; }
 }

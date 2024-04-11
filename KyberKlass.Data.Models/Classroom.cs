@@ -11,7 +11,6 @@ public class Classroom
 		this.Id = Guid.NewGuid();
 
 		this.Students = new HashSet<Student>();
-		this.Subjects = new HashSet<Subject>();
 	}
 
 	[Key]
@@ -32,8 +31,6 @@ public class Classroom
 	public bool IsActive { get; set; } = true;
 
 	public ICollection<Student> Students { get; set; }
-
-	public ICollection<Subject> Subjects { get; set; }
 
 	[Required]
 	public Guid SchoolId { get; set; }

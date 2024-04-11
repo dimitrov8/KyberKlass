@@ -162,7 +162,6 @@ public class UserService : IUserService
 
 		string currentRoleName = await user.GetRoleAsync(this._userManager);
 
-
 		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
 
 		// Create a view model for updating user role
@@ -256,19 +255,22 @@ public class UserService : IUserService
 
 		try
 		{
-			// Update user's role in the identity system
-			var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
+            if (currentRoleName != "No Role Assigned")
+            {
+                // Update user's role in the identity system
+                var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
 
-			if (!removeResult.Succeeded)
-			{
-				// Roll back transaction if removing roles fails
-				await transaction.RollbackAsync();
-				return false;
-			}
+                if (removeResult.Succeeded == false)
+                {
+                    // Roll back transaction if removing roles fails
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+            }
 
 			var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
 
-			if (!addResult.Succeeded)
+			if (addResult.Succeeded == false)
 			{
 				// Roll back transaction if adding roles fails
 				await transaction.RollbackAsync();
