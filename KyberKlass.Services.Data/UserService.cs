@@ -123,6 +123,7 @@ public class UserService : IUserService
 					Students = guardianStudents
 				};
 			}
+
 		}
 		else if (viewModel.Role == "Guardian")
 		{
