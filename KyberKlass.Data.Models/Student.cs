@@ -5,6 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Student
 {
+	public Student()
+	{
+		this.Grades = new HashSet<Grade>();
+		this.Absences = new HashSet<Absence>();
+	}
+
 	[Key]
 	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
@@ -18,14 +24,12 @@ public class Student
 	public Guardian Guardian { get; set; } = null!;
 
 	[Required]
-	public Guid SchoolId { get; set; }
-
-    [ForeignKey(nameof(SchoolId))]
-    public School School { get; set; } = null!;
-
-	[Required]
 	public Guid ClassroomId { get; set; }
 
 	[ForeignKey(nameof(ClassroomId))]
 	public Classroom Classroom { get; set; } = null!;
+
+	public ICollection<Grade> Grades { get; set; }
+
+	public ICollection<Absence> Absences { get; set; }
 }

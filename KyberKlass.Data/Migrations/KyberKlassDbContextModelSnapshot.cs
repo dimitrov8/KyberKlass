@@ -22,6 +22,31 @@ namespace KyberKlass.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("KyberKlass.Data.Models.Absence", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsExcused")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Absences");
+                });
+
             modelBuilder.Entity("KyberKlass.Data.Models.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -128,7 +153,7 @@ namespace KyberKlass.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KYBERKLASS.COM",
                             NormalizedUserName = "ADMIN@KYBERKLASS.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEH7sOxBqvzbwuVCIqt2OmzEexOrq61DTuqkhQ7tS7en8tX1GP6rUZFCgEepmXPGzSw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGvktEL0r3eFvEIvs2LWJtJBbw/yRvEddKe/aKLaeurb/GdujrY+0lS6dNJNFv2K4Q==",
                             PhoneNumber = "08888888888",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
@@ -163,7 +188,40 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classrooms", (string)null);
+                    b.ToTable("Classrooms");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Grade", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid?>("ClassroomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Grade");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -173,7 +231,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guardians", (string)null);
+                    b.ToTable("Guardians");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.School", b =>
@@ -204,12 +262,12 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4594fd52-9479-4b14-80f6-ffd36e80d7a4"),
+                            Id = new Guid("e3e9bc7e-c7f5-42c1-a7e2-5f80f4c28014"),
                             Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
                             Email = "st@example.com",
                             IsActive = true,
@@ -218,7 +276,7 @@ namespace KyberKlass.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("97c3bfb8-fb34-430b-9828-4cf0fc5353e0"),
+                            Id = new Guid("415f4395-81a0-474e-8e10-618f11ec3ff4"),
                             Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                             Email = "schoolb@ez.com",
                             IsActive = true,
@@ -244,7 +302,35 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("GuardianId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Subject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
@@ -254,7 +340,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teachers", (string)null);
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -288,28 +374,28 @@ namespace KyberKlass.Data.Migrations
                         new
                         {
                             Id = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
-                            ConcurrencyStamp = "442ab180-3e07-4544-a5db-16761080d2b9",
+                            ConcurrencyStamp = "73fffab0-e7c9-488a-b03f-fb9ca11bbb0b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("73d4ee76-ffa8-46d1-a154-5b4fab4dce3d"),
-                            ConcurrencyStamp = "7d57467f-29dc-4d63-b357-fb70d8d78120",
+                            Id = new Guid("5cbd4379-f48b-4573-b1c5-142059738c96"),
+                            ConcurrencyStamp = "00adfc57-b99a-41db-99e2-80967c3a969c",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = new Guid("71ebe63d-81cd-4009-b364-78ab21bba61d"),
-                            ConcurrencyStamp = "4653e2a3-5d64-4783-8c3b-9b220256d9f8",
+                            Id = new Guid("4c93b954-0b82-4155-bd15-73f00e39f7d4"),
+                            ConcurrencyStamp = "d5070a7e-77e6-48cb-aeaa-ca877b5b7d3b",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("5a175ecf-ea75-44f2-84df-4d572865ce02"),
-                            ConcurrencyStamp = "371abd31-9407-4506-8888-5c510cf6c3cb",
+                            Id = new Guid("ceb19d69-21da-474a-98b2-80557bfed461"),
+                            ConcurrencyStamp = "a5eea8d4-b8d0-4cc0-a359-5dd6b1b78660",
                             Name = "Guardian",
                             NormalizedName = "GUARDIAN"
                         });
@@ -425,6 +511,17 @@ namespace KyberKlass.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("KyberKlass.Data.Models.Absence", b =>
+                {
+                    b.HasOne("KyberKlass.Data.Models.Student", "Student")
+                        .WithMany("Absences")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("KyberKlass.Data.Models.ApplicationUser", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
@@ -451,6 +548,29 @@ namespace KyberKlass.Data.Migrations
                     b.Navigation("School");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Grade", b =>
+                {
+                    b.HasOne("KyberKlass.Data.Models.Classroom", null)
+                        .WithMany("Grades")
+                        .HasForeignKey("ClassroomId");
+
+                    b.HasOne("KyberKlass.Data.Models.Student", "Student")
+                        .WithMany("Grades")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("KyberKlass.Data.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -489,6 +609,25 @@ namespace KyberKlass.Data.Migrations
                     b.Navigation("Classroom");
 
                     b.Navigation("Guardian");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Subject", b =>
+                {
+                    b.HasOne("KyberKlass.Data.Models.Classroom", "Classroom")
+                        .WithMany("Subjects")
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("KyberKlass.Data.Models.Teacher", "Teacher")
+                        .WithMany("Subjects")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
@@ -560,7 +699,11 @@ namespace KyberKlass.Data.Migrations
 
             modelBuilder.Entity("KyberKlass.Data.Models.Classroom", b =>
                 {
+                    b.Navigation("Grades");
+
                     b.Navigation("Students");
+
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -571,6 +714,18 @@ namespace KyberKlass.Data.Migrations
             modelBuilder.Entity("KyberKlass.Data.Models.School", b =>
                 {
                     b.Navigation("Classrooms");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Student", b =>
+                {
+                    b.Navigation("Absences");
+
+                    b.Navigation("Grades");
+                });
+
+            modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
+                {
+                    b.Navigation("Subjects");
                 });
 #pragma warning restore 612, 618
         }
