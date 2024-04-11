@@ -4,6 +4,7 @@ using KyberKlass.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KyberKlass.Data.Migrations
 {
     [DbContext(typeof(KyberKlassDbContext))]
-    partial class KyberKlassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240409172857_MoveToDevelopment")]
+    partial class MoveToDevelopment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,7 +165,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classrooms", (string)null);
+                    b.ToTable("Classrooms");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -173,7 +175,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guardians", (string)null);
+                    b.ToTable("Guardians");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.School", b =>
@@ -204,7 +206,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
 
                     b.HasData(
                         new
@@ -244,7 +246,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("GuardianId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
@@ -254,7 +256,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teachers", (string)null);
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
