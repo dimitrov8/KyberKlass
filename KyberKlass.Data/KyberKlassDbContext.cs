@@ -26,8 +26,6 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
 
 	public DbSet<Guardian> Guardians { get; set; } = null!;
 
-	public DbSet<Absence> Absences { get; set; } = null!;
-
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

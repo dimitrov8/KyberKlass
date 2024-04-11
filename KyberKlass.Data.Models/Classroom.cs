@@ -12,7 +12,6 @@ public class Classroom
 
 		this.Students = new HashSet<Student>();
 		this.Subjects = new HashSet<Subject>();
-		this.Grades = new HashSet<Grade>();
 	}
 
 	[Key]
@@ -35,8 +34,6 @@ public class Classroom
 	public ICollection<Student> Students { get; set; }
 
 	public ICollection<Subject> Subjects { get; set; }
-
-	public ICollection<Grade> Grades { get; set; }
 
 	[Required]
 	public Guid SchoolId { get; set; }

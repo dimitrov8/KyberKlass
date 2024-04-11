@@ -12,12 +12,6 @@ public class StudentEntityConfiguration : IEntityTypeConfiguration<Student>
 			.HasQueryFilter(s => s.ApplicationUser.IsActive);
 
 		builder
-			.HasMany(s => s.Absences)
-			.WithOne(a => a.Student)
-			.HasForeignKey(a => a.StudentId)
-			.OnDelete(DeleteBehavior.Restrict);
-
-		builder
 			.HasOne(s => s.Guardian)
 			.WithMany(g => g.Students)
 			.HasForeignKey(s => s.GuardianId)

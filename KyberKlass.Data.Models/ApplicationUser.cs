@@ -28,7 +28,7 @@ public class ApplicationUser : IdentityUser<Guid>
 
 	public IdentityRole<Guid>? Role { get; set; }
 
-	public Guardian? Guardian { get; set; } // TODO MAYBE REMOVE
+	//public Guardian? Guardian { get; set; } // TODO MAYBE REMOVE
 
 	[Required]
 	public bool IsActive { get; set; } = true;

@@ -1,7 +1,5 @@
 ﻿namespace KyberKlass.Common;
 
-using System.Xml.Linq;
-
 public static class CustomMessageConstants
 {
 	public static class Common
