@@ -8,12 +8,19 @@ using ViewModels.Admin;
 using ViewModels.Admin.School;
 using static Common.CustomMessageConstants.Common;
 
+/// <summary>
+/// Controller responsible for managing schools in the system.
+/// </summary>
 [Authorize(Roles = "Admin")]
 public class SchoolController : Controller
 {
 	private readonly ISchoolService _schoolService;
 	private const string CONTROLLER_NAME = "School";
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SchoolController"/> class.
+	/// </summary>
+	/// <param name="schoolService">The service for managing schools.</param>
 	public SchoolController(ISchoolService schoolService)
 	{
 		this._schoolService = schoolService;
@@ -24,7 +31,9 @@ public class SchoolController : Controller
 		return $"~/Views/Admin/School/{viewName}.cshtml";
 	}
 
-	// Shows all schools
+	/// <summary>
+	/// Retrieves all schools and renders the corresponding view.
+	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> All()
 	{
@@ -33,10 +42,14 @@ public class SchoolController : Controller
 		return this.View(this.GetViewPath(nameof(this.All)), schools);
 	}
 
+	/// <summary>
+	/// Displays details of a specific school.
+	/// </summary>
+	/// <param name="id">The ID of the school.</param>
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
-		 bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null); 
 
 		if (isValidInput == false)
 		{
@@ -60,14 +73,18 @@ public class SchoolController : Controller
 		}
 	}
 
-	// Returns a view from which we can add a school
+	/// <summary>
+	/// Returns a view to add a new school.
+	/// </summary>
 	[HttpGet]
 	public IActionResult Add()
 	{
 		return this.View(this.GetViewPath(nameof(Add)));
 	}
 
-	// Tries to add the school
+	/// <summary>
+	/// Adds a new school.
+	/// </summary>
 	[HttpPost]
 	public async Task<IActionResult> Add(AddSchoolFormModel model)
 	{
@@ -99,7 +116,9 @@ public class SchoolController : Controller
 		}
 	}
 
-	// Gets school by id
+	/// <summary>
+	/// Displays a view to edit details of a school.
+	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> Edit(string id)
 	{
@@ -114,7 +133,7 @@ public class SchoolController : Controller
 		{
 			var schoolViewModel = await this._schoolService.GetForEditAsync(id);
 
-			if (schoolViewModel == null)
+			if (schoolViewModel == null) 
 			{
 				return this.NotFound();
 			}
@@ -127,6 +146,11 @@ public class SchoolController : Controller
 		}
 	}
 
+	/// <summary>
+	/// Updates the details of a school.
+	/// </summary>
+	/// <param name="id">The ID of the school to edit.</param>
+	/// <param name="model">The <see cref="SchoolViewModel"/> containing the updated details.</param>
 	[HttpPost]
 	public async Task<IActionResult> Edit(string id, SchoolViewModel model)
 	{
@@ -170,6 +194,10 @@ public class SchoolController : Controller
 		}
 	}
 
+	/// <summary>
+	/// Displays a confirmation page before deleting a school.
+	/// </summary>
+	/// <param name="id">The ID of the school to delete.</param>
 	[HttpGet]
 	public async Task<IActionResult> Delete(string id)
 	{
@@ -197,6 +225,10 @@ public class SchoolController : Controller
 		}
 	}
 
+	/// <summary>
+	/// Deletes the specified school.
+	/// </summary>
+	/// <param name="id">The ID of the school to delete.</param>
 	[HttpPost]
 	public async Task<IActionResult> DeleteConfirmed(string id)
 	{
@@ -226,10 +258,13 @@ public class SchoolController : Controller
 		}
 	}
 
+	/// <summary>
+	/// Retrieves all schools and returns them as JSON.
+	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> GetSchools()
     {
-        IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
+        IEnumerable<UserBasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
 
         return this.Json(allSchools);
     }
