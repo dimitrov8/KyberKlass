@@ -1,6 +1,7 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin.School;
 using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
@@ -72,7 +73,7 @@ public interface IUserService
 	/// Retrieves a collection of basic view models for all guardians asynchronously.
 	/// </summary>
 	/// <returns>A collection of basic view models representing all guardians.</returns>
-	Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync();
+	Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync();
 
 	/// <summary>
 	/// Checks if a teacher is assigned to any classroom asynchronously.
