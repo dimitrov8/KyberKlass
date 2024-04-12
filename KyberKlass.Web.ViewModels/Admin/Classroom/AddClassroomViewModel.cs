@@ -7,7 +7,7 @@ public class AddClassroomViewModel
 {
 	public AddClassroomViewModel()
 	{
-		this.UnassignedTeachers = new HashSet<UserBasicViewModel>();
+		this.UnassignedTeachers = new HashSet<BasicViewModel>();
 	}
 
 	[Required(ErrorMessage = "Classroom name is required.")]
@@ -23,5 +23,5 @@ public class AddClassroomViewModel
 	[Required]
 	public string SchoolId { get; set; } = null!;
 
-	public IEnumerable<UserBasicViewModel> UnassignedTeachers { get; set; }
+	public IEnumerable<BasicViewModel> UnassignedTeachers { get; set; }
 }

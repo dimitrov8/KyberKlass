@@ -6,10 +6,10 @@ public class StudentChangeGuardianViewModel
 {
 	public StudentChangeGuardianViewModel()
 	{
-		this.AvailableGuardians = new HashSet<UserBasicViewModel>();
+		this.AvailableGuardians = new HashSet<BasicViewModel>();
 	}
 
 	public UserDetailsViewModel? UserDetails { get; set; }
 
-	public IEnumerable<UserBasicViewModel> AvailableGuardians { get; set; }
+	public IEnumerable<BasicViewModel> AvailableGuardians { get; set; }
 }

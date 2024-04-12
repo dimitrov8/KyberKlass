@@ -1,6 +1,6 @@
 ﻿namespace KyberKlass.Web.ViewModels.Admin;
 
-public class UserBasicViewModel
+public class BasicViewModel
 {
     public string Id { get; set; } = null!;
 
