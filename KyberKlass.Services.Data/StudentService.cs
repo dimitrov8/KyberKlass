@@ -27,7 +27,47 @@ public class StudentService : IStudentService
 		this._guardianService = guardianService;
 	}
 
-	public Task<Student?> GetById(string id)
+	public async Task<IEnumerable<UserViewModel>?> AllAsync()
+	{
+		string studentRoleName = "Student";
+
+		var studentRoleId = await this._dbContext
+			.Roles
+			.AsNoTracking()
+			.Where(r => r.Name == studentRoleName)
+			.Select(r => r.Id)
+			.FirstOrDefaultAsync();
+
+		if (studentRoleId != Guid.Empty)
+		{
+			// Retrieve all users who have the "Teacher" role
+			List<ApplicationUser> students = await this._dbContext
+				.Users
+				.Where(user => this._dbContext
+					.UserRoles
+					.Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
+				//.Include(user => user.Role)
+				.AsNoTracking()
+				.ToListAsync();
+
+			List<UserViewModel> studentViewModels = students
+				.Select(t => new UserViewModel
+				{
+					Id = t.Id.ToString(),
+					Email = t.Email,
+					FullName = t.GetFullName(),
+					Role = studentRoleName, // Hardcode the role as "Student" to avoid unnecessary role queries
+					IsActive = t.IsActive
+				})
+				.ToList();
+
+			return studentViewModels;
+		}
+
+		return null;
+	}
+
+	public Task<Student?> GetByIdASync(string id)
 	{
 		return this._dbContext
 			.Students
@@ -42,13 +82,13 @@ public class StudentService : IStudentService
 	///     A collection of user basic view models representing unassigned students.
 	///     If no unassigned students are found, an empty collection is returned.
 	/// </returns>
-	public async Task<IEnumerable<BasicViewModel>> GetUnassignedStudentsAsync()
+	public async Task<IEnumerable<UserBasicViewModel>> GetUnassignedStudentsAsync()
 	{
 		IList<ApplicationUser> allStudents = await this._userManager.GetUsersInRoleAsync("Student"); // Retrieve all users assigned the role of "Student"
 
 		if (allStudents.Any() == false) // Check if there are any students found
 		{
-			return Enumerable.Empty<BasicViewModel>();
+			return Enumerable.Empty<UserBasicViewModel>();
 		}
 
 		List<Guid> assignedStudentIds = await this._dbContext.Classrooms
@@ -56,9 +96,9 @@ public class StudentService : IStudentService
 			.Select(s => s.Id)
 			.ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
 
-		List<BasicViewModel> unassignedStudents = allStudents
+		List<UserBasicViewModel> unassignedStudents = allStudents
 			.Where(s => assignedStudentIds.Contains(s.Id) == false)
-			.Select(s => new BasicViewModel
+			.Select(s => new UserBasicViewModel
 			{
 				Id = s.Id.ToString(),
 				Name = s.GetFullName()
@@ -71,7 +111,7 @@ public class StudentService : IStudentService
 	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
 	{
 		var userDetails = await this._userService.GetDetailsAsync(userId);
-		IEnumerable<BasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
+		IEnumerable<UserBasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
 
 		var viewModel = new StudentChangeGuardianViewModel
 		{
@@ -84,8 +124,8 @@ public class StudentService : IStudentService
 
 	public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)
 	{
-		Student? student = await this.GetById(userId);
-		Guardian? newGuardian = await this._guardianService.GetById(guardianId);
+		Student? student = await this.GetByIdASync(userId);
+		Guardian? newGuardian = await this._guardianService.GetByIdAsync(guardianId);
 
 		if (student == null || newGuardian == null)
 		{
