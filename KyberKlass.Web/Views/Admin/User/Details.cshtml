@@ -108,7 +108,12 @@
 	</div>
 
 	<div class="mt-5">
-		<a class="btn btn-warning" asp-controller="User" asp-action="UpdateRole" asp-route-id="@Model.Id">Update Role</a>
-		<a class="btn btn-secondary" asp-controller="User" asp-action="All">Back to List</a>
+		<a class="btn btn-primary fw-bold" asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+		<a class="btn btn-warning fw-bold" asp-controller="User" asp-action="UpdateRole" asp-route-id="@Model.Id">Update Role</a>
+		@if (Model is {Role: "Student"})
+		{
+			<a class="btn btn-success fw-bold" asp-controller="Student" asp-action="ChangeGuardian" asp-route-id="@Model.Id">Change Guardian</a>
+		}
+		<a class="btn btn-secondary fw-bold" asp-controller="User" asp-action="All">Back to List</a>
 	</div>
 </div>
