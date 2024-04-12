@@ -48,7 +48,7 @@ public class ClassroomController : Controller
                 return this.NotFound();
             }
 
-            IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.GetClassroomsAsync(schoolId);
+            IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.GetAllClassroomsAsync(schoolId);
 
             var viewModel = new ManageClassroomsViewModel
             {
@@ -75,7 +75,7 @@ public class ClassroomController : Controller
             return this.BadRequest(INVALID_INPUT_MESSAGE);
         }
 
-        IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+        IEnumerable<BasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
 
         var viewModel = new AddClassroomViewModel
         {
@@ -93,7 +93,7 @@ public class ClassroomController : Controller
         if (this.ModelState.IsValid == false)
         {
             // Repopulate unassigned teachers
-            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+            IEnumerable<BasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
             model.UnassignedTeachers = unassignedTeachers;
 
             // Repopulate unassigned students
@@ -130,7 +130,7 @@ public class ClassroomController : Controller
             this.ModelState.AddModelError(string.Empty, string.Format(ADDITION_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
 
             // Repopulate unassigned teachers
-            IEnumerable<UserBasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
+            IEnumerable<BasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
             model.UnassignedTeachers = unassignedTeachers;
 
             // Repopulate unassigned students
@@ -152,10 +152,9 @@ public class ClassroomController : Controller
 
         try
         {
-            var school = await this._schoolService.GetByIdAsync(schoolId);
-            var classroom = await this._classroomService.GetClassroomAsync(classroomId);
+            var classroom = await this._classroomService.GetClassroomAsync(schoolId, classroomId);
 
-            if (school == null && classroom == null)
+            if (classroom == null)
             {
                 // TODO RETURN CUSTOM ERROR PAGE
             }
@@ -179,9 +178,37 @@ public class ClassroomController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Details(string schoolId, string classroomId)
+    {
+        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
+                            await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+
+        if (isValidInput == false)
+        {
+            return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
+
+        try
+        {
+            var classroomDetailsViewModel = await this._classroomService.GetClassroomAsync(schoolId, classroomId);
+
+            if (classroomDetailsViewModel == null)
+            {
+                return this.NotFound(); // If classroom is not found
+            }
+
+            return this.View(this.GetViewPath(nameof(this.Details)), classroomDetailsViewModel);
+        }
+        catch (Exception)
+        {
+            return this.RedirectToAction(nameof(this.Manage), new { schoolId });
+        }
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetSchoolClassrooms(string schoolId)
     {
-        IEnumerable<UserBasicViewModel> classrooms = await this._classroomService.GetAllClassroomsBySchoolId(schoolId);
+        IEnumerable<BasicViewModel> classrooms = await this._classroomService.GetAllClassroomsBySchoolIdAsJsonAsync(schoolId);
 
         return this.Json(classrooms);
     }
