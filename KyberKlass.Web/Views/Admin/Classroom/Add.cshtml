@@ -5,7 +5,7 @@
 <form asp-controller="Classroom" asp-action="Add" method="post" onsubmit="return validateForm()">
 	<div class="form-group">
 		<label asp-for="Name">Classroom Name</label>
-		<input asp-for="Name" class="form-control"/>
+		<input asp-for="Name" class="form-control" />
 		<span asp-validation-for="Name" class="text-danger"></span>
 	</div>
 
@@ -25,30 +25,30 @@
 		Please select a teacher.
 	</div>
 
-	<input type="hidden" asp-for="SchoolId"/>
-	<input type="hidden" id="teacherId" name="TeacherId"/>
+	<input type="hidden" asp-for="SchoolId" />
+	<input type="hidden" id="teacherId" name="TeacherId" />
 
-	<button type="submit" class="btn btn-primary">Create</button>
+	<button type="submit" class="btn btn-primary fw-bold">Create</button>
 </form>
 
 @section Scripts {
 	<script>
-        function updateTeacherId() {
-            var selectedTeacherId = document.getElementById("teacherDropdown").value;
-            document.getElementById("teacherId").value = selectedTeacherId; // Update the hidden input field with the selected teacher ID
-            console.log("Selected Teacher ID: " + selectedTeacherId);
-        }
+	function updateTeacherId() {
+		var selectedTeacherId = document.getElementById("teacherDropdown").value;
+		document.getElementById("teacherId").value = selectedTeacherId; // Update the hidden input field with the selected teacher ID
+		console.log("Selected Teacher ID: " + selectedTeacherId);
+	}
 
-        function validateForm() {
-            var teacherId = document.getElementById("TeacherId").value;
-            if (teacherId === '') {
-                document.getElementById("teacherAlert").style.display = "block";
-                return false;
-            } else {
-                document.getElementById("teacherAlert").style.display = "none";
-            }
+	function validateForm() {
+		var teacherId = document.getElementById("TeacherId").value;
+		if (teacherId === '') {
+			document.getElementById("teacherAlert").style.display = "block";
+			return false;
+		} else {
+			document.getElementById("teacherAlert").style.display = "none";
+		}
 
-            return true;
-        }
-    </script>
+		return true;
+	}
+</script>
 }

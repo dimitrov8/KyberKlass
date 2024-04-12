@@ -2,8 +2,8 @@
 @model ManageClassroomsViewModel
 
 @{
-    ViewData["Title"] = $"Manage Classrooms for {Model.SchoolName}";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = $"Manage Classrooms for {Model.SchoolName}";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
@@ -11,83 +11,83 @@
 
 @if (TempData["SuccessMessage"] != null)
 {
-        <div class="alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        </div>
+	<div class="alert alert-success" role="alert">
+		@TempData["SuccessMessage"]
+	</div>
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
-        <div class="alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-        </div>
+	<div class="alert alert-danger" role="alert">
+		@TempData["ErrorMessage"]
+	</div>
 }
 
 <div class="card-body">
-<table id="id" class="table table-bordered table-striped">
-	<thead>
-	<tr>
-		<th style="width: 310px;">Classroom ID</th>
-		<th style="width: 150px;">Classroom Name</th>
-		<th>Teacher</th>
-		<th style="width: 170px;">Number of Students</th>
-		<th style="width: 200px;">Actions</th>
-	</tr>
-	</thead>
-	<tbody>
-	@foreach (var classroom in Model.Classrooms)
-	{
-		<tr>
-			<td>@classroom.Id</td>
-			<td>@classroom.Name</td>
-			<td>@classroom.TeacherName</td>
-			<td>@classroom.StudentsCount</td>
-			<td>
-				<!-- Details button -->
-				<form asp-controller="Classroom" asp-action="Details" method="get" style="display : inline;">
-					<input type="hidden" name="schoolId" value="@Model.SchoolId" />
-					<input type="hidden" name="classroomId" value="@classroom.Id" />
-					<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
-				</form>
+	<table id="id" class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th style="width: 310px;">Classroom ID</th>
+				<th style="width: 150px;">Classroom Name</th>
+				<th>Teacher</th>
+				<th style="width: 170px;">Number of Students</th>
+				<th style="width: 200px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var classroom in Model.Classrooms)
+			{
+				<tr>
+					<td>@classroom.Id</td>
+					<td>@classroom.Name</td>
+					<td>@classroom.TeacherName</td>
+					<td>@classroom.StudentsCount</td>
+					<td>
+						<!-- Details button -->
+						<form asp-controller="Classroom" asp-action="Details" method="get" style="display : inline;">
+							<input type="hidden" name="schoolId" value="@Model.SchoolId" />
+							<input type="hidden" name="classroomId" value="@classroom.Id" />
+							<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+						</form>
 
-				<!-- Edit button -->
-				<form asp-controller="Classroom" asp-action="Edit" method="get" style="display : inline;">
-					<input type="hidden" name="id" value="@classroom.Id" />
-					<button type="submit" class="btn btn-warning btn-sm fw-bold">Edit</button>
-				</form>
+						<!-- Edit button -->
+						<form asp-controller="Classroom" asp-action="Edit" method="get" style="display : inline;">
+							<input type="hidden" name="id" value="@classroom.Id" />
+							<button type="submit" class="btn btn-warning btn-sm fw-bold">Edit</button>
+						</form>
 
-				<!-- Delete button -->
-				<form asp-controller="Classroom" asp-action="Delete" method="get" style="display : inline;">
-					<input type="hidden" name="id" value="@classroom.Id" />
-					<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
-				</form>
-			</td>
-		</tr>
-	}
-	</tbody>
-</table>
+						<!-- Delete button -->
+						<form asp-controller="Classroom" asp-action="Delete" method="get" style="display : inline;">
+							<input type="hidden" name="id" value="@classroom.Id" />
+							<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
+						</form>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 </div>
 
 @if (!Model.Classrooms.Any())
 {
-        <p>No classrooms found.</p>
+	<p>No classrooms found.</p>
 }
 
-<a asp-controller="Classroom" asp-action="Add" asp-route-schoolId="@Model.SchoolId" class="btn btn-success">Add Classroom</a>
-<a asp-controller="School" asp-action="All" class="btn btn-secondary">Back to List</a>
+<a asp-controller="Classroom" asp-action="Add" asp-route-schoolId="@Model.SchoolId" class="btn btn-success fw-bold">Add Classroom</a>
+<a asp-controller="School" asp-action="All" class="btn btn-secondary fw-bold">Back to List</a>
 
 @section scripts
-    {
-        <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-        <script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-        <script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-        <script src="~/plugins/jszip/jszip.min.js"></script>
-        <script src="~/plugins/pdfmake/pdfmake.min.js"></script>
-        <script src="~/plugins/pdfmake/vfs_fonts.js"></script>
-        <script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-        <script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-        <script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+	{
+	<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/jszip/jszip.min.js"></script>
+	<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+	<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 }

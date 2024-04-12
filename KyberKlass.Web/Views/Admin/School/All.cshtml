@@ -6,99 +6,100 @@
 
 @if (TempData["SuccessDeleteMessage"] != null)
 {
-	<div class="alert alert-secondary" role="alert">
+		<div class="alert alert-secondary" role="alert">
 		@TempData["SuccessDeleteMessage"]
-	</div>
+		</div>
 }
 else if (TempData["SuccessMessage"] != null)
 {
-	<div class="alert alert-success" role="alert">
+		<div class="alert alert-success" role="alert">
 		@TempData["SuccessMessage"]
-	</div>
+		</div>
 }
 else if (TempData["ErrorMessage"] != null)
 {
-	<div class="alert alert-danger" role="alert">
+		<div class="alert alert-danger" role="alert">
 		@TempData["ErrorMessage"]
-	</div>
+		</div>
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
-<hr/>
+	<h2 class="text-center">@ViewData["Title"]</h2>
+	<hr />
 
-<div class="card-body">
-	<table id="id" class="table table-bordered table-striped">
-		<thead>
-		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Address</th>
-			<th>Email</th>
-			<th>Phone Number</th>
-			<th>IsActive</th>
-			<th style="width: 350px;">Actions</th>
-		</tr>
-		</thead>
-		<tbody>
-		@foreach (var school in Model)
-		{
-			<tr>
-				<td>@school.Id</td>
-				<td>@school.Name</td>
-				<td>@school.Address</td>
-				<td>@school.Email</td>
-				<td>@school.PhoneNumber</td>
-				<td>
-					<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(school.IsActive ? "checked" : "")/>
-				</td>
-				<td>
-					<!-- Edit button -->
-					<form asp-controller="School" asp-action="Edit" method="get" style="display : inline;">
-						<input type="hidden" name="id" value="@school.Id"/>
-						<button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
-					</form>
+	<div class="card-body">
+		<table id="id" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Address</th>
+					<th>Email</th>
+					<th>Phone Number</th>
+					<th>IsActive</th>
+					<th style="width: 350px;">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+			@foreach (var school in Model)
+			{
+					<tr>
+						<td>@school.Id</td>
+						<td>@school.Name</td>
+						<td>@school.Address</td>
+						<td>@school.Email</td>
+						<td>@school.PhoneNumber</td>
+						<td>
+							<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(school.IsActive
+							? "checked" : "") />
+						</td>
+						<td>
+							<!-- Edit button -->
+							<form asp-controller="School" asp-action="Edit" method="get" style="display : inline;">
+								<input type="hidden" name="id" value="@school.Id" />
+								<button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
+							</form>
 
-					<!-- Details button -->
-					<form asp-controller="School" asp-action="Details" method="get" style="display : inline;">
-						<input type="hidden" name="id" value="@school.Id"/>
-						<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
-					</form>
+							<!-- Details button -->
+							<form asp-controller="School" asp-action="Details" method="get" style="display : inline;">
+								<input type="hidden" name="id" value="@school.Id" />
+								<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+							</form>
 
-					<!-- Manage Classrooms button -->
-					<form asp-controller="Classroom" asp-action="Manage" method="get" style="display : inline;">
-						<input type="hidden" name="schoolId" value="@school.Id"/>
-						<button type="submit" class="btn btn-primary btn-sm fw-bold">Manage Classrooms</button>
-					</form>
+							<!-- Manage Classrooms button -->
+							<form asp-controller="Classroom" asp-action="Manage" method="get" style="display : inline;">
+								<input type="hidden" name="schoolId" value="@school.Id" />
+								<button type="submit" class="btn btn-primary btn-sm fw-bold">Manage Classrooms</button>
+							</form>
 
-					<!-- Delete button -->
-					<form asp-controller="School" asp-action="Delete" method="get" style="display : inline;">
-						<input type="hidden" name="id" value="@school.Id"/>
-						<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
-					</form>
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
+							<!-- Delete button -->
+							<form asp-controller="School" asp-action="Delete" method="get" style="display : inline;">
+								<input type="hidden" name="id" value="@school.Id" />
+								<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
+							</form>
+						</td>
+					</tr>
+			}
+			</tbody>
+		</table>
 
 	@* Include necessary scripts for DataTables.js and DataTables.Export *@
 
 	@section scripts
-	{
-		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-		<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-		<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-		<script src="~/plugins/jszip/jszip.min.js"></script>
-		<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
-		<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-	}
+		{
+			<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+			<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+			<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+			<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+			<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+			<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+			<script src="~/plugins/jszip/jszip.min.js"></script>
+			<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+			<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+			<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+			<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+			<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+		}
 
-	<script>
-</script>
-</div>
+		<script>
+		</script>
+	</div>
