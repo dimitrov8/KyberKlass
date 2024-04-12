@@ -40,7 +40,7 @@ public class ClassroomService : IClassroomService
                 Name = c.Name,
                 TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                 Students = c.Students
-                    .Select(s => new BasicViewModel
+                    .Select(s => new UserBasicViewModel
                     {
                         Id = s.Id.ToString(),
                         Name = s.ApplicationUser.GetFullName()
@@ -76,7 +76,7 @@ public class ClassroomService : IClassroomService
             Name = c.Name,
             TeacherName = c.Teacher.ApplicationUser.GetFullName(),
             Students = c.Students // todo classrooms
-                .Select(s => new BasicViewModel
+                .Select(s => new UserBasicViewModel
                 {
                     Id = s.Id.ToString(),
                     Name = s.ApplicationUser.GetFullName()
@@ -87,11 +87,11 @@ public class ClassroomService : IClassroomService
         return classroomViewModels;
     }
 
-    public async Task<IEnumerable<BasicViewModel>> GetAllSchoolClassroomsAsync()
+    public async Task<IEnumerable<UserBasicViewModel>> GetAllSchoolClassroomsAsync()
     {
-        IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
+        IEnumerable<UserBasicViewModel> allClassrooms = await this._dbContext
             .Classrooms
-            .Select(c => new BasicViewModel
+            .Select(c => new UserBasicViewModel
             {
                 Id = c.Id.ToString(),
                 Name = c.Name
@@ -102,12 +102,12 @@ public class ClassroomService : IClassroomService
         return allClassrooms;
     }
 
-    public  async Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolId(string schoolId)
+    public  async Task<IEnumerable<UserBasicViewModel>> GetAllClassroomsBySchoolId(string schoolId)
     {
-        IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
+        IEnumerable<UserBasicViewModel> allClassrooms = await this._dbContext
             .Classrooms
             .Where(c => c.SchoolId == Guid.Parse(schoolId))
-            .Select(c => new BasicViewModel
+            .Select(c => new UserBasicViewModel
             {
                 Id = c.Id.ToString(),
                 Name = c.Name
@@ -188,11 +188,11 @@ public class ClassroomService : IClassroomService
         return false; // Return false if the classroom to delete is not found
     }
 
-    public async Task<BasicViewModel?> GetClassroomAsync(string id)
+    public async Task<UserBasicViewModel?> GetClassroomAsync(string id)
     {
         return await this._dbContext
             .Classrooms
-            .Select(c => new BasicViewModel
+            .Select(c => new UserBasicViewModel
             {
                 Id = c!.Id.ToString(),
                 Name = c.Name
