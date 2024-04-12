@@ -9,7 +9,7 @@
 	<hr/>
 
 	<dl class="row">
-		<dt class="col-sm-3">ID:</dt>
+		<dt class="col-sm-3">Classroom ID:</dt>
 		<dd class="col-sm-9">@Model.Id</dd>
 
 		<dt class="col-sm-3">Name:</dt>
@@ -20,13 +20,29 @@
 
 		<dt class="col-sm-3">Students Count:</dt>
 		<dd class="col-sm-9">@Model.StudentsCount</dd>
-
-		<dt class="col-sm-3">Students:</dt>
-		<dd class="col-sm-9">@Model.Students</dd>
+		
+		<h4 class="mt-2">Students:</h4>
+		<table class="table">
+			<thead>
+			<tr>
+				<th>ID</th>
+				<th>Full Name</th>
+			</tr>
+			</thead>
+			<tbody>
+			@foreach (var student in Model.Students)
+			{
+				<tr>
+					<td>@student.Id</td>
+					<td>@student.Name</td>
+				</tr>
+			}
+			</tbody>
+		</table>
 	</dl>
 
 	<div class="mt-4">
-		<a class="btn btn-primary mr-3" asp-controller="School" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-		<a class="btn btn-secondary" asp-controller="School" asp-action="All">Back to List</a>
+		<a class="btn btn-primary mr-3" asp-controller="Classroom" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+		<a class="btn btn-secondary" asp-controller="Classroom" asp-action="Manage" asp-route-schoolId="@Model.SchoolId">Back to List</a>
 	</div>
 </div>
