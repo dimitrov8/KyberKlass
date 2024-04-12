@@ -26,18 +26,6 @@
 				</button>
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 					<ul class="navbar-nav flex-grow-1">
-						<!-- Existing navigation items -->
-
-						<!-- Navigation button for managing users -->
-						<li class="nav-item">
-							<a class="nav-link" asp-area="" asp-controller="User" asp-action="All">Manage Users</a>
-						</li>
-						
-						<!-- Navigation button for managing users -->
-						<li class="nav-item">
-							<a class="nav-link" asp-area="" asp-controller="Teacher" asp-action="All">Manage Teachers</a>
-						</li>
-
 						<!-- First Dropdown for managing schools -->
 						<li class="nav-item">
 							<div class="dropdown">
@@ -56,10 +44,20 @@
 							</div>
 						</li>
 
-						@*<!-- Spacer between the two dropdowns -->
-						<li class="nav-item" style="margin-left: 10px;"></li>*@
+						<!-- Navigation button for managing users -->
+						<li class="nav-item">
+							<a class="nav-link" asp-area="" asp-controller="User" asp-action="All">Manage Users</a>
+						</li>
+						
+						<!-- Navigation button for managing teachers -->
+						<li class="nav-item">
+							<a class="nav-link" asp-area="" asp-controller="Teacher" asp-action="All">Manage Teachers</a>
+						</li>
 
-					
+						<!-- Navigation button for managing students -->
+						<li class="nav-item">
+							<a class="nav-link" asp-area="" asp-controller="Student" asp-action="All">Manage Students</a>
+						</li>
 
 					</ul>
 					<partial name="_LoginPartial"/>
@@ -83,9 +81,6 @@ else
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-						</li>
 					</ul>
 					<partial name="_LoginPartial"/>
 				</div>
@@ -106,7 +101,6 @@ else
 		{
 			@Html.Raw($" - {DateTime.UtcNow.Year}")
 		}
-		<a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 	</div>
 </footer>
 
