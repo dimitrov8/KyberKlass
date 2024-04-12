@@ -9,7 +9,7 @@ public class Student
 	[ForeignKey(nameof(ApplicationUser))]
 	public Guid Id { get; set; }
 
-	public ApplicationUser ApplicationUser { get; set; } = null!;
+	public ApplicationUser ApplicationUser { get; set; } =  null!;
 
 	[Required]
 	public Guid GuardianId { get; set; }
