@@ -7,5 +7,5 @@ public interface ITeacherService
 {
 	Task<List<UserViewModel>?> AllAsync();
 
-	Task<IEnumerable<UserBasicViewModel>> GetUnassignedTeachersAsync();
+	Task<IEnumerable<BasicViewModel>> GetUnassignedTeachersAsync();
 }

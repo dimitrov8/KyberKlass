@@ -18,9 +18,9 @@ public static class CustomMessageConstants
 		public const string EDIT_ERROR_MESSAGE = "An error occurred while editing the {0}."; // {0} => name of controller
 
 		// DELETION
-		public const string DELETION_SUCCESSFUL_MESSAGE = "{0} \"{1}\" succefully deleted."; // {0} => name of controller | {1} => name of model
+		public const string DELETION_SUCCESSFUL_MESSAGE = "{0} with ID: \"{1}\" succefully deleted."; // {0} => name of controller | {1} => name of model
 		public const string SOFT_DELETION_SUCCESSFUL_MESSAGE = "Successfully soft deleted {0} with ID: \"{1}\"."; // {0} => name of controller | {1} => id of model
-		public const string DELETION_ERROR_MESSAGE = "{0} delation failed. Please try again later."; // {0} => name of controller
+		public const string DELETION_ERROR_MESSAGE = "{0} with ID: \"{1}\" delation failed. Please try again later."; // {0} => name of controller
 	}
 
 	public static class User

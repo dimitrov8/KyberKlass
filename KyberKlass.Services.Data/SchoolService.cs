@@ -80,7 +80,7 @@ public class SchoolService : ISchoolService
                         Name = c.Name,
                         TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                         Students = c.Students
-                            .Select(st => new UserBasicViewModel
+                            .Select(st => new BasicViewModel
                             {
                                 Id = st.Id.ToString(),
                                 Name = st.ApplicationUser.GetFullName()
@@ -93,11 +93,11 @@ public class SchoolService : ISchoolService
     }
 
 	/// <inheritdoc />
-	public async Task<IEnumerable<UserBasicViewModel>> GetSchoolsAsync()
+	public async Task<IEnumerable<BasicViewModel>> GetSchoolsAsync()
     {
         return await this._dbContext
             .Schools
-            .Select(s => new UserBasicViewModel
+            .Select(s => new BasicViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.Name
@@ -199,7 +199,7 @@ public class SchoolService : ISchoolService
                         Name = c.Name,
                         TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                         Students = c.Students
-                            .Select(st => new UserBasicViewModel
+                            .Select(st => new BasicViewModel
                             {
                                 Id = st.Id.ToString(),
                                 Name = st.ApplicationUser.GetFullName()
