@@ -11,27 +11,37 @@ using Web.ViewModels.Admin.Guardian;
 using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
 
+/// <summary>
+/// Service for managing user-related operations.
+/// </summary>
 public class UserService : IUserService
 {
 	private readonly KyberKlassDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+	private readonly IGuardianService _guardianService;
+	private readonly ISchoolService _schoolService;
 
 	public UserService(KyberKlassDbContext dbContext,
 		UserManager<ApplicationUser> userManager,
-		RoleManager<IdentityRole<Guid>> roleManager)
+		RoleManager<IdentityRole<Guid>> roleManager,
+		IGuardianService guardianService,
+		ISchoolService schoolService)
 	{
 		this._dbContext = dbContext;
 		this._userManager = userManager;
 		this._roleManager = roleManager;
+		this._guardianService = guardianService;
+		this._schoolService = schoolService;
 	}
 
-	private async Task<IEnumerable<BasicViewModel>> GetAllStudentsAssignedByGuardianIdAsync(Guardian guardian)
+	// Helper method to retrieve all students assigned to a guardian
+	private async Task<IEnumerable<UserBasicViewModel>> GetAllStudentsAssignedByGuardianIdAsync(Guardian guardian)
 	{
-		IEnumerable<BasicViewModel> guardianStudents = await this._dbContext
+		IEnumerable<UserBasicViewModel> guardianStudents = await this._dbContext
 			.Students
 			.Where(s => s.Guardian.Id == guardian.Id)
-			.Select(s => new BasicViewModel
+			.Select(s => new UserBasicViewModel
 			{
 				Id = s.Id.ToString(),
 				Name = s.ApplicationUser.GetFullName()
@@ -42,7 +52,8 @@ public class UserService : IUserService
 		return guardianStudents;
 	}
 
-	public async Task<List<UserViewModel>> AllAsync()
+	/// <inheritdoc />
+	public async Task<IEnumerable<UserViewModel>> AllAsync()
 	{
 		var usersWithRoles = await this._dbContext.Users
 			.Select(user => new
@@ -58,7 +69,7 @@ public class UserService : IUserService
 			})
 			.ToListAsync();
 
-		List<UserViewModel> userViewModels = usersWithRoles
+		IEnumerable<UserViewModel> userViewModels = usersWithRoles
 			.Select(u => new UserViewModel
 			{
 				Id = u.User.Id.ToString(),
@@ -67,28 +78,21 @@ public class UserService : IUserService
 				Role = u.Roles.FirstOrDefault() ?? "No Role Assigned",
 				IsActive = u.User.IsActive
 			})
-			.ToList();
+			.ToArray();
 
 		return userViewModels; // TODO Make this method better
 	}
 
-	/// <summary>
-	///     Retrieves details of a user asynchronously based on the provided ID.
-	/// </summary>
-	/// <param name="id">The ID of the user to retrieve details for.</param>
-	/// <returns>
-	///     A user details view model representing the specified user, or null if the user is not found.
-	/// </returns>
+	/// <inheritdoc />
 	public async Task<UserDetailsViewModel?> GetDetailsAsync(string id)
 	{
-		var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
+		var user = await this.GetUserById(id); 
 
 		if (user == null)
 		{
-			return null; // Return null if the user is not found
+			return null;
 		}
 
-		// Map user details to a view model
 		var viewModel = new UserDetailsViewModel
 		{
 			Id = user.Id.ToString(),
@@ -111,7 +115,7 @@ public class UserService : IUserService
 
 			if (guardian != null)
 			{
-				IEnumerable<BasicViewModel> guardianStudents = await this.GetAllStudentsAssignedByGuardianIdAsync(guardian);
+				IEnumerable<UserBasicViewModel> guardianStudents = await this.GetAllStudentsAssignedByGuardianIdAsync(guardian);
 
 				viewModel.Guardian = new GuardianViewModel
 				{
@@ -127,10 +131,10 @@ public class UserService : IUserService
 		}
 		else if (viewModel.Role == "Guardian")
 		{
-			IEnumerable<BasicViewModel> students = await this._dbContext
+			IEnumerable<UserBasicViewModel> students = await this._dbContext
 				.Students
 				.Where(s => s.Guardian.Id == user.Id)
-				.Select(s => new BasicViewModel
+				.Select(s => new UserBasicViewModel
 				{
 					Id = s.Id.ToString().ToLower(),
 					Name = s.ApplicationUser.GetFullName()
@@ -144,27 +148,20 @@ public class UserService : IUserService
 		return viewModel;
 	}
 
-	/// <summary>
-	///     Retrieves a user asynchronously for updating their role based on the provided ID.
-	/// </summary>
-	/// <param name="id">The ID of the user to retrieve for updating their role.</param>
-	/// <returns>
-	///     A user update role view model representing the specified user, or null if the user is not found.
-	/// </returns>
+	/// <inheritdoc />
 	public async Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id)
 	{
-		var user = await this.GetUserById(id); // Retrieve the user from the database based on the provided ID
+		var user = await this.GetUserById(id); 
 
 		if (user == null)
 		{
-			return null; // Return null if the user is not found
+			return null; 
 		}
 
 		string currentRoleName = await user.GetRoleAsync(this._userManager);
 
-		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync(); // Retrieve all available roles asynchronously
+		IEnumerable<UserRolesViewModel> availableRoles = await this.GetAllRolesAsync();
 
-		// Create a view model for updating user role
 		var viewModel = new UserUpdateRoleViewModel
 		{
 			Id = user.Id.ToString(),
@@ -173,14 +170,14 @@ public class UserService : IUserService
 			IsActive = user.IsActive,
 			PreviousRoleName = currentRoleName,
 			CurrentRoleName = currentRoleName,
-			AvailableRoles = availableRoles // Assign available roles to the view model
+			AvailableRoles = availableRoles
 		};
 
 		if (currentRoleName == "Guardian")
 		{
-			IEnumerable<BasicViewModel> students = await this._dbContext.Students
+			IEnumerable<UserBasicViewModel> students = await this._dbContext.Students
 				.Where(s => s.Guardian.Id == user.Id)
-				.Select(s => new BasicViewModel
+				.Select(s => new UserBasicViewModel
 				{
 					Id = s.Id.ToString(),
 					Name = s.ApplicationUser.GetFullName()
@@ -194,57 +191,77 @@ public class UserService : IUserService
 		return viewModel;
 	}
 
-	public async Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync()
+	/// <inheritdoc />
+	public async Task<IEnumerable<UserBasicViewModel>> GetAllGuardiansAsync()
 	{
 		IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
 
-		List<BasicViewModel> guardianViewModels = guardians
-			.Select(g => new BasicViewModel
+		IEnumerable<UserBasicViewModel> guardianViewModels = guardians
+			.Select(g => new UserBasicViewModel
 			{
 				Id = g.Id.ToString(),
 				Name = g.GetFullName()
 			})
-			.ToList();
+			.ToArray();
 
 		return guardianViewModels;
 	}
 
+	/// <inheritdoc />
 	public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
 	{
-		// Check if the user with the provided userId is assigned to any classroom as a teacher
 		bool isAssigned = await this._dbContext.Classrooms
+			.AsNoTracking()
 			.AnyAsync(c => c.TeacherId == Guid.Parse(userId));
 
 		return isAssigned;
 	}
 
+	/// <inheritdoc />
 	public async Task<bool> IsGuardianAssignedToStudentAsync(string userId)
 	{
 		bool isAssigned = await this._dbContext.Students
+			.AsNoTracking()
 			.AnyAsync(s => s.Guardian.Id == Guid.Parse(userId));
 
 		return isAssigned;
 	}
 
-	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? classroomId)
+	/// <inheritdoc />
+	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId,  string? schoolId, string? classroomId)
 	{
 		var user = await this.GetUserById(userId);
 		if (user == null)
 			return false;
 
-		IdentityRole<Guid>? role = await this._roleManager.FindByIdAsync(roleId);
-		if (role == null)
+		IdentityRole<Guid>? roleToUpdate = await this._roleManager.FindByIdAsync(roleId); // Role to update to
+		if (roleToUpdate == null)
 			return false;
 
-		string currentRoleName = await user.GetRoleAsync(this._userManager);
-		if (currentRoleName == role.Name)
+		string currentRoleName = await user.GetRoleAsync(this._userManager); // Current user role
+		if (currentRoleName == roleToUpdate.Name)
 			return true;
 
-		if (currentRoleName == "Guardian")
+		if (currentRoleName == "Guardian") // If current user role is "Guardian"
 		{
-			var guardian = await this._dbContext.Guardians.FindAsync(user.Id);
+			var guardian = await this._dbContext.Guardians.FindAsync(user.Id); // Get the guardian entity
 
-			if (guardian != null && guardian.Students.Any())
+			if (guardian != null && guardian.Students.Any()) // If the guardian exists and has students assigned
+			{
+				return false; // Return false
+			}
+		}
+
+		// If roleToUpdate is "Student" and ID'S required are not null
+		if (roleToUpdate.Name == "Student" && guardianId != null && schoolId != null && classroomId != null)
+		{
+			// Validations for guardian school and classroom to assign to "Student"
+			var guardianToAssign = await this._guardianService.GetByIdAsync(guardianId);
+			var schoolToAssign = await this._schoolService.GetByIdAsync(schoolId);
+			bool classroomExistsInSchool = await this._schoolService.ClassroomExistsInSchoolAsync(schoolId, classroomId);
+
+			// If any of the validations fail return false
+			if (guardianToAssign == null || schoolToAssign == null || classroomExistsInSchool == false)
 			{
 				return false;
 			}
@@ -268,7 +285,7 @@ public class UserService : IUserService
                 }
             }
 
-			var addResult = await this._userManager.AddToRoleAsync(user, role.Name);
+			var addResult = await this._userManager.AddToRoleAsync(user, roleToUpdate.Name);
 
 			if (addResult.Succeeded == false)
 			{
@@ -277,7 +294,7 @@ public class UserService : IUserService
 				return false;
 			}
 
-			user.Role = role;
+			user.Role = roleToUpdate;
 
 			// Update user role-related tables in the database
 			// Remove user from the current role table based on the previous role
@@ -304,7 +321,7 @@ public class UserService : IUserService
 			}
 
 			// Update user role table based on the new role
-			switch (role.Name)
+			switch (roleToUpdate.Name)
 			{
 				case "Teacher":
 					this._dbContext.Teachers.Add(new Teacher { Id = user.Id });
@@ -317,6 +334,7 @@ public class UserService : IUserService
 					{
 						Id = user.Id,
 						GuardianId = Guid.Parse(guardianId!),
+						SchoolId = Guid.Parse(schoolId!),
 						ClassroomId = Guid.Parse(classroomId!)
 					});
 
@@ -339,10 +357,7 @@ public class UserService : IUserService
 		}
 	}
 
-	/// <summary>
-	///     Retrieves all roles from the database and returns them as an enumerable collection of UserRolesViewModel objects.
-	/// </summary>
-	/// <returns>An enumerable collection of UserRolesViewModel objects representing all roles.</returns>
+	/// <inheritdoc />
 	public async Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync()
 	{
 		IEnumerable<UserRolesViewModel> allRoles = await this._roleManager
@@ -358,6 +373,7 @@ public class UserService : IUserService
 		return allRoles;
 	}
 
+	/// <inheritdoc />
 	public async Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model)
 	{
 		var user = await this.GetUserById(id);
@@ -381,6 +397,7 @@ public class UserService : IUserService
 		return model;
 	}
 
+	/// <inheritdoc />
 	public async Task<UserEditFormModel?> GetForEditAsync(string id)
 	{
 		var user = await this.GetUserById(id);
@@ -405,6 +422,7 @@ public class UserService : IUserService
 		return viewModel;
 	}
 
+	/// <inheritdoc />
 	public async Task<ApplicationUser?> GetUserById(string id)
 	{
 		return await this._dbContext
@@ -412,6 +430,7 @@ public class UserService : IUserService
 			.FindAsync(Guid.Parse(id));
 	}
 
+	/// <inheritdoc />
 	public async Task<string?> GetRoleNameByIdAsync(string id)
 	{
 		IdentityRole<Guid>? role = await this._roleManager.FindByIdAsync(id);
