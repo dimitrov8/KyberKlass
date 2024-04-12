@@ -9,7 +9,7 @@ using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.School;
 
 /// <summary>
-///     Provides functionality to interact with school data in the database.
+///  Service class responsible for managing schools.
 /// </summary>
 public class SchoolService : ISchoolService
 {
@@ -24,12 +24,8 @@ public class SchoolService : ISchoolService
         this._dbContext = dbContext;
     }
 
-    /// <summary>
-    ///     Adds a new school to the database.
-    /// </summary>
-    /// <param name="model">The model containing school data.</param>
-    /// <returns>True if the school is successfully added; otherwise, false.</returns>
-    public async Task<bool> AddAsync(AddSchoolFormModel model)
+    /// <inheritdoc />
+	public async Task<bool> AddAsync(AddSchoolFormModel model)
     {
         var newSchool = new School
         {
@@ -51,16 +47,13 @@ public class SchoolService : ISchoolService
 
         // Add the new school to the database and save changes
         await this._dbContext.Schools.AddAsync(newSchool);
-        await this._dbContext.SaveChangesAsync(); // Return true if the school is successfully added
+        await this._dbContext.SaveChangesAsync();
 
         return true;
     }
 
-    /// <summary>
-    ///     Retrieves all schools from the database.
-    /// </summary>
-    /// <returns>An enumerable collection of school view models.</returns>
-    public async Task<IEnumerable<SchoolViewModel>> AllAsync()
+	/// <inheritdoc />
+	public async Task<IEnumerable<SchoolViewModel>> AllAsync()
     {
         School[] schools = await this._dbContext
             .Schools
@@ -87,7 +80,7 @@ public class SchoolService : ISchoolService
                         Name = c.Name,
                         TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                         Students = c.Students
-                            .Select(st => new BasicViewModel
+                            .Select(st => new UserBasicViewModel
                             {
                                 Id = st.Id.ToString(),
                                 Name = st.ApplicationUser.GetFullName()
@@ -96,14 +89,15 @@ public class SchoolService : ISchoolService
                     })
             });
 
-        return viewModel; // Return the collection of schools with their classrooms
+        return viewModel;
     }
 
-    public async Task<IEnumerable<BasicViewModel>> GetSchoolsAsync()
+	/// <inheritdoc />
+	public async Task<IEnumerable<UserBasicViewModel>> GetSchoolsAsync()
     {
         return await this._dbContext
             .Schools
-            .Select(s => new BasicViewModel
+            .Select(s => new UserBasicViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.Name
@@ -112,12 +106,8 @@ public class SchoolService : ISchoolService
             .ToArrayAsync();
     }
 
-    /// <summary>
-    ///     Retrieves school data for editing based on the provided school ID.
-    /// </summary>
-    /// <param name="id">The ID of the school to retrieve.</param>
-    /// <returns>The school data for editing as an instance of <see cref="AddSchoolFormModel" />.</returns>
-    public async Task<AddSchoolFormModel?> GetForEditAsync(string id)
+	/// <inheritdoc />
+	public async Task<AddSchoolFormModel?> GetForEditAsync(string id)
     {
         var viewModel = await this._dbContext
             .Schools
@@ -136,12 +126,17 @@ public class SchoolService : ISchoolService
         return viewModel;
     }
 
-    /// <summary>
-    ///     Retrieves school data for deletion based on the provided school ID.
-    /// </summary>
-    /// <param name="id">The ID of the school to retrieve.</param>
-    /// <returns>The school data for deletion as an instance of <see cref="SchoolViewModel" />.</returns>
-    public async Task<SchoolViewModel?> GetForDeleteAsync(string id)
+	/// <inheritdoc />
+	public async Task<bool> ClassroomExistsInSchoolAsync(string schoolId, string classroomId)
+    {
+	    return this._dbContext
+		    .Schools
+		    .AsNoTracking()
+		    .Any(s => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
+    }
+
+	/// <inheritdoc />
+	public async Task<SchoolViewModel?> GetForDeleteAsync(string id)
     {
         var viewModel = await this._dbContext
             .Schools
@@ -161,13 +156,8 @@ public class SchoolService : ISchoolService
         return viewModel;
     }
 
-    /// <summary>
-    ///     Edits an existing school in the database.
-    /// </summary>
-    /// <param name="id">The ID of the school to edit.</param>
-    /// <param name="model">The updated school data.</param>
-    /// <returns>True if the school is successfully edited; otherwise, false.</returns>
-    public async Task<bool> EditAsync(string id, SchoolViewModel model)
+	/// <inheritdoc />
+	public async Task<bool> EditAsync(string id, SchoolViewModel model)
     {
         var schoolForEdit = await this._dbContext.Schools.FindAsync(Guid.Parse(id));
 
@@ -188,12 +178,8 @@ public class SchoolService : ISchoolService
         return true; // Return true if the school is successfully edited
     }
 
-    /// <summary>
-    ///     Retrieves details of a school based on the provided school ID.
-    /// </summary>
-    /// <param name="id">The ID of the school to retrieve.</param>
-    /// <returns>The details of the school as an instance of <see cref="SchoolViewModel" />.</returns>
-    public async Task<SchoolViewModel?> ViewDetailsAsync(string id)
+	/// <inheritdoc />
+	public async Task<SchoolViewModel?> ViewDetailsAsync(string id)
     {
         var viewModel = await this._dbContext
             .Schools
@@ -213,7 +199,7 @@ public class SchoolService : ISchoolService
                         Name = c.Name,
                         TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                         Students = c.Students
-                            .Select(st => new BasicViewModel
+                            .Select(st => new UserBasicViewModel
                             {
                                 Id = st.Id.ToString(),
                                 Name = st.ApplicationUser.GetFullName()
@@ -228,12 +214,8 @@ public class SchoolService : ISchoolService
         return viewModel;
     }
 
-    /// <summary>
-    ///     Deletes a school from the database based on the provided school ID.
-    /// </summary>
-    /// <param name="id">The ID of the school to delete.</param>
-    /// <returns>True if the school is successfully deleted; otherwise, false.</returns>
-    public async Task<bool> DeleteAsync(string id)
+	/// <inheritdoc />
+	public async Task<bool> DeleteAsync(string id)
     {
         var schoolToDelete = await this._dbContext.Schools.FindAsync(Guid.Parse(id));
 
@@ -243,18 +225,14 @@ public class SchoolService : ISchoolService
             this._dbContext.Schools.Remove(schoolToDelete);
             await this._dbContext.SaveChangesAsync();
 
-            return true; // Return true if the school is successfully deleted
+            return true; 
         }
 
-        return false; // Return false if the school to delete is not found
+        return false;
     }
 
-    /// <summary>
-    ///     Retrieves details of a school based on the provided school ID.
-    /// </summary>
-    /// <param name="id">The ID of the school to retrieve.</param>
-    /// <returns>The details of the school as an instance of <see cref="SchoolViewModel" />.</returns>
-    public async Task<SchoolViewModel?> GetByIdAsync(string id)
+	/// <inheritdoc />
+	public async Task<SchoolViewModel?> GetByIdAsync(string id)
     {
         var school = await this._dbContext
             .Schools
@@ -274,6 +252,6 @@ public class SchoolService : ISchoolService
             };
         }
 
-        return null; // Return null if the school with the provided ID is not found
+        return null;
     }
 }
