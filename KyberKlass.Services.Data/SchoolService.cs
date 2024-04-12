@@ -74,7 +74,7 @@ public class SchoolService : ISchoolService
                 PhoneNumber = s.PhoneNumber,
                 IsActive = s.IsActive,
                 Classrooms = s.Classrooms
-                    .Select(c => new ClassroomViewModel
+                    .Select(c => new ClassroomDetailsViewModel
                     {
                         Id = c.Id.ToString(),
                         Name = c.Name,
@@ -193,7 +193,7 @@ public class SchoolService : ISchoolService
                 PhoneNumber = s.PhoneNumber,
                 IsActive = s.IsActive,
                 Classrooms = s.Classrooms
-                    .Select(c => new ClassroomViewModel
+                    .Select(c => new ClassroomDetailsViewModel
                     {
                         Id = c.Id.ToString(),
                         Name = c.Name,

@@ -31,10 +31,10 @@ public class ClassroomService : IClassroomService
     public async Task<ManageClassroomsViewModel> GetManageClassroomsAsync(string schoolId)
     {
         var school = await this._dbContext.Schools.FindAsync(Guid.Parse(schoolId)); // Retrieve the school
-        IEnumerable<ClassroomViewModel> classrooms = await this._dbContext
+        IEnumerable<ClassroomDetailsViewModel> classrooms = await this._dbContext
             .Classrooms
             .Where(c => c.SchoolId == school!.Id)
-            .Select(c => new ClassroomViewModel
+            .Select(c => new ClassroomDetailsViewModel
             {
                 Id = c.Id.ToString(),
                 Name = c.Name,
@@ -59,7 +59,7 @@ public class ClassroomService : IClassroomService
     }
 
 
-    public async Task<IEnumerable<ClassroomViewModel>> GetClassroomsAsync(string schoolId)
+    public async Task<IEnumerable<ClassroomDetailsViewModel>> GetClassroomsAsync(string schoolId)
     {
         Classroom[] classrooms = await this._dbContext
             .Classrooms
@@ -70,7 +70,7 @@ public class ClassroomService : IClassroomService
             .AsNoTracking()
             .ToArrayAsync();
 
-        IEnumerable<ClassroomViewModel> classroomViewModels = classrooms.Select(c => new ClassroomViewModel
+        IEnumerable<ClassroomDetailsViewModel> classroomViewModels = classrooms.Select(c => new ClassroomDetailsViewModel
         {
             Id = c.Id.ToString(),
             Name = c.Name,

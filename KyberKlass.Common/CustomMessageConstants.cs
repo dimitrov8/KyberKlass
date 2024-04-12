@@ -8,7 +8,7 @@ public static class CustomMessageConstants
 
 		// ADDITION
 		public const string ADDITION_SUCCESSFUL_MESSAGE = "{0} \"{1}\" is successfully added."; // {0} => name of controller | {1} => name of model
-		public const string ALREADY_ADDED_MESSAGE = "{0} \"{1}\" is already added."; // {0} => name of controller | {1} => name of model
+		public const string ALREADY_ADDED_MESSAGE = "{0} \"{1}\" already exists."; // {0} => name of controller | {1} => name of model
 		public const string UNABLE_TO_ADD_MESSAGE = "Unable to add {0}. Please try again."; // {0} => name of controller
 		public const string ADDITION_ERROR_MESSAGE = "An error occurred while adding the {0}."; // {0} => name of controller
 

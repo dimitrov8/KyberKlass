@@ -9,7 +9,7 @@ public interface IClassroomService
 
     Task<ManageClassroomsViewModel> GetManageClassroomsAsync(string schoolId);
 
-    Task<IEnumerable<ClassroomViewModel>> GetClassroomsAsync(string schoolId);
+    Task<IEnumerable<ClassroomDetailsViewModel>> GetClassroomsAsync(string schoolId);
 
     Task<IEnumerable<UserBasicViewModel>> GetAllSchoolClassroomsAsync();
 

@@ -48,7 +48,7 @@ public class ClassroomController : Controller
                 return this.NotFound();
             }
 
-            IEnumerable<ClassroomViewModel> classrooms = await this._classroomService.GetClassroomsAsync(schoolId);
+            IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.GetClassroomsAsync(schoolId);
 
             var viewModel = new ManageClassroomsViewModel
             {
