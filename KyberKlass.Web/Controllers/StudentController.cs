@@ -1,13 +1,14 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
 using Infrastructure.Extensions;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
 using static Common.CustomMessageConstants.Common;
 using static Common.CustomMessageConstants.Student;
 
-[Authorize(Roles = "Student, Admin")]
+[Authorize(Roles = "Admin")]
 public class StudentController : Controller
 {
 	private readonly IStudentService _studentService;
@@ -24,7 +25,14 @@ public class StudentController : Controller
 	}
 
 	[HttpGet]
-	[Authorize(Roles = "Admin")]
+	public async Task<IActionResult> All()
+	{
+		IEnumerable<UserViewModel>? allStudentsViewModel = await this._studentService.AllAsync();
+
+		return this.View(this.GetViewPath(nameof(this.All)), allStudentsViewModel);
+	}
+
+	[HttpGet]
 	public async Task<IActionResult> ChangeGuardian(string id)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
@@ -52,7 +60,6 @@ public class StudentController : Controller
 	}
 
 	[HttpPost]
-	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> ChangeGuardian(string id, string guardianId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null) &&
