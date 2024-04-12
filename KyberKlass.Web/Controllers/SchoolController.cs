@@ -245,15 +245,16 @@ public class SchoolController : Controller
 
 			if (successfullyDeleted)
 			{
-				this.TempData["SuccessMessage"] = string.Empty;
+				this.TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, id);
 
 				return this.RedirectToAction(nameof(this.All));
 			}
 
-			return this.BadRequest(DELETION_ERROR_MESSAGE);
+			return this.BadRequest(string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id));
 		}
 		catch (Exception)
 		{
+			this.TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id);
 			return this.RedirectToAction(nameof(this.All));
 		}
 	}
@@ -264,7 +265,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> GetSchools()
     {
-        IEnumerable<UserBasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
+        IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
 
         return this.Json(allSchools);
     }
