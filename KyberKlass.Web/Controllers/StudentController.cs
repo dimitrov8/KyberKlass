@@ -78,7 +78,7 @@ public class StudentController : Controller
 			{
 				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_CHANGED_GUARDIAN, id);
 
-				return this.RedirectToAction("ChangeGuardian");
+				return this.RedirectToAction(nameof(this.ChangeGuardian), new {id, guardianId});
 			}
 
 			this.TempData["ErrorMessage"] = GUARDIAN_ALREADY_SET;
