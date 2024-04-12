@@ -45,7 +45,8 @@
 			<td>
 				<!-- Details button -->
 				<form asp-controller="Classroom" asp-action="Details" method="get" style="display : inline;">
-					<input type="hidden" name="id" value="@classroom.Id" />
+					<input type="hidden" name="schoolId" value="@Model.SchoolId" />
+					<input type="hidden" name="classroomId" value="@classroom.Id" />
 					<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
 				</form>
 
@@ -73,6 +74,7 @@
 }
 
 <a asp-controller="Classroom" asp-action="Add" asp-route-schoolId="@Model.SchoolId" class="btn btn-success">Add Classroom</a>
+<a asp-controller="School" asp-action="All" class="btn btn-secondary">Back to List</a>
 
 @section scripts
     {
