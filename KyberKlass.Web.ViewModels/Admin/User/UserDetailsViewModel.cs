@@ -8,7 +8,7 @@ public class UserDetailsViewModel
 {
     public UserDetailsViewModel()
     {
-        this.Students = new HashSet<BasicViewModel>();
+        this.Students = new HashSet<UserBasicViewModel>();
     }
 
     public string Id { get; set; } = null!;
@@ -30,7 +30,7 @@ public class UserDetailsViewModel
     // Additional properties if user has student role
     // Properties for student's guardian information
     public GuardianViewModel? Guardian { get; set; }
-    public IEnumerable<BasicViewModel>? Students { get; set; }
+    public IEnumerable<UserBasicViewModel>? Students { get; set; }
 
     // Property for student's school information
     public IEnumerable<SchoolViewModel>? School { get; set; }

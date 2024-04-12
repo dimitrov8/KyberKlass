@@ -1,14 +1,13 @@
 ﻿namespace KyberKlass.Web.ViewModels.Admin.Classroom;
 
 using System.ComponentModel.DataAnnotations;
-using User;
 using static Common.EntityValidations.Classroom;
 
 public class AddClassroomViewModel
 {
 	public AddClassroomViewModel()
 	{
-		this.UnassignedTeachers = new HashSet<BasicViewModel>();
+		this.UnassignedTeachers = new HashSet<UserBasicViewModel>();
 	}
 
 	[Required(ErrorMessage = "Classroom name is required.")]
@@ -24,5 +23,5 @@ public class AddClassroomViewModel
 	[Required]
 	public string SchoolId { get; set; } = null!;
 
-	public IEnumerable<BasicViewModel> UnassignedTeachers { get; set; }
+	public IEnumerable<UserBasicViewModel> UnassignedTeachers { get; set; }
 }

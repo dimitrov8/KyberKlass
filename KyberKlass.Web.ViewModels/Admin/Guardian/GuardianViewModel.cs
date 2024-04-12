@@ -6,7 +6,7 @@ public class GuardianViewModel
 {
 	public GuardianViewModel()
 	{
-		this.Students = new HashSet<BasicViewModel>();
+		this.Students = new HashSet<UserBasicViewModel>();
 	}
 
 	public string Id { get; set; } = null!;
@@ -19,5 +19,5 @@ public class GuardianViewModel
 
 	public string PhoneNumber { get; set; } = null!;
 
-	public IEnumerable<BasicViewModel> Students { get; set; }
+	public IEnumerable<UserBasicViewModel> Students { get; set; }
 }
