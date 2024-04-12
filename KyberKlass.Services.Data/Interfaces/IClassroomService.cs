@@ -5,15 +5,15 @@ using Web.ViewModels.Admin.Classroom;
 
 public interface IClassroomService
 {
-    Task<BasicViewModel?> GetClassroomAsync(string id);
+    Task<UserBasicViewModel?> GetClassroomAsync(string id);
 
     Task<ManageClassroomsViewModel> GetManageClassroomsAsync(string schoolId);
 
     Task<IEnumerable<ClassroomViewModel>> GetClassroomsAsync(string schoolId);
 
-    Task<IEnumerable<BasicViewModel>> GetAllSchoolClassroomsAsync();
+    Task<IEnumerable<UserBasicViewModel>> GetAllSchoolClassroomsAsync();
 
-    Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolId(string schoolId);
+    Task<IEnumerable<UserBasicViewModel>> GetAllClassroomsBySchoolId(string schoolId);
 
     Task<bool> AddAsync(AddClassroomViewModel model);
 

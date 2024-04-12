@@ -1,15 +1,17 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
-using KyberKlass.Web.ViewModels.Admin;
+using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Student;
 using Web.ViewModels.Admin.User;
 
 public interface IStudentService
 {
-	public Task<Student?> GetById(string id);
+	public Task<IEnumerable<UserViewModel>?> AllAsync();
 
-	Task<IEnumerable<BasicViewModel>> GetUnassignedStudentsAsync();
+	public Task<Student?> GetByIdASync(string id);
+
+	Task<IEnumerable<UserBasicViewModel>> GetUnassignedStudentsAsync();
 
 	Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId);
 
