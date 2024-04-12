@@ -1,7 +1,5 @@
 ﻿namespace KyberKlass.Web.ViewModels.Admin.Guardian;
 
-using User;
-
 public class GuardianViewModel
 {
 	public GuardianViewModel()

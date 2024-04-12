@@ -7,7 +7,7 @@ public class SchoolViewModel
 {
 	public SchoolViewModel()
 	{
-		this.Classrooms = new HashSet<ClassroomViewModel>();
+		this.Classrooms = new HashSet<ClassroomDetailsViewModel>();
 	}
 
 	public string Id { get; set; } = null!;
@@ -29,5 +29,5 @@ public class SchoolViewModel
 	[Display(Name = "Total Students")]
 	public int TotalStudents => this.Classrooms.Sum(s => s.StudentsCount);
 
-	public IEnumerable<ClassroomViewModel> Classrooms { get; set; }
+	public IEnumerable<ClassroomDetailsViewModel> Classrooms { get; set; }
 }
