@@ -26,12 +26,15 @@ public static class CustomMessageConstants
 	public static class User
 	{
 		// Role
-		public const string ROLE_UPDATE_SUCCESS_MESSAGE = "Successfully updated role.";
-		public const string ROLE_UPDATE_FAILED_MESSAGE = "Failed to update user role.";
-		public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a teacher in a classroom. " +
+		public const string ROLE_UPDATE_SUCCESS_MESSAGE = "Successfully updated role for User with ID: \"{0}\".";
+		public const string ROLE_UPDATE_FAILED_MESSAGE = "Failed to update role for User with ID: \"{0}\".";
+
+        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. User with ID: \"{0}\" is currently assigned as a teacher in a classroom. " +
 		                                                                     "Please reassign the classroom teacher before attempting to update the role.";
-		public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. The user is currently assigned as a guardian for one or more students. " +
+		public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. User with ID: \"{0}\" is currently assigned as a guardian for one or more students. " +
 		                                                                      "Please reassign the guardian for the affected student(s) before attempting to update the role.";
+
+		public const string FAILED_TO_UPDATE_TO_STUDENT_ROLE_MESSAGE = "Failed to update role to Student. Invalid guardian, school, or classroom.";
 	}
 
 	public static class Student
