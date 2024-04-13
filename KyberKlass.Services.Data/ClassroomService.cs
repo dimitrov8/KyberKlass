@@ -88,6 +88,7 @@ public class ClassroomService : IClassroomService
 				SchoolId = schoolId,
 				Name = c.Name,
 				TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+				IsActive = c.IsActive,
 				Students = c.Students
 					.Select(s => new BasicViewModel
 					{
@@ -117,6 +118,7 @@ public class ClassroomService : IClassroomService
 			Id = c.Id.ToString(),
 			Name = c.Name,
 			TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+			IsActive = c.IsActive,
 			Students = c.Students // todo classrooms
 				.Select(s => new BasicViewModel
 				{
