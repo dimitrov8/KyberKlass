@@ -14,12 +14,16 @@ public class UserController : Controller
 {
 	private readonly IUserService _userService;
 	private readonly ISchoolService _schoolService;
+	private readonly ITeacherService _teacherService;
+	private readonly IGuardianService _guardianService;
 	private const string CONTROLLER_NAME = "User";
 
-	public UserController(IUserService userService, ISchoolService schoolService)
+	public UserController(IUserService userService, ISchoolService schoolService, ITeacherService teacherService, IGuardianService guardianService)
 	{
 		this._userService = userService;
 		this._schoolService = schoolService;
+		this._teacherService = teacherService;
+		this._guardianService = guardianService;
 	}
 
 	private string GetViewPath(string viewName)
@@ -180,19 +184,19 @@ public class UserController : Controller
 			if (roleToUpdateTo != null && currentRole == "Teacher") // If user wants to update to a valid role and his current role is "Teacher"
 			{
 				// Checks if teacher is assigned to a classroom
-				bool isTeacherAssignedToClassroom = await this._userService.IsTeacherAssignedToClassroomAsync(id);
+				bool isTeacherAssignedToClassroom = await this._teacherService.IsTeacherAssignedToClassroomAsync(id);
 
 				if (isTeacherAssignedToClassroom) // If teacher is assigned to a classroom
 				{
 					// Display a message to change the classroom teacher
 					this.TempData["ErrorMessage"] = string.Format(FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE, id);
-                    this.RedirectToAction(nameof(this.All));
+                    return this.RedirectToAction(nameof(this.All));
                 }
 			}
 			else if (roleToUpdateTo != null && currentRole == "Guardian") // If user wants to update to a valid role and his current role is "Guardian"
 			{
 				// Checks if guardian is assigned to any student
-				bool isGuardianAssignedToStudent = await this._userService.IsGuardianAssignedToStudentAsync(id); 
+				bool isGuardianAssignedToStudent = await this._guardianService.IsGuardianAssignedToStudentAsync(id); 
 
 				if (isGuardianAssignedToStudent) // If guardian is assigned to any student
 				{
@@ -227,8 +231,8 @@ public class UserController : Controller
 	[HttpGet]
 	public async Task<IActionResult> GetGuardiansAndSchools()
 	{
-		IEnumerable<BasicViewModel> guardians = await this._userService.GetAllGuardiansAsync(); // Fetch guardians
-		IEnumerable<BasicViewModel> schools = await this._schoolService.GetSchoolsAsync(); // Fetch schools
+		IEnumerable<BasicViewModel> guardians = await this._guardianService.GetAllGuardiansAsync(); // Fetch guardians
+		IEnumerable<BasicViewModel> schools = await this._schoolService.BasicAllAsync(); // Fetch schools
 
 		var data = new
 		{

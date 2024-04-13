@@ -1,8 +1,6 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
-using KyberKlass.Web.ViewModels.Admin.School;
-using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
 /// <summary>
@@ -66,20 +64,6 @@ public interface IUserService
 	Task<string?> GetRoleNameByIdAsync(string id);
 
 	/// <summary>
-	/// Checks if a teacher is assigned to any classroom asynchronously.
-	/// </summary>
-	/// <param name="userId">The unique identifier of the teacher.</param>
-	/// <returns>True if the teacher is assigned to any classroom; otherwise, false.</returns>
-	Task<bool> IsTeacherAssignedToClassroomAsync(string userId);
-
-	/// <summary>
-	/// Checks if a guardian is assigned to any student asynchronously.
-	/// </summary>
-	/// <param name="userId">The unique identifier of the guardian.</param>
-	/// <returns>True if the guardian is assigned to any student; otherwise, false.</returns>
-	Task<bool> IsGuardianAssignedToStudentAsync(string userId);
-
-	/// <summary>
 	/// Updates the role of a user asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
@@ -89,10 +73,4 @@ public interface IUserService
 	/// <param name="classroomId">The unique identifier of the classroom (if applicable).</param>
 	/// <returns>True if the role update was successful; otherwise, false.</returns>
 	Task<bool> UpdateRoleAsync(string id, string roleId, string? guardianId, string? schoolId, string? classroomId);
-
-	/// <summary>
-	/// Retrieves a collection of basic view models for all guardians asynchronously.
-	/// </summary>
-	/// <returns>A collection of basic view models representing all guardians.</returns>
-	Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync();
 }

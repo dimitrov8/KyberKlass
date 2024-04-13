@@ -9,25 +9,25 @@ using static Common.CustomMessageConstants.Common;
 
 public class ClassroomController : Controller
 {
-    private readonly ISchoolService _schoolService;
-    private readonly IClassroomService _classroomService;
-    private readonly ITeacherService _teacherService;
+	private readonly ISchoolService _schoolService;
+	private readonly IClassroomService _classroomService;
+	private readonly ITeacherService _teacherService;
 
-    private const string CONTROLLER_NAME = "Classroom";
+	private const string CONTROLLER_NAME = "Classroom";
 
-    public ClassroomController(ISchoolService schoolService,
-        IClassroomService classroomService,
-        ITeacherService teacherService)
-    {
-        this._schoolService = schoolService;
-        this._classroomService = classroomService;
-        this._teacherService = teacherService;
-    }
+	public ClassroomController(ISchoolService schoolService,
+		IClassroomService classroomService,
+		ITeacherService teacherService)
+	{
+		this._schoolService = schoolService;
+		this._classroomService = classroomService;
+		this._teacherService = teacherService;
+	}
 
-    private string GetViewPath(string viewName)
-    {
-        return $"~/Views/Admin/Classroom/{viewName}.cshtml";
-    }
+	private string GetViewPath(string viewName)
+	{
+		return $"~/Views/Admin/Classroom/{viewName}.cshtml";
+	}
 
 	[HttpGet]
 	public async Task<IActionResult> Add(string schoolId)
@@ -115,7 +115,7 @@ public class ClassroomController : Controller
 	public async Task<IActionResult> Details(string schoolId, string classroomId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
-		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
 
 		if (isValidInput == false)
 		{
@@ -124,7 +124,7 @@ public class ClassroomController : Controller
 
 		try
 		{
-			var classroomDetailsViewModel = await this._classroomService.GetClassroomAsync(schoolId, classroomId);
+			var classroomDetailsViewModel = await this._classroomService.GetClassroomAsync(classroomId);
 
 			if (classroomDetailsViewModel == null)
 			{
@@ -158,7 +158,7 @@ public class ClassroomController : Controller
 				return this.NotFound();
 			}
 
-			IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.GetAllClassroomsAsync(schoolId);
+			IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.AllAsync(schoolId);
 
 			var viewModel = new ManageClassroomsViewModel
 			{
@@ -175,31 +175,76 @@ public class ClassroomController : Controller
 		}
 	}
 
-    [HttpGet]
-    public async Task<IActionResult> Delete(string schoolId, string classroomId)
-    {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
-                            await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+	[HttpGet]
+	public async Task<IActionResult> Delete(string schoolId, string classroomId)
+	{
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
+							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
 
-        if (isValidInput == false)
-        {
-            return this.BadRequest(INVALID_INPUT_MESSAGE);
-        }
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
 
-        try
-        {
-            var model = await this._classroomService.GetForDeleteAsync(schoolId, classroomId);
+		try
+		{
+			var model = await this._classroomService.GetForDeleteAsync(classroomId);
 
-            if (model == null)
-            {
+			if (model == null)
+			{
 				return this.NotFound();
 			}
 
-            return this.View(this.GetViewPath(nameof(this.Delete)), model);
-        }
-        catch (Exception)
-        {
+			return this.View(this.GetViewPath(nameof(this.Delete)), model);
+		}
+		catch (Exception)
+		{
 			return this.RedirectToAction(nameof(this.Manage), new { schoolId });
 		}
-    }
+	}
+
+	/// <summary>
+	/// Displays a confirmation page before deleting a classroom.
+	/// </summary>
+	/// <param name="schoolId">The unique identifier of the school the classroom is in.</param>
+	/// <param name="classroomId">The unique identifier of the classroom.</param>
+	[HttpPost]
+	public async Task<IActionResult> DeleteConfirmed(string schoolId, string classroomId)
+	{
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
+							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		try
+		{
+			var hasStudentsAssigned = await this._classroomService.HasStudentsAssignedAsync(classroomId);
+
+			if (hasStudentsAssigned)
+			{
+				this.TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, CONTROLLER_NAME.ToLower());
+
+				return this.RedirectToAction(nameof(this.Manage), new { schoolId });
+			}
+
+			bool successfullyDeleted = await this._classroomService.DeleteAsync(classroomId);
+
+			if (successfullyDeleted)
+			{
+				this.TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, classroomId);
+
+				return this.RedirectToAction(nameof(this.Manage), new { schoolId });
+			}
+
+			return this.BadRequest(string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, classroomId));
+		}
+		catch (Exception)
+		{
+			this.TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, classroomId);
+			return this.RedirectToAction(nameof(this.Manage), new { schoolId });
+		}
+	}
 }

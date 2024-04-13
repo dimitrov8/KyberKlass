@@ -50,12 +50,6 @@
 							<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
 						</form>
 
-						<!-- Edit button -->
-						<form asp-controller="Classroom" asp-action="Edit" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@classroom.Id" />
-							<button type="submit" class="btn btn-warning btn-sm fw-bold">Edit</button>
-						</form>
-
 						<!-- Delete button -->
 						<form asp-controller="Classroom" asp-action="Delete" method="get" style="display : inline;">
 							<input type="hidden" name="schoolId" value="@Model.SchoolId" />

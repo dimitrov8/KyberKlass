@@ -25,7 +25,7 @@ public interface ISchoolService
 	/// Retrieves basic information about all schools asynchronously.
 	/// </summary>
 	/// <returns>A collection of basic user view models representing schools.</returns>
-	Task<IEnumerable<BasicViewModel>> GetSchoolsAsync();
+	Task<IEnumerable<BasicViewModel>> BasicAllAsync();
 
     /// <summary>
     /// Retrieves a specific school by unique identifier asynchronously.
@@ -77,6 +77,4 @@ public interface ISchoolService
     /// <param name="id">The unique identifier of the school to delete.</param>
     /// <returns>True if the school was deleted successfully; otherwise, false.</returns>
     Task<bool> DeleteAsync(string id);
-
-	//Task<IEnumerable<UserBasicViewModel>> GetTeachersAsync();
 }

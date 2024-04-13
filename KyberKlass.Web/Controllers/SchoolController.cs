@@ -48,7 +48,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> GetSchools()
 	{
-		IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
+		IEnumerable<BasicViewModel> allSchools = await this._schoolService.BasicAllAsync();
 
 		return this.Json(allSchools);
 	}
@@ -99,7 +99,7 @@ public class SchoolController : Controller
 	/// <summary>
 	/// Displays details of a specific school.
 	/// </summary>
-	/// <param name="id">The ID of the school.</param>
+	/// <param name="id">The unique identifier of the school.</param>
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
@@ -129,6 +129,7 @@ public class SchoolController : Controller
 
 	/// <summary>
 	/// Displays a view to edit details of a school.
+	/// <param name="id">The unique identifier of the school.</param>
 	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> Edit(string id)
@@ -160,7 +161,7 @@ public class SchoolController : Controller
 	/// <summary>
 	/// Updates the details of a school.
 	/// </summary>
-	/// <param name="id">The ID of the school to edit.</param>
+	/// <param name="id">The unique identifier of the school.</param>
 	/// <param name="model">The <see cref="SchoolDetailsViewModel"/> containing the updated details.</param>
 	[HttpPost]
 	public async Task<IActionResult> Edit(string id, SchoolDetailsViewModel model)
@@ -208,7 +209,7 @@ public class SchoolController : Controller
 	/// <summary>
 	/// Displays a confirmation page before deleting a school.
 	/// </summary>
-	/// <param name="id">The ID of the school to delete.</param>
+	/// <param name="id">The unique identifier of the school to delete.</param>
 	[HttpGet]
 	public async Task<IActionResult> Delete(string id)
 	{
@@ -239,7 +240,7 @@ public class SchoolController : Controller
 	/// <summary>
 	/// Deletes the specified school.
 	/// </summary>
-	/// <param name="id">The ID of the school to delete.</param>
+	/// <param name="id">The unique identifier of the school to delete.</param>
 	[HttpPost]
 	public async Task<IActionResult> DeleteConfirmed(string id)
 	{
