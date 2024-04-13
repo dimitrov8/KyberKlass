@@ -20,15 +20,21 @@
 
 				<dt class="col-sm-4">Address:</dt>
 				<dd class="col-sm-8">@Model.Address</dd>
+				
+				<dt class="col-sm-4">Phone Number:</dt>
+				<dd class="col-sm-8">@Model.PhoneNumber</dd>
 
 				<dt class="col-sm-4">Email:</dt>
 				<dd class="col-sm-8">@Model.Email</dd>
 
-				<dt class="col-sm-4">Phone Number:</dt>
-				<dd class="col-sm-8">@Model.PhoneNumber</dd>
-
 				<dt class="col-sm-4">Is Active:</dt>
 				<dd class="col-sm-8">@Model.IsActive</dd>
+				
+				<dt class="col-sm-3">Total Classrooms:</dt>
+				<dd class="col-sm-9">@Model.TotalClassrooms</dd>
+
+				<dt class="col-sm-3">Total Students:</dt>
+				<dd class="col-sm-9">@Model.TotalStudents</dd>
 			</dl>
 
 			<form asp-controller="School" asp-action="DeleteConfirmed" method="post">

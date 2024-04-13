@@ -58,7 +58,8 @@
 
 						<!-- Delete button -->
 						<form asp-controller="Classroom" asp-action="Delete" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@classroom.Id" />
+							<input type="hidden" name="schoolId" value="@Model.SchoolId" />
+							<input type="hidden" name="classroomId" value="@classroom.Id" />
 							<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
 						</form>
 					</td>

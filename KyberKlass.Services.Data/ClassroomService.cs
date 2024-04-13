@@ -12,146 +12,150 @@ using Web.ViewModels.Admin.Classroom;
 /// </summary>
 public class ClassroomService : IClassroomService
 {
-    private readonly KyberKlassDbContext _dbContext;
+	private readonly KyberKlassDbContext _dbContext;
 
-    /// <summary>
-    /// Constructor for ClassroomService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    public ClassroomService(KyberKlassDbContext dbContext)
-    {
-        this._dbContext = dbContext;
-    }
+	/// <summary>
+	///  Constructor for ClassroomService.
+	/// </summary>
+	/// <param name="dbContext">The database context.</param>
+	public ClassroomService(KyberKlassDbContext dbContext)
+	{
+		this._dbContext = dbContext;
+	}
 
-    /// <inheritdoc />
-    public async Task<IEnumerable<ClassroomDetailsViewModel>> GetAllClassroomsAsync(string schoolId)
-    {
-        IEnumerable<Classroom> classrooms = await this._dbContext
-            .Classrooms
-            .Where(c => c.SchoolId == Guid.Parse(schoolId))
-            .Include(c => c.Students)
-            .ThenInclude(s => s.ApplicationUser)
-            .Include(u => u.Teacher.ApplicationUser)
-            .AsNoTracking()
-            .ToArrayAsync();
+	/// <inheritdoc />
+	public async Task<bool> AddAsync(AddClassroomViewModel model)
+	{
+		var newSchool = await this._dbContext.Schools.FindAsync(Guid.Parse(model.SchoolId));
 
-        IEnumerable<ClassroomDetailsViewModel> classroomViewModels = classrooms.Select(c => new ClassroomDetailsViewModel
-        {
-            Id = c.Id.ToString(),
-            Name = c.Name,
-            TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-            Students = c.Students // todo classrooms
-                .Select(s => new BasicViewModel
-                {
-                    Id = s.Id.ToString(),
-                    Name = s.ApplicationUser.GetFullName(),
-                })
-                .ToArray()
-        });
+		if (newSchool == null)
+		{
+			return false; // If the school doesn't exist, return false
+		}
 
-        return classroomViewModels;
-    }
+		var schoolIdAsGuid = Guid.Parse(model.SchoolId);
+		var teacherIdAsGuid = Guid.Parse(model.TeacherId);
 
-    /// <inheritdoc />
-    public async Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolIdAsJsonAsync(string schoolId)
-    {
-        IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
-            .Classrooms
-            .Where(c => c.SchoolId == Guid.Parse(schoolId))
-            .Select(c => new BasicViewModel
-            {
-                Id = c.Id.ToString(),
-                Name = c.Name
-            })
-            .AsNoTracking()
-            .ToArrayAsync();
+		var newClassroom = new Classroom
+		{
+			Id = Guid.NewGuid(),
+			Name = model.Name,
+			TeacherId = teacherIdAsGuid,
+			SchoolId = schoolIdAsGuid
+		};
 
-        return allClassrooms;
-    }
+		await this._dbContext.Classrooms.AddAsync(newClassroom);
+		await this._dbContext.SaveChangesAsync();
 
-    /// <inheritdoc />
-    public async Task<bool> AddAsync(AddClassroomViewModel model)
-    {
-        var newSchool = await this._dbContext.Schools.FindAsync(Guid.Parse(model.SchoolId));
+		return true;
+	}
 
-        if (newSchool == null)
-        {
-            return false; // If the school doesn't exist, return false
-        }
+	/// <inheritdoc />
+	public async Task<bool> ClassroomExistsInSchoolAsync(string classroomName, string schoolId)
+	{
+		return await this._dbContext
+			.Classrooms
+			.AsNoTracking()
+			.AnyAsync(c => c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
+	}
 
-        //bool classRoomExists = await this.ClassroomExistsInSchool(model.Name, model.SchoolId); // Check if the classroom already exists in the school
+	/// <inheritdoc />
+	public async Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolIdAsJsonAsync(string schoolId)
+	{
+		IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == Guid.Parse(schoolId))
+			.Select(c => new BasicViewModel
+			{
+				Id = c.Id.ToString(),
+				Name = c.Name
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
 
-        //if (classRoomExists)
-        //{
-        //	return false; // If the classroom already exists, return false
-        //}
+		return allClassrooms;
+	}
 
-        var schoolIdAsGuid = Guid.Parse(model.SchoolId);
-        var teacherIdAsGuid = Guid.Parse(model.TeacherId);
+	/// <inheritdoc />
+	public async Task<ClassroomDetailsViewModel?> GetClassroomAsync(string schoolId, string classroomId)
+	{
+		return await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == Guid.Parse(schoolId) && c.Id == Guid.Parse(classroomId))
+			.Select(c => new ClassroomDetailsViewModel
+			{
+				Id = c.Id.ToString(),
+				SchoolId = schoolId,
+				Name = c.Name,
+				TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+				Students = c.Students
+					.Select(s => new BasicViewModel
+					{
+						Id = s.Id.ToString(),
+						Name = s.ApplicationUser.GetFullName()
+					})
+					.ToArray()
+			})
+			.AsNoTracking()
+			.FirstOrDefaultAsync();
+	}
 
-        var newClassroom = new Classroom
-        {
-            Id = Guid.NewGuid(),
-            Name = model.Name,
-            TeacherId = teacherIdAsGuid,
-            SchoolId = schoolIdAsGuid
-        }; // Create a new classroom object
+	/// <inheritdoc />
+	public async Task<IEnumerable<ClassroomDetailsViewModel>> GetAllClassroomsAsync(string schoolId)
+	{
+		IEnumerable<Classroom> classrooms = await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == Guid.Parse(schoolId))
+			.Include(c => c.Students)
+			.ThenInclude(s => s.ApplicationUser)
+			.Include(u => u.Teacher.ApplicationUser)
+			.AsNoTracking()
+			.ToArrayAsync();
 
-        // Add the new classroom to the database
-        await this._dbContext.Classrooms.AddAsync(newClassroom);
-        await this._dbContext.SaveChangesAsync();
+		IEnumerable<ClassroomDetailsViewModel> classroomViewModels = classrooms.Select(c => new ClassroomDetailsViewModel
+		{
+			Id = c.Id.ToString(),
+			Name = c.Name,
+			TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+			Students = c.Students // todo classrooms
+				.Select(s => new BasicViewModel
+				{
+					Id = s.Id.ToString(),
+					Name = s.ApplicationUser.GetFullName()
+				})
+				.ToArray()
+		});
 
-        return true;
-    }
+		return classroomViewModels;
+	}
 
-    /// <inheritdoc />
-    public async Task<bool> ClassroomExistsInSchoolAsync(string classroomName, string schoolId)
-    {
-        return await this._dbContext
-            .Classrooms
-            .AnyAsync(c => c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
-    }
+	/// <inheritdoc />
+	public async Task<ClassroomDetailsViewModel?> GetForDeleteAsync(string schoolId, string classroomId)
+	{
+		var viewModel = await this.GetClassroomAsync(schoolId, classroomId);
 
+		return viewModel;
+	}
 
-    // TODO ADD SUMMARY AND MAYBE MAKE ALSO A GO FOR DELETE
-    public async Task<bool> DeleteAsync(string classroomId)
-    {
-        var classroomToDelete = await this._dbContext.Classrooms.FindAsync(Guid.Parse(classroomId));
+	/// <inheritdoc />
+	public async Task<bool> DeleteAsync(string schoolId, string classroomId)
+	{
+		var classroomToDelete = await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == Guid.Parse(schoolId) && c.Id == Guid.Parse(classroomId))
+			.FirstOrDefaultAsync();
 
-        // If the classroom exists and there are no students in this classrooms
-        if (classroomToDelete != null && classroomToDelete.Students.Any() == false)
-        {
-            // Remove the classroom from the database
-            this._dbContext.Classrooms.Remove(classroomToDelete);
-            await this._dbContext.SaveChangesAsync();
+		// If the classroom exists and there are no students in this classrooms
+		if (classroomToDelete != null && classroomToDelete.Students.Any() == false)
+		{
+			this._dbContext.Classrooms.Remove(classroomToDelete);
+			await this._dbContext.SaveChangesAsync();
 
-            return true; // Return true if the classroom is successfully deleted
-        }
+			return true;
+		}
 
-        return false; // Return false if the classroom to delete is not found
-    }
+		return false;
+	}
 
-    /// <inheritdoc />
-    public async Task<ClassroomDetailsViewModel?> GetClassroomAsync(string schoolId, string classroomId)
-    {
-        return await this._dbContext
-            .Classrooms
-            .Where(c => c.SchoolId == Guid.Parse(schoolId) && c.Id == Guid.Parse(classroomId))
-            .Select(c => new ClassroomDetailsViewModel
-            {
-                Id = c.Id.ToString(),
-                SchoolId = schoolId,
-                Name = c.Name,
-                TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-                Students = c.Students
-                    .Select(s => new BasicViewModel
-                    {
-                        Id = s.Id.ToString(),
-                        Name = s.ApplicationUser.GetFullName()
-                    })
-                    .ToArray()
-            })
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
-    }
+	
 }

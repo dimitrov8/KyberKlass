@@ -43,34 +43,14 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Displays details of a specific school.
+	/// Retrieves all schools and returns them as JSON.
 	/// </summary>
-	/// <param name="id">The ID of the school.</param>
 	[HttpGet]
-	public async Task<IActionResult> Details(string id)
+	public async Task<IActionResult> GetSchools()
 	{
-		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null); 
+		IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
 
-		if (isValidInput == false)
-		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
-
-		try
-		{
-			var schoolModel = await this._schoolService.ViewDetailsAsync(id);
-
-			if (schoolModel == null)
-			{
-				return this.NotFound();
-			}
-
-			return this.View(this.GetViewPath(nameof(this.Details)), schoolModel);
-		}
-		catch (Exception)
-		{
-			return this.RedirectToAction(nameof(this.All)); // Maybe return custom error view
-		}
+		return this.Json(allSchools);
 	}
 
 	/// <summary>
@@ -113,6 +93,37 @@ public class SchoolController : Controller
 			this.ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
 
 			return this.View(this.GetViewPath(nameof(Add)), model);
+		}
+	}
+
+	/// <summary>
+	/// Displays details of a specific school.
+	/// </summary>
+	/// <param name="id">The ID of the school.</param>
+	[HttpGet]
+	public async Task<IActionResult> Details(string id)
+	{
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null); 
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		try
+		{
+			var schoolModel = await this._schoolService.ViewDetailsAsync(id);
+
+			if (schoolModel == null)
+			{
+				return this.NotFound();
+			}
+
+			return this.View(this.GetViewPath(nameof(this.Details)), schoolModel);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.All)); // Maybe return custom error view
 		}
 	}
 
@@ -258,15 +269,4 @@ public class SchoolController : Controller
 			return this.RedirectToAction(nameof(this.All));
 		}
 	}
-
-	/// <summary>
-	/// Retrieves all schools and returns them as JSON.
-	/// </summary>
-	[HttpGet]
-	public async Task<IActionResult> GetSchools()
-    {
-        IEnumerable<BasicViewModel> allSchools = await this._schoolService.GetSchoolsAsync();
-
-        return this.Json(allSchools);
-    }
 }

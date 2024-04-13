@@ -1,5 +1,6 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
+using KyberKlass.Web.ViewModels.Admin.School;
 using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Classroom;
 
@@ -49,7 +50,27 @@ public interface IClassroomService
     /// <returns>A collection of classroom view models representing classrooms in a school, serialized as JSON.</returns>
     Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolIdAsJsonAsync(string schoolId);
 
-    //Task<bool> ClassroomExistsAsync(string classroomId);
+	///// <summary>
+	///// Edits a classroom asynchronously.
+	///// </summary>
+	///// <param name="id">The unique identifier of the classroom to edit.</param>
+	///// <param name="model">The updated classroom view model.</param>
+	///// <returns>True if the classroom was edited successfully; otherwise, false.</returns>
+	//Task<bool> EditAsync(string id, ClassroomDetailsViewModel model);
 
-    //Task<bool> DeleteAsync(string schoolId, string classroomId);
+	/// <summary>
+	/// Retrieves classroom information for deletion asynchronously.
+	/// </summary>
+	/// <param name="schoolId">The unique identifier of the school.</param>
+	/// <param name="classroomId">The unique identifier of the classroom in the school to delete.</param>
+	/// <returns>The view model for the specified classroom if found; otherwise, null.</returns>
+	Task<ClassroomDetailsViewModel?> GetForDeleteAsync(string schoolId, string classroomId);
+
+	/// <summary>
+	/// Deletes a classroom asynchronously.
+	/// </summary>
+	/// <param name="schoolId">The unique identifier of the school.</param>
+	/// <param name="classroomId">The unique identifier of the classroom in the school to delete.</param>
+	/// <returns>True if the classroom was deleted successfully; otherwise, false.</returns>
+	Task<bool> DeleteAsync(string schoolId, string classroomId);
 }

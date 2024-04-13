@@ -3,9 +3,9 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
-using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Student;
 using Web.ViewModels.Admin.User;
 
@@ -67,47 +67,6 @@ public class StudentService : IStudentService
 		return null;
 	}
 
-	public Task<Student?> GetByIdASync(string id)
-	{
-		return this._dbContext
-			.Students
-			.Include(s => s.Guardian)
-			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
-	}
-
-	/// <summary>
-	///     Retrieves a collection of basic user view models representing unassigned students asynchronously.
-	/// </summary>
-	/// <returns>
-	///     A collection of user basic view models representing unassigned students.
-	///     If no unassigned students are found, an empty collection is returned.
-	/// </returns>
-	public async Task<IEnumerable<BasicViewModel>> GetUnassignedStudentsAsync()
-	{
-		IList<ApplicationUser> allStudents = await this._userManager.GetUsersInRoleAsync("Student"); // Retrieve all users assigned the role of "Student"
-
-		if (allStudents.Any() == false) // Check if there are any students found
-		{
-			return Enumerable.Empty<BasicViewModel>();
-		}
-
-		List<Guid> assignedStudentIds = await this._dbContext.Classrooms
-			.SelectMany(c => c.Students)
-			.Select(s => s.Id)
-			.ToListAsync(); // Retrieve the IDs of students who are assigned to classrooms
-
-		List<BasicViewModel> unassignedStudents = allStudents
-			.Where(s => assignedStudentIds.Contains(s.Id) == false)
-			.Select(s => new BasicViewModel
-			{
-				Id = s.Id.ToString(),
-				Name = s.GetFullName()
-			})
-			.ToList(); // Filter out the unassigned students
-
-		return unassignedStudents; // Return the collection of unassigned students
-	}
-
 	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
 	{
 		var userDetails = await this._userService.GetDetailsAsync(userId);
@@ -122,10 +81,18 @@ public class StudentService : IStudentService
 		return viewModel;
 	}
 
+	public Task<Student?> GetByIdASync(string id)
+	{
+		return this._dbContext
+			.Students
+			.Include(s => s.Guardian)
+			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
+	}
+
 	public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)
 	{
-		Student? student = await this.GetByIdASync(userId);
-		Guardian? newGuardian = await this._guardianService.GetByIdAsync(guardianId);
+		var student = await this.GetByIdASync(userId);
+		var newGuardian = await this._guardianService.GetByIdAsync(guardianId);
 
 		if (student == null || newGuardian == null)
 		{

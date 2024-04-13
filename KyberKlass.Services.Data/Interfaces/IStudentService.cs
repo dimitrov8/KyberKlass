@@ -11,8 +11,6 @@ public interface IStudentService
 
 	public Task<Student?> GetByIdASync(string id);
 
-	Task<IEnumerable<BasicViewModel>> GetUnassignedStudentsAsync();
-
 	Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId);
 
 	Task<bool> StudentChangeGuardianAsync(string userId, string guardianId);
