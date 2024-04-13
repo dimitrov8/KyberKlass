@@ -57,19 +57,22 @@ public class UserService : IUserService
 	/// <inheritdoc />
 	public async Task<IEnumerable<UserViewModel>> AllAsync()
 	{
-		var usersWithRoles = await this._dbContext.Users
+		var usersWithRoles = await this._dbContext
+			.Users
 			.Select(user => new
 			{
 				User = user,
-				Roles = this._dbContext.UserRoles
+				Roles = this._dbContext
+					.UserRoles
 					.Where(ur => ur.UserId == user.Id)
 					.Join(this._dbContext.Roles,
 						ur => ur.RoleId,
 						role => role.Id,
 						(ur, role) => role.Name)
-					.ToList()
+					.ToArray()
 			})
-			.ToListAsync();
+			.AsNoTracking()
+			.ToArrayAsync();
 
 		IEnumerable<UserViewModel> userViewModels = usersWithRoles
 			.Select(u => new UserViewModel
@@ -82,13 +85,13 @@ public class UserService : IUserService
 			})
 			.ToArray();
 
-		return userViewModels; // TODO Make this method better
+		return userViewModels;
 	}
 
 	/// <inheritdoc />
 	public async Task<UserDetailsViewModel?> GetDetailsAsync(string id)
 	{
-		var user = await this.GetUserById(id); 
+		var user = await this.GetUserById(id);
 
 		if (user == null)
 		{
@@ -153,11 +156,11 @@ public class UserService : IUserService
 	/// <inheritdoc />
 	public async Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id)
 	{
-		var user = await this.GetUserById(id); 
+		var user = await this.GetUserById(id);
 
 		if (user == null)
 		{
-			return null; 
+			return null;
 		}
 
 		string currentRoleName = await user.GetRoleAsync(this._userManager);
@@ -194,43 +197,7 @@ public class UserService : IUserService
 	}
 
 	/// <inheritdoc />
-	public async Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync()
-	{
-		IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
-
-		IEnumerable<BasicViewModel> guardianViewModels = guardians
-			.Select(g => new BasicViewModel
-			{
-				Id = g.Id.ToString(),
-				Name = g.GetFullName()
-			})
-			.ToArray();
-
-		return guardianViewModels;
-	}
-
-	/// <inheritdoc />
-	public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
-	{
-		bool isAssigned = await this._dbContext.Classrooms
-			.AsNoTracking()
-			.AnyAsync(c => c.TeacherId == Guid.Parse(userId));
-
-		return isAssigned;
-	}
-
-	/// <inheritdoc />
-	public async Task<bool> IsGuardianAssignedToStudentAsync(string userId)
-	{
-		bool isAssigned = await this._dbContext.Students
-			.AsNoTracking()
-			.AnyAsync(s => s.Guardian.Id == Guid.Parse(userId));
-
-		return isAssigned;
-	}
-
-	/// <inheritdoc />
-	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId,  string? schoolId, string? classroomId)
+	public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? schoolId, string? classroomId)
 	{
 		var user = await this.GetUserById(userId);
 		if (user == null)
@@ -272,18 +239,18 @@ public class UserService : IUserService
 
 		try
 		{
-            if (currentRoleName != "No Role Assigned")
-            {
-                // Update user's role in the identity system
-                var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
+			if (currentRoleName != "No Role Assigned")
+			{
+				// Update user's role in the identity system
+				var removeResult = await this._userManager.RemoveFromRolesAsync(user, await this._userManager.GetRolesAsync(user));
 
-                if (removeResult.Succeeded == false)
-                {
-                    // Roll back transaction if removing roles fails
-                    await transaction.RollbackAsync();
-                    return false;
-                }
-            }
+				if (removeResult.Succeeded == false)
+				{
+					// Roll back transaction if removing roles fails
+					await transaction.RollbackAsync();
+					return false;
+				}
+			}
 
 			var addResult = await this._userManager.AddToRoleAsync(user, roleToUpdate.Name);
 

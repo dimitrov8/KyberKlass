@@ -65,7 +65,7 @@ public class SchoolService : ISchoolService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<BasicViewModel>> GetSchoolsAsync()
+    public async Task<IEnumerable<BasicViewModel>> BasicAllAsync()
     {
 	    return await this._dbContext
 		    .Schools
@@ -197,7 +197,7 @@ public class SchoolService : ISchoolService
 	{
 		var schoolToDelete = await this._dbContext.Schools.FindAsync(Guid.Parse(id));
 
-		if (schoolToDelete != null)
+		if (schoolToDelete != null && schoolToDelete.Students.Any() == false && schoolToDelete.Classrooms.Any() == false)
 		{
 			// Remove the school from the database
 			this._dbContext.Schools.Remove(schoolToDelete);

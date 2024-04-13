@@ -60,32 +60,15 @@ public class ClassroomService : IClassroomService
 	}
 
 	/// <inheritdoc />
-	public async Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolIdAsJsonAsync(string schoolId)
-	{
-		IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
-			.Classrooms
-			.Where(c => c.SchoolId == Guid.Parse(schoolId))
-			.Select(c => new BasicViewModel
-			{
-				Id = c.Id.ToString(),
-				Name = c.Name
-			})
-			.AsNoTracking()
-			.ToArrayAsync();
-
-		return allClassrooms;
-	}
-
-	/// <inheritdoc />
-	public async Task<ClassroomDetailsViewModel?> GetClassroomAsync(string schoolId, string classroomId)
+	public async Task<ClassroomDetailsViewModel?> GetClassroomAsync(string id)
 	{
 		return await this._dbContext
 			.Classrooms
-			.Where(c => c.SchoolId == Guid.Parse(schoolId) && c.Id == Guid.Parse(classroomId))
+			.Where(c => c.Id == Guid.Parse(id))
 			.Select(c => new ClassroomDetailsViewModel
 			{
 				Id = c.Id.ToString(),
-				SchoolId = schoolId,
+				SchoolId = c.SchoolId.ToString(),
 				Name = c.Name,
 				TeacherName = c.Teacher.ApplicationUser.GetFullName(),
 				IsActive = c.IsActive,
@@ -102,7 +85,7 @@ public class ClassroomService : IClassroomService
 	}
 
 	/// <inheritdoc />
-	public async Task<IEnumerable<ClassroomDetailsViewModel>> GetAllClassroomsAsync(string schoolId)
+	public async Task<IEnumerable<ClassroomDetailsViewModel>> AllAsync(string schoolId)
 	{
 		IEnumerable<Classroom> classrooms = await this._dbContext
 			.Classrooms
@@ -132,20 +115,35 @@ public class ClassroomService : IClassroomService
 	}
 
 	/// <inheritdoc />
-	public async Task<ClassroomDetailsViewModel?> GetForDeleteAsync(string schoolId, string classroomId)
+	public async Task<IEnumerable<BasicViewModel>> GetAllClassroomsBySchoolIdAsJsonAsync(string schoolId)
 	{
-		var viewModel = await this.GetClassroomAsync(schoolId, classroomId);
+		IEnumerable<BasicViewModel> allClassrooms = await this._dbContext
+			.Classrooms
+			.Where(c => c.SchoolId == Guid.Parse(schoolId))
+			.Select(c => new BasicViewModel
+			{
+				Id = c.Id.ToString(),
+				Name = c.Name
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+
+		return allClassrooms;
+	}
+
+	public async Task<ClassroomDetailsViewModel?> GetForDeleteAsync(string id)
+	{
+		var viewModel = await this.GetClassroomAsync(id);
 
 		return viewModel;
 	}
 
 	/// <inheritdoc />
-	public async Task<bool> DeleteAsync(string schoolId, string classroomId)
+	public async Task<bool> DeleteAsync(string id)
 	{
 		var classroomToDelete = await this._dbContext
 			.Classrooms
-			.Where(c => c.SchoolId == Guid.Parse(schoolId) && c.Id == Guid.Parse(classroomId))
-			.FirstOrDefaultAsync();
+			.FirstOrDefaultAsync(c => c.Id == Guid.Parse(id));
 
 		// If the classroom exists and there are no students in this classrooms
 		if (classroomToDelete != null && classroomToDelete.Students.Any() == false)
@@ -159,5 +157,13 @@ public class ClassroomService : IClassroomService
 		return false;
 	}
 
-	
+	public async Task<bool> HasStudentsAssignedAsync(string id)
+	{
+		bool hasStudents = await this._dbContext
+			.Classrooms
+			.Where(c => c.Id == Guid.Parse(id))
+			.AnyAsync(c => c.Students.Any());
+
+		return hasStudents;
+	}
 }

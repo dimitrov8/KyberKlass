@@ -70,7 +70,7 @@ public class StudentService : IStudentService
 	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
 	{
 		var userDetails = await this._userService.GetDetailsAsync(userId);
-		IEnumerable<BasicViewModel> availableGuardians = await this._userService.GetAllGuardiansAsync();
+		IEnumerable<BasicViewModel> availableGuardians = await this._guardianService.GetAllGuardiansAsync();
 
 		var viewModel = new StudentChangeGuardianViewModel
 		{

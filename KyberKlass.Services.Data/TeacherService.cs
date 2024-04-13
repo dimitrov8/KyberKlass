@@ -99,4 +99,15 @@ public class TeacherService : ITeacherService
 
 		return unassignedTeachers;
 	}
+
+	/// <inheritdoc />
+	public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
+	{
+		bool isAssigned = await this._dbContext
+			.Classrooms
+			.AsNoTracking()
+			.AnyAsync(c => c.TeacherId == Guid.Parse(userId));
+
+		return isAssigned;
+	}
 }
