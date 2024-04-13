@@ -25,7 +25,7 @@ public class SchoolService : ISchoolService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<SchoolViewModel>> AllAsync()
+    public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync()
     {
 	    School[] schools = await this._dbContext
 		    .Schools
@@ -36,8 +36,8 @@ public class SchoolService : ISchoolService
 		    .AsNoTracking()
 		    .ToArrayAsync();
 
-	    IEnumerable<SchoolViewModel> viewModel = schools
-		    .Select(s => new SchoolViewModel
+	    IEnumerable<SchoolDetailsViewModel> viewModel = schools
+		    .Select(s => new SchoolDetailsViewModel
 		    {
 			    Id = s.Id.ToString(),
 			    Name = s.Name,
@@ -107,12 +107,12 @@ public class SchoolService : ISchoolService
     }
 
 	/// <inheritdoc />
-	public async Task<SchoolViewModel?> ViewDetailsAsync(string id)
+	public async Task<SchoolDetailsViewModel?> ViewDetailsAsync(string id)
 	{
 		var viewModel = await this._dbContext
 			.Schools
 			.Where(s => s.Id == Guid.Parse(id))
-			.Select(s => new SchoolViewModel
+			.Select(s => new SchoolDetailsViewModel
 			{
 				Id = s.Id.ToString(),
 				Name = s.Name,
@@ -163,7 +163,7 @@ public class SchoolService : ISchoolService
     }
 
 	/// <inheritdoc />
-	public async Task<bool> EditAsync(string id, SchoolViewModel model)
+	public async Task<bool> EditAsync(string id, SchoolDetailsViewModel model)
 	{
 		var schoolForEdit = await this._dbContext.Schools.FindAsync(Guid.Parse(id));
 
@@ -185,22 +185,9 @@ public class SchoolService : ISchoolService
 	}
 
 	/// <inheritdoc />
-	public async Task<SchoolViewModel?> GetForDeleteAsync(string id)
+	public async Task<SchoolDetailsViewModel?> GetForDeleteAsync(string id)
 	{
-		var viewModel = await this._dbContext
-			.Schools
-			.Where(s => s.Id == Guid.Parse(id))
-			.Select(s => new SchoolViewModel
-			{
-				Id = s.Id.ToString(),
-				Name = s.Name,
-				Address = s.Address,
-				Email = s.Email,
-				PhoneNumber = s.PhoneNumber,
-				IsActive = s.IsActive
-			})
-			.AsNoTracking()
-			.FirstOrDefaultAsync();
+		var viewModel = await this.ViewDetailsAsync(id);
 
 		return viewModel;
 	}
@@ -223,7 +210,7 @@ public class SchoolService : ISchoolService
 	}
 
 	/// <inheritdoc />
-	public async Task<SchoolViewModel?> GetByIdAsync(string id)
+	public async Task<SchoolDetailsViewModel?> GetByIdAsync(string id)
 	{
 		var school = await this._dbContext
 			.Schools
@@ -232,7 +219,7 @@ public class SchoolService : ISchoolService
 
 		if (school != null)
 		{
-			return new SchoolViewModel
+			return new SchoolDetailsViewModel
 			{
 				Id = school.Id.ToString(),
 				Name = school.Name,

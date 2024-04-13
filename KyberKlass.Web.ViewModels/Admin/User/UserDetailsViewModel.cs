@@ -33,5 +33,5 @@ public class UserDetailsViewModel
     public IEnumerable<BasicViewModel>? Students { get; set; }
 
     // Property for student's school information
-    public IEnumerable<SchoolViewModel>? School { get; set; }
+    public IEnumerable<SchoolDetailsViewModel>? School { get; set; }
 }

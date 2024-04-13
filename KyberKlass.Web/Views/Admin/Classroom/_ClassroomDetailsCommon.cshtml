@@ -1,0 +1,40 @@
+﻿@model ClassroomDetailsViewModel
+
+<dl class="row">
+	<dt class="col-sm-3">Classroom ID:</dt>
+	<dd class="col-sm-9">@Model.Id</dd>
+
+	<dt class="col-sm-3">School ID:</dt>
+	<dd class="col-sm-9">@Model.SchoolId</dd>
+
+	<dt class="col-sm-3">Classroom Name:</dt>
+	<dd class="col-sm-9">@Model.Name</dd>
+
+	<dt class="col-sm-3">Teacher:</dt>
+	<dd class="col-sm-9">@Model.TeacherName</dd>
+
+	<dt class="col-sm-3">Number of Students:</dt>
+	<dd class="col-sm-9">@Model.StudentsCount</dd>
+
+	<dt class="col-sm-3">Is Active:</dt>
+	<dd class="col-sm-9">@Model.IsActive</dd>
+
+	<h4 class="mt-2">Students:</h4>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Full Name</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var student in Model.Students)
+		{
+			<tr>
+				<td>@student.Id</td>
+				<td>@student.Name</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+</dl>

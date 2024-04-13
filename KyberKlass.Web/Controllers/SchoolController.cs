@@ -37,7 +37,7 @@ public class SchoolController : Controller
 	[HttpGet]
 	public async Task<IActionResult> All()
 	{
-		IEnumerable<SchoolViewModel> schools = await this._schoolService.AllAsync();
+		IEnumerable<SchoolDetailsViewModel> schools = await this._schoolService.AllAsync();
 
 		return this.View(this.GetViewPath(nameof(this.All)), schools);
 	}
@@ -161,9 +161,9 @@ public class SchoolController : Controller
 	/// Updates the details of a school.
 	/// </summary>
 	/// <param name="id">The ID of the school to edit.</param>
-	/// <param name="model">The <see cref="SchoolViewModel"/> containing the updated details.</param>
+	/// <param name="model">The <see cref="SchoolDetailsViewModel"/> containing the updated details.</param>
 	[HttpPost]
-	public async Task<IActionResult> Edit(string id, SchoolViewModel model)
+	public async Task<IActionResult> Edit(string id, SchoolDetailsViewModel model)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 

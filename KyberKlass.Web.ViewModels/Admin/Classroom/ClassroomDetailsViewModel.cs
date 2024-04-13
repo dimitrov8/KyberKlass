@@ -15,7 +15,9 @@ public class ClassroomDetailsViewModel
 
     public string TeacherName { get; set; } = null!;
 
-    public ICollection<BasicViewModel> Students { get; set; }
+    public bool IsActive { get; set; }
+
+	public ICollection<BasicViewModel> Students { get; set; }
 
     public int StudentsCount => this.Students.Count;
 }

@@ -1,41 +1,16 @@
-﻿@model SchoolViewModel
+﻿@model SchoolDetailsViewModel
 
 @{
 	ViewData["Title"] = "School Details";
 }
 
-<div class="container mt-5">
-	<h1 class="mb-4">@ViewData["Title"]</h1>
+<div class="container">
+	<h1>@ViewData["Title"]</h1>
 	<hr />
 
-	<dl class="row">
-		<dt class="col-sm-3">ID:</dt>
-		<dd class="col-sm-9">@Model.Id</dd>
+	@await Html.PartialAsync("~/Views/Admin/School/_SchoolDetailsCommon.cshtml", Model)
 
-		<dt class="col-sm-3">Name:</dt>
-		<dd class="col-sm-9">@Model.Name</dd>
-
-		<dt class="col-sm-3">Address:</dt>
-		<dd class="col-sm-9">@Model.Address</dd>
-
-		<dt class="col-sm-3">Email:</dt>
-		<dd class="col-sm-9">@Model.Email</dd>
-
-		<dt class="col-sm-3">Phone Number:</dt>
-		<dd class="col-sm-9">@Model.PhoneNumber</dd>
-
-		<dt class="col-sm-3">Is Active:</dt>
-		<dd class="col-sm-9">@Model.IsActive</dd>
-
-		<dt class="col-sm-3">Total Classrooms:</dt>
-		<dd class="col-sm-9">@Model.TotalClassrooms</dd>
-
-		<dt class="col-sm-3">Total Students:</dt>
-		<dd class="col-sm-9">@Model.TotalStudents</dd>
-
-	</dl>
-
-	<div class="mt-4">
+	<div class="mt-5">
 		<a class="btn btn-warning fw-bold" asp-controller="School" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
 		<a class="btn btn-primary fw-bold" asp-controller="Classroom" asp-action="Manage" asp-route-schoolId="@Model.Id">Manage Classrooms</a>
 		<a class="btn btn-secondary fw-bold" asp-controller="School" asp-action="All">Back to List</a>

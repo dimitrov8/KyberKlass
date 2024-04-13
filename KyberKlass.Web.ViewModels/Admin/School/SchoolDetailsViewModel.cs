@@ -3,9 +3,9 @@
 using System.ComponentModel.DataAnnotations;
 using Classroom;
 
-public class SchoolViewModel
+public class SchoolDetailsViewModel
 {
-	public SchoolViewModel()
+	public SchoolDetailsViewModel()
 	{
 		this.Classrooms = new HashSet<ClassroomDetailsViewModel>();
 	}

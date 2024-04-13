@@ -19,7 +19,7 @@ public interface ISchoolService
 	/// Retrieves all schools asynchronously.
 	/// </summary>
 	/// <returns>A collection of school view models.</returns>
-	Task<IEnumerable<SchoolViewModel>> AllAsync();
+	Task<IEnumerable<SchoolDetailsViewModel>> AllAsync();
 
 	/// <summary>
 	/// Retrieves basic information about all schools asynchronously.
@@ -32,7 +32,7 @@ public interface ISchoolService
     /// </summary>
     /// <param name="id">The unique identifier of the school to retrieve.</param>
     /// <returns>The view model for the specified school if found; otherwise, null.</returns>
-    Task<SchoolViewModel?> GetByIdAsync(string id);
+    Task<SchoolDetailsViewModel?> GetByIdAsync(string id);
 
     /// <summary>
     /// Retrieves school information for editing asynchronously.
@@ -47,14 +47,14 @@ public interface ISchoolService
     /// <param name="id">The unique identifier of the school to edit.</param>
     /// <param name="model">The updated school view model.</param>
     /// <returns>True if the school was edited successfully; otherwise, false.</returns>
-    Task<bool> EditAsync(string id, SchoolViewModel model);
+    Task<bool> EditAsync(string id, SchoolDetailsViewModel model);
 
     /// <summary>
     /// Retrieves details of a specific school asynchronously.
     /// </summary>
     /// <param name="id">The unique identifier of the school to view.</param>
     /// <returns>The view model for the specified school if found; otherwise, null.</returns>
-    Task<SchoolViewModel?> ViewDetailsAsync(string id);
+    Task<SchoolDetailsViewModel?> ViewDetailsAsync(string id);
 
     /// <summary>
     /// Checks if a classroom with the specified unique identifier exists in a school asynchronously.
@@ -69,7 +69,7 @@ public interface ISchoolService
     /// </summary>
     /// <param name="id">The unique identifier of the school to delete.</param>
     /// <returns>The view model for the specified school if found; otherwise, null.</returns>
-    Task<SchoolViewModel?> GetForDeleteAsync(string id);
+    Task<SchoolDetailsViewModel?> GetForDeleteAsync(string id);
 
     /// <summary>
     /// Deletes a school asynchronously.
