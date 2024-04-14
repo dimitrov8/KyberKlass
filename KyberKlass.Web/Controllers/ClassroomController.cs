@@ -115,7 +115,7 @@ public class ClassroomController : Controller
 	public async Task<IActionResult> Details(string schoolId, string classroomId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
-							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
 
 		if (isValidInput == false)
 		{
@@ -176,10 +176,86 @@ public class ClassroomController : Controller
 	}
 
 	[HttpGet]
+	public async Task<IActionResult> Edit(string schoolId, string classroomId)
+	{
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		try
+		{
+			var classroomViewModel = await this._classroomService.GetForEditAsync(classroomId);
+
+			if (classroomViewModel == null)
+			{
+				return this.NotFound();
+			}
+
+			return this.View(this.GetViewPath(nameof(this.Edit)), classroomViewModel);
+		}
+		catch (Exception)
+		{
+			return this.RedirectToAction(nameof(this.Manage), new { schoolId });
+		}
+	}
+
+	/// <summary>
+	///     Updates the details of a school.
+	/// </summary>
+	/// <param name="classroomId">The unique identifier of the classroom.</param>
+	/// <param name="model">The <see cref="ClassroomDetailsViewModel" /> containing the updated details.</param>
+	[HttpPost]
+	public async Task<IActionResult> Edit(string classroomId, AddClassroomViewModel model)
+	{
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+
+		if (isValidInput == false)
+		{
+			return this.BadRequest(INVALID_INPUT_MESSAGE);
+		}
+
+		if (this.ModelState.IsValid == false)
+		{
+			this.TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
+
+			return this.View(this.GetViewPath(nameof(Edit)), model);
+		}
+
+		try
+		{
+			bool editSuccessfully = await this._classroomService.EditAsync(classroomId, model);
+
+			if (editSuccessfully)
+			{
+				if (model.IsActive == false)
+				{
+					this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id);
+				}
+				else
+				{
+					this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
+				}
+			}
+
+			return this.RedirectToAction(nameof(this.Manage), new { model.SchoolId });
+		}
+		catch (Exception)
+		{
+			this.ModelState.AddModelError(string.Empty, EDIT_ERROR_MESSAGE);
+
+			return this.View(this.GetViewPath(nameof(Edit)), model);
+		}
+	}
+
+	[HttpGet]
 	public async Task<IActionResult> Delete(string schoolId, string classroomId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
-							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
 
 		if (isValidInput == false)
 		{
@@ -204,7 +280,7 @@ public class ClassroomController : Controller
 	}
 
 	/// <summary>
-	/// Displays a confirmation page before deleting a classroom.
+	///     Displays a confirmation page before deleting a classroom.
 	/// </summary>
 	/// <param name="schoolId">The unique identifier of the school the classroom is in.</param>
 	/// <param name="classroomId">The unique identifier of the classroom.</param>
@@ -212,7 +288,7 @@ public class ClassroomController : Controller
 	public async Task<IActionResult> DeleteConfirmed(string schoolId, string classroomId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(schoolId, null) &&
-							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(classroomId, null);
 
 		if (isValidInput == false)
 		{
@@ -221,7 +297,7 @@ public class ClassroomController : Controller
 
 		try
 		{
-			var hasStudentsAssigned = await this._classroomService.HasStudentsAssignedAsync(classroomId);
+			bool hasStudentsAssigned = await this._classroomService.HasStudentsAssignedAsync(classroomId);
 
 			if (hasStudentsAssigned)
 			{

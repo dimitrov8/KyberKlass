@@ -7,16 +7,16 @@
 
 @if (TempData["SuccessMessage"] != null)
 {
-		<div class="alert alert-success" role="alert">
+	<div class="alert alert-success" role="alert">
 		@TempData["SuccessMessage"]
-		</div>
+	</div>
 }
 
 else if (TempData["ErrorMessage"] != null)
 {
-		<div class="alert alert-danger" role="alert">
+	<div class="alert alert-danger" role="alert">
 		@TempData["ErrorMessage"]
-		</div>
+	</div>
 }
 
 <h2 class="text-center">@ViewData["Title"] </h2>
@@ -35,64 +35,64 @@ else if (TempData["ErrorMessage"] != null)
 		</tr>
 		</thead>
 		<tbody>
-			@foreach (var user in Model)
-			{
-				<tr>
-					<td>@user.Id</td>
-					<td>@user.Email</td>
-					<td>@user.FullName</td>
-					<td>@user.Role</td>
-					<td>
-						<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(user.IsActive ? "checked" : "")/>
-					</td>
-					<td>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td>@user.Id</td>
+				<td>@user.Email</td>
+				<td>@user.FullName</td>
+				<td>@user.Role</td>
+				<td>
+					<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(user.IsActive ? "checked" : "")/>
+				</td>
+				<td>
 
-						<!-- Edit button -->
-						<form asp-controller="User" asp-action="Edit" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
-						</form>
-
-						<!-- Details button -->
-						<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
-						</form>
-
-						<!-- Update Role button -->
-						<form asp-controller="User" asp-action="UpdateRole" method="get" style="display : inline;">
-							<input type="hidden" name="id" value="@user.Id"/>
-							<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
-						</form>
-
-								<!-- Change Guardian button -->
-								<form asp-controller="Student" asp-action="ChangeGuardian" method="get" style="display : inline;">
-									<input type="hidden" name="id" value="@user.Id"/>
-									<button type="submit" class="btn btn-success btn-sm fw-bold">Change Guardian</button>
+					<!-- Edit button -->
+					<form asp-controller="User" asp-action="Edit" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
 					</form>
 
-					</td>
-				</tr>
-			}
+					<!-- Details button -->
+					<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+					</form>
+
+					<!-- Update Role button -->
+					<form asp-controller="User" asp-action="UpdateRole" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
+					</form>
+
+					<!-- Change Guardian button -->
+					<form asp-controller="Student" asp-action="ChangeGuardian" method="get" style="display : inline;">
+						<input type="hidden" name="id" value="@user.Id"/>
+						<button type="submit" class="btn btn-success btn-sm fw-bold">Change Guardian</button>
+					</form>
+
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 
 	@* Include necessary scripts for DataTables.js and DataTables.Export *@
 
 	@section scripts
-		{
-			<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-			<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-			<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-			<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-			<script src="~/plugins/jszip/jszip.min.js"></script>
-			<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
-			<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-			<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+	{
+		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+		<script src="~/plugins/jszip/jszip.min.js"></script>
+		<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+		<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 	}
 
 	<script>

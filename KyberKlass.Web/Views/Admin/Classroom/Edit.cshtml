@@ -1,0 +1,33 @@
+﻿@model AddClassroomViewModel
+
+@{
+	ViewData["Title"] = "Edit Classroom";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr/>
+
+<form asp-controller="Classroom" asp-action="Edit">
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+	<input type="hidden" name="classroomId" asp-for="Id"/>
+	<input type="hidden" asp-for="Id"/>
+	<input type="hidden" asp-for="SchoolId"/>
+	<input type="hidden" asp-for="Name"/>
+	<input type="hidden" asp-for="TeacherId"/>
+	<input type="hidden" asp-for="UnassignedTeachers"/>
+
+	<div class="form-check mb-3">
+		<input class="form-check-input" type="checkbox" asp-for="IsActive"/>
+		<label class="form-check-label" for="@Model.IsActive">Is Active</label>
+	</div>
+
+	<button type="submit" class="btn btn-primary fw-bold">Save</button>
+	<a class="btn btn-secondary fw-bold" asp-controller="Classroom" asp-action="Manage" asp-route-schoolId="@Model.SchoolId">Back to List</a>
+</form>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

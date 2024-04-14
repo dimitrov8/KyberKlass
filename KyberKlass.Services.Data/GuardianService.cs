@@ -3,9 +3,9 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
-using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin;
 
 public class GuardianService : IGuardianService
 {

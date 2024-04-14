@@ -1,10 +1,10 @@
 ﻿namespace KyberKlass.Web.Controllers;
 
 using Infrastructure.Extensions;
-using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Data.Interfaces;
+using ViewModels.Admin.User;
 using static Common.CustomMessageConstants.Common;
 using static Common.CustomMessageConstants.Student;
 
@@ -78,7 +78,7 @@ public class StudentController : Controller
 			{
 				this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_CHANGED_GUARDIAN, id);
 
-				return this.RedirectToAction(nameof(this.ChangeGuardian), new {id, guardianId});
+				return this.RedirectToAction(nameof(this.ChangeGuardian), new { id, guardianId });
 			}
 
 			this.TempData["ErrorMessage"] = GUARDIAN_ALREADY_SET;

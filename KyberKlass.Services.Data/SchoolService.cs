@@ -9,102 +9,102 @@ using Web.ViewModels.Admin.Classroom;
 using Web.ViewModels.Admin.School;
 
 /// <summary>
-///  Service class responsible for managing schools.
+///     Service class responsible for managing schools.
 /// </summary>
 public class SchoolService : ISchoolService
 {
-    private readonly KyberKlassDbContext _dbContext;
+	private readonly KyberKlassDbContext _dbContext;
 
-    /// <summary>
-    ///  Constructor for ClassroomService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
+	/// <summary>
+	///     Constructor for ClassroomService.
+	/// </summary>
+	/// <param name="dbContext">The database context.</param>
 	public SchoolService(KyberKlassDbContext dbContext)
-    {
-        this._dbContext = dbContext;
-    }
+	{
+		this._dbContext = dbContext;
+	}
 
-    /// <inheritdoc />
-    public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync()
-    {
-	    School[] schools = await this._dbContext
-		    .Schools
-		    .Include(s => s.Classrooms)
-		    .ThenInclude(c => c.Teacher.ApplicationUser)
-		    .Include(s => s.Classrooms)
-		    .ThenInclude(c => c.Students)
-		    .AsNoTracking()
-		    .ToArrayAsync();
+	/// <inheritdoc />
+	public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync()
+	{
+		School[] schools = await this._dbContext
+			.Schools
+			.Include(s => s.Classrooms)
+			.ThenInclude(c => c.Teacher.ApplicationUser)
+			.Include(s => s.Classrooms)
+			.ThenInclude(c => c.Students)
+			.AsNoTracking()
+			.ToArrayAsync();
 
-	    IEnumerable<SchoolDetailsViewModel> viewModel = schools
-		    .Select(s => new SchoolDetailsViewModel
-		    {
-			    Id = s.Id.ToString(),
-			    Name = s.Name,
-			    Address = s.Address,
-			    Email = s.Email,
-			    PhoneNumber = s.PhoneNumber,
-			    IsActive = s.IsActive,
-			    Classrooms = s.Classrooms
-				    .Select(c => new ClassroomDetailsViewModel
-				    {
-					    Id = c.Id.ToString(),
-					    Name = c.Name,
-					    TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-					    Students = c.Students
-						    .Select(st => new BasicViewModel
-						    {
-							    Id = st.Id.ToString(),
-							    Name = st.ApplicationUser.GetFullName()
-						    })
-						    .ToArray()
-				    })
-		    });
+		IEnumerable<SchoolDetailsViewModel> viewModel = schools
+			.Select(s => new SchoolDetailsViewModel
+			{
+				Id = s.Id.ToString(),
+				Name = s.Name,
+				Address = s.Address,
+				Email = s.Email,
+				PhoneNumber = s.PhoneNumber,
+				IsActive = s.IsActive,
+				Classrooms = s.Classrooms
+					.Select(c => new ClassroomDetailsViewModel
+					{
+						Id = c.Id.ToString(),
+						Name = c.Name,
+						TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+						Students = c.Students
+							.Select(st => new BasicViewModel
+							{
+								Id = st.Id.ToString(),
+								Name = st.ApplicationUser.GetFullName()
+							})
+							.ToArray()
+					})
+			});
 
-	    return viewModel;
-    }
+		return viewModel;
+	}
 
-    /// <inheritdoc />
-    public async Task<IEnumerable<BasicViewModel>> BasicAllAsync()
-    {
-	    return await this._dbContext
-		    .Schools
-		    .Select(s => new BasicViewModel
-		    {
-			    Id = s.Id.ToString(),
-			    Name = s.Name
-		    })
-		    .AsNoTracking()
-		    .ToArrayAsync();
-    }
+	/// <inheritdoc />
+	public async Task<IEnumerable<BasicViewModel>> BasicAllAsync()
+	{
+		return await this._dbContext
+			.Schools
+			.Select(s => new BasicViewModel
+			{
+				Id = s.Id.ToString(),
+				Name = s.Name
+			})
+			.AsNoTracking()
+			.ToArrayAsync();
+	}
 
 	/// <inheritdoc />
 	public async Task<bool> AddAsync(AddSchoolFormModel model)
-    {
-        var newSchool = new School
-        {
-            Id = Guid.NewGuid(),
-            Name = model.Name,
-            Address = model.Address,
-            Email = model.Email,
-            PhoneNumber = model.PhoneNumber,
-            IsActive = true
-        }; // Create a new School object with data from the provided model
+	{
+		var newSchool = new School
+		{
+			Id = Guid.NewGuid(),
+			Name = model.Name,
+			Address = model.Address,
+			Email = model.Email,
+			PhoneNumber = model.PhoneNumber,
+			IsActive = true
+		}; // Create a new School object with data from the provided model
 
-        // Check if a school with the same name already exists
-        bool schoolExists = await this._dbContext.Schools.AnyAsync(s => s.Name == model.Name);
+		// Check if a school with the same name already exists
+		bool schoolExists = await this._dbContext.Schools.AnyAsync(s => s.Name == model.Name);
 
-        if (schoolExists)
-        {
-            return false;
-        }
+		if (schoolExists)
+		{
+			return false;
+		}
 
-        // Add the new school to the database and save changes
-        await this._dbContext.Schools.AddAsync(newSchool);
-        await this._dbContext.SaveChangesAsync();
+		// Add the new school to the database and save changes
+		await this._dbContext.Schools.AddAsync(newSchool);
+		await this._dbContext.SaveChangesAsync();
 
-        return true;
-    }
+		return true;
+	}
 
 	/// <inheritdoc />
 	public async Task<SchoolDetailsViewModel?> ViewDetailsAsync(string id)
@@ -144,26 +144,26 @@ public class SchoolService : ISchoolService
 
 	/// <inheritdoc />
 	public async Task<AddSchoolFormModel?> GetForEditAsync(string id)
-    {
-        var viewModel = await this._dbContext
-            .Schools
-            .Where(s => s.Id == Guid.Parse(id))
-            .Select(s => new AddSchoolFormModel
-            {
-                Name = s.Name,
-                Address = s.Address,
-                Email = s.Email,
-                PhoneNumber = s.PhoneNumber,
-                IsActive = s.IsActive
-            })
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
+	{
+		var viewModel = await this._dbContext
+			.Schools
+			.Where(s => s.Id == Guid.Parse(id))
+			.Select(s => new AddSchoolFormModel
+			{
+				Name = s.Name,
+				Address = s.Address,
+				Email = s.Email,
+				PhoneNumber = s.PhoneNumber,
+				IsActive = s.IsActive
+			})
+			.AsNoTracking()
+			.FirstOrDefaultAsync();
 
-        return viewModel;
-    }
+		return viewModel;
+	}
 
 	/// <inheritdoc />
-	public async Task<bool> EditAsync(string id, SchoolDetailsViewModel model)
+	public async Task<bool> EditAsync(string id, AddSchoolFormModel model)
 	{
 		var schoolForEdit = await this._dbContext.Schools.FindAsync(Guid.Parse(id));
 
@@ -210,6 +210,17 @@ public class SchoolService : ISchoolService
 	}
 
 	/// <inheritdoc />
+	public async Task<bool> HasStudentsAssignedAsync(string id)
+	{
+		bool hasStudents = await this._dbContext
+			.Schools
+			.Where(c => c.Id == Guid.Parse(id))
+			.AnyAsync(c => c.Students.Any());
+
+		return hasStudents;
+	}
+
+	/// <inheritdoc />
 	public async Task<SchoolDetailsViewModel?> GetByIdAsync(string id)
 	{
 		var school = await this._dbContext
@@ -235,10 +246,10 @@ public class SchoolService : ISchoolService
 
 	/// <inheritdoc />
 	public async Task<bool> ClassroomExistsInSchoolAsync(string schoolId, string classroomId)
-    {
-	    return this._dbContext
-		    .Schools
-		    .AsNoTracking()
-		    .Any(s => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
-    }
+	{
+		return this._dbContext
+			.Schools
+			.AsNoTracking()
+			.Any(s => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
+	}
 }

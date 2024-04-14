@@ -4,17 +4,15 @@ using System.Globalization;
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
-using Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Guardian;
 using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
-using static KyberKlass.Common.CustomMessageConstants;
-using Student = KyberKlass.Data.Models.Student;
 
 /// <summary>
-/// Service for managing user-related operations.
+///     Service for managing user-related operations.
 /// </summary>
 public class UserService : IUserService
 {
@@ -132,7 +130,6 @@ public class UserService : IUserService
 					Students = guardianStudents
 				};
 			}
-
 		}
 		else if (viewModel.Role == "Guardian")
 		{

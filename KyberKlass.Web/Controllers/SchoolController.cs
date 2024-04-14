@@ -9,7 +9,7 @@ using ViewModels.Admin.School;
 using static Common.CustomMessageConstants.Common;
 
 /// <summary>
-/// Controller responsible for managing schools in the system.
+///     Controller responsible for managing schools in the system.
 /// </summary>
 [Authorize(Roles = "Admin")]
 public class SchoolController : Controller
@@ -18,7 +18,7 @@ public class SchoolController : Controller
 	private const string CONTROLLER_NAME = "School";
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="SchoolController"/> class.
+	///     Initializes a new instance of the <see cref="SchoolController" /> class.
 	/// </summary>
 	/// <param name="schoolService">The service for managing schools.</param>
 	public SchoolController(ISchoolService schoolService)
@@ -32,7 +32,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Retrieves all schools and renders the corresponding view.
+	///     Retrieves all schools and renders the corresponding view.
 	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> All()
@@ -43,7 +43,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Retrieves all schools and returns them as JSON.
+	///     Retrieves all schools and returns them as JSON.
 	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> GetSchools()
@@ -54,7 +54,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Returns a view to add a new school.
+	///     Returns a view to add a new school.
 	/// </summary>
 	[HttpGet]
 	public IActionResult Add()
@@ -63,7 +63,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Adds a new school.
+	///     Adds a new school.
 	/// </summary>
 	[HttpPost]
 	public async Task<IActionResult> Add(AddSchoolFormModel model)
@@ -97,13 +97,13 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Displays details of a specific school.
+	///     Displays details of a specific school.
 	/// </summary>
 	/// <param name="id">The unique identifier of the school.</param>
 	[HttpGet]
 	public async Task<IActionResult> Details(string id)
 	{
-		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null); 
+		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
 		if (isValidInput == false)
 		{
@@ -128,8 +128,8 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Displays a view to edit details of a school.
-	/// <param name="id">The unique identifier of the school.</param>
+	///     Displays a view to edit details of a school.
+	///     <param name="id">The unique identifier of the school.</param>
 	/// </summary>
 	[HttpGet]
 	public async Task<IActionResult> Edit(string id)
@@ -145,7 +145,7 @@ public class SchoolController : Controller
 		{
 			var schoolViewModel = await this._schoolService.GetForEditAsync(id);
 
-			if (schoolViewModel == null) 
+			if (schoolViewModel == null)
 			{
 				return this.NotFound();
 			}
@@ -159,12 +159,12 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Updates the details of a school.
+	///     Updates the details of a school.
 	/// </summary>
 	/// <param name="id">The unique identifier of the school.</param>
-	/// <param name="model">The <see cref="SchoolDetailsViewModel"/> containing the updated details.</param>
+	/// <param name="model">The <see cref="SchoolDetailsViewModel" /> containing the updated details.</param>
 	[HttpPost]
-	public async Task<IActionResult> Edit(string id, SchoolDetailsViewModel model)
+	public async Task<IActionResult> Edit(string id, AddSchoolFormModel model)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
 
@@ -188,11 +188,11 @@ public class SchoolController : Controller
 			{
 				if (model.IsActive == false)
 				{
-					this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE,CONTROLLER_NAME, model.Id);
+					this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id);
 				}
 				else
 				{
-					this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE,CONTROLLER_NAME, model.Name);
+					this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
 				}
 			}
 
@@ -207,7 +207,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Displays a confirmation page before deleting a school.
+	///     Displays a confirmation page before deleting a school.
 	/// </summary>
 	/// <param name="id">The unique identifier of the school to delete.</param>
 	[HttpGet]
@@ -238,7 +238,7 @@ public class SchoolController : Controller
 	}
 
 	/// <summary>
-	/// Deletes the specified school.
+	///     Deletes the specified school.
 	/// </summary>
 	/// <param name="id">The unique identifier of the school to delete.</param>
 	[HttpPost]
@@ -253,6 +253,15 @@ public class SchoolController : Controller
 
 		try
 		{
+			bool hasStudentsAssigned = await this._schoolService.HasStudentsAssignedAsync(id);
+
+			if (hasStudentsAssigned)
+			{
+				this.TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, CONTROLLER_NAME.ToLower());
+
+				return this.RedirectToAction(nameof(this.All), new { id });
+			}
+
 			bool successfullyDeleted = await this._schoolService.DeleteAsync(id);
 
 			if (successfullyDeleted)

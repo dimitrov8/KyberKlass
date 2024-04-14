@@ -22,7 +22,8 @@ public static class CustomMessageConstants
 		public const string SOFT_DELETION_SUCCESSFUL_MESSAGE = "Successfully soft deleted {0} with ID: \"{1}\"."; // {0} => name of controller | {1} => id of model
 		public const string DELETION_ERROR_MESSAGE = "{0} with ID: \"{1}\" delation failed. Please try again later."; // {0} => name of controller
 
-		public const string DELETION_DATA_ERROR_MESSAGE = "Unable to delete the {0} because there is data in it. You can instead soft-delete the by unchecking \"IsActive\". You can do that by clicking \"Edit\"."; // {0} => name of controller
+		public const string DELETION_DATA_ERROR_MESSAGE =
+			"Unable to delete the {0} because there is data in it. You can instead soft-delete the by unchecking \"IsActive\". You can do that by clicking \"Edit\"."; // {0} => name of controller
 	}
 
 	public static class User
@@ -31,10 +32,12 @@ public static class CustomMessageConstants
 		public const string ROLE_UPDATE_SUCCESS_MESSAGE = "Successfully updated role for User with ID: \"{0}\".";
 		public const string ROLE_UPDATE_FAILED_MESSAGE = "Failed to update role for User with ID: \"{0}\".";
 
-        public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. User with ID: \"{0}\" is currently assigned as a teacher in a classroom. " +
+		public const string FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE = "Unable to update role. User with ID: \"{0}\" is currently assigned as a teacher in a classroom. " +
 		                                                                     "Please reassign the classroom teacher before attempting to update the role.";
-		public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE = "Unable to update role. User with ID: \"{0}\" is currently assigned as a guardian for one or more students. " +
-		                                                                      "Please reassign the guardian for the affected student(s) before attempting to update the role.";
+
+		public const string FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE =
+			"Unable to update role. User with ID: \"{0}\" is currently assigned as a guardian for one or more students. " +
+			"Please reassign the guardian for the affected student(s) before attempting to update the role.";
 
 		public const string FAILED_TO_UPDATE_TO_STUDENT_ROLE_MESSAGE = "Failed to update role to Student. Invalid guardian, school, or classroom.";
 	}
@@ -50,6 +53,5 @@ public static class CustomMessageConstants
 
 	public static class Classroom
 	{
-	
 	}
 }

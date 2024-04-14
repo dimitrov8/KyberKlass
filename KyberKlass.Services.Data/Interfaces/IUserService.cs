@@ -4,45 +4,45 @@ using KyberKlass.Data.Models;
 using Web.ViewModels.Admin.User;
 
 /// <summary>
-/// Interface for managing user-related operations.
+///     Interface for managing user-related operations.
 /// </summary>
 public interface IUserService
 {
 	/// <summary>
-	/// Retrieves a collection of user view models asynchronously.
+	///     Retrieves a collection of user view models asynchronously.
 	/// </summary>
 	/// <returns>A collection of user view models.</returns>
 	Task<IEnumerable<UserViewModel>> AllAsync();
 
 	/// <summary>
-	/// Retrieves a user entity by its unique identifier asynchronously.
+	///     Retrieves a user entity by its unique identifier asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <returns>The user entity if found; otherwise, null.</returns>
 	Task<ApplicationUser?> GetUserById(string id);
 
 	/// <summary>
-	/// Retrieves all available user roles asynchronously.
+	///     Retrieves all available user roles asynchronously.
 	/// </summary>
 	/// <returns>A collection of user roles.</returns>
 	Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync();
 
 	/// <summary>
-	/// Retrieves details of a user by their unique identifier asynchronously.
+	///     Retrieves details of a user by their unique identifier asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <returns>The details of the user if found; otherwise, null.</returns>
 	Task<UserDetailsViewModel?> GetDetailsAsync(string id);
 
 	/// <summary>
-	/// Retrieves a view model for editing a user asynchronously.
+	///     Retrieves a view model for editing a user asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <returns>A view model for editing a user if the user is found; otherwise, null.</returns>
 	Task<UserEditFormModel?> GetForEditAsync(string id);
 
 	/// <summary>
-	/// Edits user information asynchronously.
+	///     Edits user information asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <param name="model">The updated user information.</param>
@@ -50,21 +50,21 @@ public interface IUserService
 	Task<UserEditFormModel?> EditAsync(string id, UserEditFormModel model);
 
 	/// <summary>
-	/// Retrieves a view model for updating user roles asynchronously.
+	///     Retrieves a view model for updating user roles asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <returns>A view model for updating user roles if the user is found; otherwise, null.</returns>
 	Task<UserUpdateRoleViewModel?> GetForUpdateRoleAsync(string id);
 
 	/// <summary>
-	/// Retrieves the name of the role corresponding to the given identifier asynchronously.
+	///     Retrieves the name of the role corresponding to the given identifier asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the role.</param>
 	/// <returns>The name of the role if found; otherwise, null.</returns>
 	Task<string?> GetRoleNameByIdAsync(string id);
 
 	/// <summary>
-	/// Updates the role of a user asynchronously.
+	///     Updates the role of a user asynchronously.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
 	/// <param name="roleId">The unique identifier of the role to assign to the user.</param>

@@ -155,7 +155,7 @@ public class UserController : Controller
 				return this.NotFound();
 			}
 
-            return this.View(this.GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
+			return this.View(this.GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
 		}
 		catch (Exception)
 		{
@@ -167,7 +167,7 @@ public class UserController : Controller
 	public async Task<IActionResult> UpdateRoleConfirmed(string id, string roleId, string? guardianId, string? schoolId, string? classroomId)
 	{
 		bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null) &&
-							await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(roleId, null);
+		                    await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(roleId, null);
 
 		if (isValidInput == false)
 		{
@@ -190,20 +190,20 @@ public class UserController : Controller
 				{
 					// Display a message to change the classroom teacher
 					this.TempData["ErrorMessage"] = string.Format(FAILED_TO_UPDATE_TEACHER_TO_OTHER_ROLE_MESSAGE, id);
-                    return this.RedirectToAction(nameof(this.All));
-                }
+					return this.RedirectToAction(nameof(this.All));
+				}
 			}
 			else if (roleToUpdateTo != null && currentRole == "Guardian") // If user wants to update to a valid role and his current role is "Guardian"
 			{
 				// Checks if guardian is assigned to any student
-				bool isGuardianAssignedToStudent = await this._guardianService.IsGuardianAssignedToStudentAsync(id); 
+				bool isGuardianAssignedToStudent = await this._guardianService.IsGuardianAssignedToStudentAsync(id);
 
 				if (isGuardianAssignedToStudent) // If guardian is assigned to any student
 				{
 					// Display a message to change the student(s) guardian
 					this.TempData["ErrorMessage"] = string.Format(FAILED_TO_UPDATE_GUARDIAN_TO_OTHER_ROLE_MESSAGE, id);
-                    return this.RedirectToAction(nameof(this.All));
-                }
+					return this.RedirectToAction(nameof(this.All));
+				}
 			}
 
 			bool successfulRoleUpdate = await this._userService.UpdateRoleAsync(id, roleId, guardianId, schoolId, classroomId);
@@ -224,7 +224,7 @@ public class UserController : Controller
 		}
 		catch (Exception)
 		{
-            return this.RedirectToAction(nameof(this.All)); // Can return custom error view
+			return this.RedirectToAction(nameof(this.All)); // Can return custom error view
 		}
 	}
 

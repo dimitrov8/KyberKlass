@@ -1,12 +1,12 @@
 ﻿namespace KyberKlass.Web.Infrastructure.Extensions;
 
 /// <summary>
-/// Extension methods for input validation.
+///     Extension methods for input validation.
 /// </summary>
 public static class ValidationExtensions
 {
 	/// <summary>
-	/// Asynchronously checks if the provided ID and model are not null or empty.
+	///     Asynchronously checks if the provided ID and model are not null or empty.
 	/// </summary>
 	/// <typeparam name="T">Type of the model.</typeparam>
 	/// <param name="id">The ID to validate.</param>

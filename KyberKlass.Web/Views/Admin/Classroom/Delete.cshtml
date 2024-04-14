@@ -6,19 +6,16 @@
 
 <div class="container mt-5">
 	<h1 class="mb-4">@ViewData["Title"]</h1>
-	<hr />
-	
+	<hr/>
+
 	@await Html.PartialAsync("~/Views/Admin/Classroom/_ClassroomDetailsCommon.cshtml", Model)
 
 	<div class="mt-5">
 		<form asp-controller="Classroom" asp-action="DeleteConfirmed" method="post">
-			<input type="hidden" name="schoolId" value="@Model.SchoolId" />
-			<input type="hidden" name="classroomId" value="@Model.Id" />
+			<input type="hidden" name="schoolId" value="@Model.SchoolId"/>
+			<input type="hidden" name="classroomId" value="@Model.Id"/>
 			<button type="submit" class="btn btn-danger fw-bold">Delete</button>
 			<a class="btn btn-secondary fw-bold" asp-controller="Classroom" asp-action="Manage" asp-route-schoolId="@Model.SchoolId">Back to List</a>
 		</form>
 	</div>
 </div>
-
-
-

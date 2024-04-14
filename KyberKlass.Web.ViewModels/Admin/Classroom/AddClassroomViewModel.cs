@@ -10,6 +10,9 @@ public class AddClassroomViewModel
 		this.UnassignedTeachers = new HashSet<BasicViewModel>();
 	}
 
+	[Required]
+	public Guid Id { get; set; }
+
 	[Required(ErrorMessage = "Classroom name is required.")]
 	[StringLength(MAX_NAME_LENGTH, MinimumLength = MIN_NAME_LENGTH)]
 	public string Name { get; set; } = null!;
