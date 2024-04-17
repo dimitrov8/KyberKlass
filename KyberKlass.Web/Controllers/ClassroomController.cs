@@ -36,8 +36,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		IEnumerable<BasicViewModel> unassignedTeachers = await this._teacherService.GetUnassignedTeachersAsync();
 
@@ -119,8 +120,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -128,8 +130,9 @@ public class ClassroomController : Controller
 
 			if (classroomDetailsViewModel == null)
 			{
-				return this.NotFound(); // If classroom is not found
-			}
+                return this.View("NotFound404");
+                //return this.NotFound(); // If classroom is not found
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Details)), classroomDetailsViewModel);
 		}
@@ -146,8 +149,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -155,8 +159,9 @@ public class ClassroomController : Controller
 
 			if (school == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			IEnumerable<ClassroomDetailsViewModel> classrooms = await this._classroomService.AllAsync(schoolId);
 
@@ -183,8 +188,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -192,8 +198,9 @@ public class ClassroomController : Controller
 
 			if (classroomViewModel == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Edit)), classroomViewModel);
 		}
@@ -215,8 +222,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		if (this.ModelState.IsValid == false)
 		{
@@ -259,8 +267,9 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -268,8 +277,9 @@ public class ClassroomController : Controller
 
 			if (model == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Delete)), model);
 		}
@@ -292,10 +302,11 @@ public class ClassroomController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-		try
+        try
 		{
 			bool hasStudentsAssigned = await this._classroomService.HasStudentsAssignedAsync(classroomId);
 

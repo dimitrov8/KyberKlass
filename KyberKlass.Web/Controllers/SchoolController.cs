@@ -107,8 +107,9 @@ public class SchoolController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -116,8 +117,9 @@ public class SchoolController : Controller
 
 			if (schoolModel == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Details)), schoolModel);
 		}
@@ -138,17 +140,19 @@ public class SchoolController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
-		try
+        try
 		{
 			var schoolViewModel = await this._schoolService.GetForEditAsync(id);
 
 			if (schoolViewModel == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Edit)), schoolViewModel);
 		}
@@ -170,8 +174,9 @@ public class SchoolController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		if (this.ModelState.IsValid == false)
 		{
@@ -217,8 +222,9 @@ public class SchoolController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -226,8 +232,9 @@ public class SchoolController : Controller
 
 			if (model == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Delete)), model);
 		}
@@ -248,8 +255,9 @@ public class SchoolController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{

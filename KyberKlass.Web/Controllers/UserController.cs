@@ -46,7 +46,8 @@ public class UserController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
+			return this.View("BadRequest400");
+			//return this.BadRequest(INVALID_INPUT_MESSAGE);
 		}
 
 		try
@@ -54,9 +55,10 @@ public class UserController : Controller
 			var userDetailsViewModel = await this._userService.GetDetailsAsync(id);
 
 			if (userDetailsViewModel == null)
-			{
-				return this.NotFound();
-			}
+            {
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.Details)), userDetailsViewModel);
 		}
@@ -73,8 +75,9 @@ public class UserController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -82,10 +85,11 @@ public class UserController : Controller
 
 			if (userViewModel == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
-			return this.View(this.GetViewPath(nameof(this.Edit)), userViewModel);
+            return this.View(this.GetViewPath(nameof(this.Edit)), userViewModel);
 		}
 		catch (Exception)
 		{
@@ -100,8 +104,9 @@ public class UserController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		if (this.ModelState.IsValid == false)
 		{
@@ -143,8 +148,9 @@ public class UserController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -152,8 +158,9 @@ public class UserController : Controller
 
 			if (userUpdateRoleViewModel == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
 		}
@@ -171,8 +178,9 @@ public class UserController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -220,8 +228,9 @@ public class UserController : Controller
 				});
 			}
 
-			return this.BadRequest(string.Format(ROLE_UPDATE_FAILED_MESSAGE, id));
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(string.Format(ROLE_UPDATE_FAILED_MESSAGE, id));
+        }
 		catch (Exception)
 		{
 			return this.RedirectToAction(nameof(this.All)); // Can return custom error view

@@ -39,8 +39,9 @@ public class StudentController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
@@ -48,8 +49,9 @@ public class StudentController : Controller
 
 			if (viewModel.UserDetails == null)
 			{
-				return this.NotFound();
-			}
+                return this.View("NotFound404");
+                //return this.NotFound();
+            }
 
 			return this.View(this.GetViewPath(nameof(this.ChangeGuardian)), viewModel);
 		}
@@ -67,8 +69,9 @@ public class StudentController : Controller
 
 		if (isValidInput == false)
 		{
-			return this.BadRequest(INVALID_INPUT_MESSAGE);
-		}
+            return this.View("BadRequest400");
+            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+        }
 
 		try
 		{
