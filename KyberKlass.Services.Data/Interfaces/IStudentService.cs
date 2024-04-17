@@ -6,11 +6,11 @@ using Web.ViewModels.Admin.User;
 
 public interface IStudentService
 {
-	Task<IEnumerable<UserViewModel>?> AllAsync();
+    Task<IEnumerable<UserViewModel>?> AllAsync();
 
-	Task<Student?> GetByIdASync(string id);
+    Task<Student?> GetByIdASync(string id);
 
-	Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId);
+    Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId);
 
-	Task<bool> StudentChangeGuardianAsync(string userId, string guardianId);
+    Task<bool> StudentChangeGuardianAsync(string userId, string guardianId);
 }

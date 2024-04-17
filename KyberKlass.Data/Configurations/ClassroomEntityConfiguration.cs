@@ -6,15 +6,15 @@ using Models;
 
 public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
 {
-	public void Configure(EntityTypeBuilder<Classroom> builder)
-	{
-		builder
-			.HasQueryFilter(c => c.IsActive);
+    public void Configure(EntityTypeBuilder<Classroom> builder)
+    {
+        builder
+            .HasQueryFilter(c => c.IsActive);
 
-		builder
-			.HasMany(c => c.Students)
-			.WithOne(s => s.Classroom)
-			.HasForeignKey(s => s.ClassroomId)
-			.OnDelete(DeleteBehavior.Restrict);
-	}
+        builder
+            .HasMany(c => c.Students)
+            .WithOne(s => s.Classroom)
+            .HasForeignKey(s => s.ClassroomId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
 }

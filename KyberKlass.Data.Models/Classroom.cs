@@ -6,40 +6,40 @@ using static Common.EntityValidations.Classroom;
 
 public class Classroom
 {
-	public Classroom()
-	{
-		this.Id = Guid.NewGuid();
+    public Classroom()
+    {
+        this.Id = Guid.NewGuid();
 
-		this.Students = new HashSet<Student>();
-	}
+        this.Students = new HashSet<Student>();
+    }
 
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-	public Guid Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
 
-	[Required]
-	[MaxLength(MAX_NAME_LENGTH)]
-	public string Name { get; set; } = null!;
+    [Required]
+    [MaxLength(MAX_NAME_LENGTH)]
+    public string Name { get; set; } = null!;
 
-	[Required]
-	public Guid TeacherId { get; set; }
+    [Required]
+    public Guid TeacherId { get; set; }
 
-	[ForeignKey(nameof(TeacherId))]
-	public Teacher Teacher { get; set; } = null!;
+    [ForeignKey(nameof(TeacherId))]
+    public Teacher Teacher { get; set; } = null!;
 
-	[Required]
-	public bool IsActive { get; set; } = true;
+    [Required]
+    public bool IsActive { get; set; } = true;
 
-	public ICollection<Student> Students { get; set; }
+    public ICollection<Student> Students { get; set; }
 
-	[Required]
-	public Guid SchoolId { get; set; }
+    [Required]
+    public Guid SchoolId { get; set; }
 
-	[ForeignKey(nameof(SchoolId))]
-	public School School { get; set; } = null!;
+    [ForeignKey(nameof(SchoolId))]
+    public School School { get; set; } = null!;
 
-	public override string ToString()
-	{
-		return this.Name;
-	}
+    public override string ToString()
+    {
+        return this.Name;
+    }
 }

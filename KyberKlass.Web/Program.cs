@@ -10,14 +10,14 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-	app.UseMigrationsEndPoint();
-	app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
-	app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error");
 
-	app.UseHsts();
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -30,8 +30,8 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-	EndpointConfigurationExtension.ConfigureEndpoints(endpoints);
-	EndpointConfigurationExtension.ConfigureRazorPages(endpoints);
+    EndpointConfigurationExtension.ConfigureEndpoints(endpoints);
+    EndpointConfigurationExtension.ConfigureRazorPages(endpoints);
 });
 
 app.Run();

@@ -6,9 +6,9 @@ using Models;
 
 public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>
 {
-	public void Configure(EntityTypeBuilder<Teacher> builder)
-	{
-		builder
-			.HasQueryFilter(t => t.ApplicationUser.IsActive);
-	}
+    public void Configure(EntityTypeBuilder<Teacher> builder)
+    {
+        builder
+            .HasQueryFilter(t => t.ApplicationUser.IsActive);
+    }
 }

@@ -9,45 +9,45 @@ using Models;
 
 public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
-	public KyberKlassDbContext()
-	{
-	}
+    public KyberKlassDbContext()
+    {
+    }
 
-	public KyberKlassDbContext(DbContextOptions<KyberKlassDbContext> options)
-		: base(options)
-	{
-	}
+    public KyberKlassDbContext(DbContextOptions<KyberKlassDbContext> options)
+        : base(options)
+    {
+    }
 
-	public DbSet<School> Schools { get; set; } = null!;
+    public DbSet<School> Schools { get; set; } = null!;
 
-	public DbSet<Classroom> Classrooms { get; set; } = null!;
+    public DbSet<Classroom> Classrooms { get; set; } = null!;
 
-	public DbSet<Teacher> Teachers { get; set; } = null!;
+    public DbSet<Teacher> Teachers { get; set; } = null!;
 
-	public DbSet<Student> Students { get; set; } = null!;
+    public DbSet<Student> Students { get; set; } = null!;
 
-	public DbSet<Guardian> Guardians { get; set; } = null!;
+    public DbSet<Guardian> Guardians { get; set; } = null!;
 
-	protected override void OnModelCreating(ModelBuilder builder)
-	{
-		builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-		foreach (var entityType in builder.Model.GetEntityTypes())
-		{
-			var isActiveProperty = entityType.FindProperty("IsActive");
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            var isActiveProperty = entityType.FindProperty("IsActive");
 
-			if (isActiveProperty != null && isActiveProperty.ClrType == typeof(bool))
-			{
-				var parameter = Expression.Parameter(entityType.ClrType, "e");
-				var body = Expression.Equal(
-					Expression.Property(parameter, "IsActive"),
-					Expression.Constant(true));
+            if (isActiveProperty != null && isActiveProperty.ClrType == typeof(bool))
+            {
+                var parameter = Expression.Parameter(entityType.ClrType, "e");
+                var body = Expression.Equal(
+                    Expression.Property(parameter, "IsActive"),
+                    Expression.Constant(true));
 
-				builder.Entity(entityType.ClrType)
-					.HasQueryFilter(Expression.Lambda(body, parameter));
-			}
-		}
+                builder.Entity(entityType.ClrType)
+                    .HasQueryFilter(Expression.Lambda(body, parameter));
+            }
+        }
 
-		base.OnModelCreating(builder);
-	}
+        base.OnModelCreating(builder);
+    }
 }

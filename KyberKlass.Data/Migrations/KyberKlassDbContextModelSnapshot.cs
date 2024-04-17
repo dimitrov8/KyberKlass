@@ -163,7 +163,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classrooms");
+                    b.ToTable("Classrooms", (string)null);
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -173,7 +173,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guardians");
+                    b.ToTable("Guardians", (string)null);
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.School", b =>
@@ -204,7 +204,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools");
+                    b.ToTable("Schools", (string)null);
 
                     b.HasData(
                         new
@@ -249,7 +249,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
@@ -259,7 +259,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
