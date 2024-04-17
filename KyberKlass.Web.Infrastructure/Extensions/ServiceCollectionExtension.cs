@@ -3,6 +3,7 @@
 using Data;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,12 +26,17 @@ public static class ServiceCollectionExtension
 		services.AddScoped<IStudentService, StudentService>();
 		services.AddScoped<IGuardianService, GuardianService>();
 
+		services.AddControllersWithViews(options =>
+		{
+			options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+		});
+
 		return services;
 	}
 
 	public static IServiceCollection AddApplicationDbContext(this IServiceCollection services, IConfiguration config)
 	{
-		string? connectionString = config.GetConnectionString("DefaultConnection") ??
+		string connectionString = config.GetConnectionString("DefaultConnection") ??
 		                           throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 		services.AddDbContext<KyberKlassDbContext>(options =>
