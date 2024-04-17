@@ -30,19 +30,8 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-	endpoints.MapControllerRoute(
-		"adminSchool",
-		"Admin/School/{action=Index}",
-		new { controller = "School" }
-	);
-
-	// Add other endpoint mappings here if needed
-
-	endpoints.MapControllerRoute(
-		"default",
-		"{controller=Home}/{action=Index}/{id?}");
+	EndpointConfigurationExtension.ConfigureEndpoints(endpoints);
+	EndpointConfigurationExtension.ConfigureRazorPages(endpoints);
 });
-
-app.MapRazorPages();
 
 app.Run();
