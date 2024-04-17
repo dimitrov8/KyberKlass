@@ -1,13 +1,13 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
 using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin;
-using KyberKlass.Web.ViewModels.Admin.Classroom;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin;
+using Web.ViewModels.Admin.Classroom;
 
 public class ClassroomServiceTests : IDisposable
 {
@@ -480,15 +480,15 @@ public class ClassroomServiceTests : IDisposable
 	public async Task ClassroomExistsInSchoolAsync_ReturnsTrueWhenClassroomExistsInSchool()
 	{
 		// Arrange
-		var schoolId = Guid.NewGuid().ToString();
-		var classroomName = "11E";
+		string schoolId = Guid.NewGuid().ToString();
+		string classroomName = "11E";
 		var classroom = new Classroom { Id = Guid.NewGuid(), Name = classroomName, SchoolId = Guid.Parse(schoolId) };
 
 		await this._dbContextMock.Classrooms.AddAsync(classroom);
 		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
-		var result = await this._sut.ClassroomExistsInSchoolAsync(classroomName, schoolId);
+		bool result = await this._sut.ClassroomExistsInSchoolAsync(classroomName, schoolId);
 
 		// Assert
 		Assert.True(result);
@@ -498,11 +498,11 @@ public class ClassroomServiceTests : IDisposable
 	public async Task ClassroomExistsInSchoolAsync_ReturnsFalseWhenClassroomDoesNotExistInSchool()
 	{
 		// Arrange
-		var schoolId = Guid.NewGuid().ToString();
-		var classroomName = "0A";
+		string schoolId = Guid.NewGuid().ToString();
+		string classroomName = "0A";
 
 		// Act
-		var result = await this._sut.ClassroomExistsInSchoolAsync(classroomName, schoolId);
+		bool result = await this._sut.ClassroomExistsInSchoolAsync(classroomName, schoolId);
 
 		// Assert
 		Assert.False(result);
@@ -520,7 +520,7 @@ public class ClassroomServiceTests : IDisposable
 		};
 
 		// Act
-		var result = await this._sut.AddAsync(model);
+		bool result = await this._sut.AddAsync(model);
 
 		// Assert
 		Assert.False(result);
@@ -551,7 +551,7 @@ public class ClassroomServiceTests : IDisposable
 		};
 
 		// Act
-		var result = await this._sut.AddAsync(model);
+		bool result = await this._sut.AddAsync(model);
 
 		// Assert
 		Assert.True(result);
@@ -572,7 +572,7 @@ public class ClassroomServiceTests : IDisposable
 	{
 		// Arrange
 		var classroomId = Guid.NewGuid();
-		var classroomName = "11E";
+		string classroomName = "11E";
 		var teacherId = Guid.NewGuid();
 		var schoolId = Guid.NewGuid();
 

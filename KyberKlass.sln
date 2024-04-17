@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Services.Data", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Web.Infrastructure", "KyberKlass.Web.Infrastructure\KyberKlass.Web.Infrastructure.csproj", "{D63A68C7-8BD7-4784-A387-E7A7EF2CC2C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kyberklass.Tests", "Kyberklass.Tests\Kyberklass.Tests.csproj", "{C9B181BC-3400-409B-AE9B-BBD15BA062F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KyberKlass.Tests", "Kyberklass.Tests\KyberKlass.Tests.csproj", "{C9B181BC-3400-409B-AE9B-BBD15BA062F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

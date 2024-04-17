@@ -1,12 +1,15 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
 using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Web.ViewModels.Admin;
+using Web.ViewModels.Admin.User;
 
 public class StudentServiceTests : IDisposable
 {
@@ -260,7 +263,7 @@ public class StudentServiceTests : IDisposable
 
 		var guardian = new Guardian
 		{
-			Id = guardianId, 
+			Id = guardianId,
 			ApplicationUser = guardianUser
 		};
 
@@ -291,6 +294,174 @@ public class StudentServiceTests : IDisposable
 		Assert.False(result);
 		Assert.Equal(student.Guardian.Id, guardianId);
 	}
+
+	[Fact]
+	public async Task GetStudentChangeGuardianAsync_ReturnsViewModelWithUserDetailsAndAvailableGuardians()
+	{
+		// Arrange
+		var userId = Guid.NewGuid();
+		var userDetails = new UserDetailsViewModel
+		{
+			Id = userId.ToString(),
+			FullName = "Barry Thompson",
+			BirthDate = "1999-01-01",
+			Address = "Random Address",
+			PhoneNumber = "0888888888",
+			Email = "test@test.com",
+			Role = "No Role Assigned",
+			IsActive = "true"
+		};
+
+		var availableGuardians = new List<BasicViewModel>
+		{
+			new()
+				{ Id = "1", Name = "Guardian 1" },
+			new()
+				{ Id = "2", Name = "Guardian 2" }
+		};
+
+		this._userServiceMock.Setup(m => m.GetDetailsAsync(userId.ToString()))
+			.ReturnsAsync(userDetails);
+
+		this._guardianServiceMock.Setup(m => m.GetAllGuardiansAsync())
+			.ReturnsAsync(availableGuardians);
+
+		// Act
+		var result = await this._sut.GetStudentChangeGuardianAsync(userId.ToString());
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.NotNull(result.UserDetails);
+		Assert.Equal(userDetails.Id, result.UserDetails!.Id);
+		Assert.Equal(userDetails.FullName, result.UserDetails.FullName);
+		Assert.Equal(userDetails.BirthDate, result.UserDetails.BirthDate);
+		Assert.Equal(userDetails.Address, result.UserDetails.Address);
+		Assert.Equal(userDetails.PhoneNumber, result.UserDetails.PhoneNumber);
+		Assert.Equal(userDetails.Email, result.UserDetails.Email);
+		Assert.Equal(userDetails.Role, result.UserDetails.Role);
+		Assert.Equal(userDetails.IsActive, result.UserDetails.IsActive);
+
+		Assert.NotNull(result.AvailableGuardians);
+		Assert.Equal(availableGuardians.Count, result.AvailableGuardians.Count());
+
+		foreach (var expectedGuardian in availableGuardians)
+		{
+			Assert.Contains(result.AvailableGuardians, g => g.Id == expectedGuardian.Id && g.Name == expectedGuardian.Name);
+		}
+	}
+
+	[Fact]
+	public async Task AllAsync_ReturnsAllUsersWithStudentRole()
+	{
+		// Arrange
+		var studentRoleId = Guid.NewGuid();
+		var student1Id = Guid.NewGuid();
+		var student2Id = Guid.NewGuid();
+		var students = new List<ApplicationUser>
+		{
+			new()
+			{
+				Id = student1Id,
+				UserName = "test_student1@test.com",
+				NormalizedUserName = "TEST_STUDENT1@TEST.COM",
+				Email = "test_student1@test.com",
+				NormalizedEmail = "TEST_STUDENT1@TEST.COM",
+				FirstName = "Random",
+				LastName = "Student",
+				BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+				Address = "Random Address",
+				IsActive = true
+			},
+			new()
+			{
+				Id = student2Id,
+				UserName = "test_student2@test.com",
+				NormalizedUserName = "TEST_STUDENT2@TEST.COM",
+				Email = "test_student2@test.com",
+				NormalizedEmail = "TEST_STUDENT2@TEST.COM",
+				FirstName = "AnotherRandom",
+				LastName = "Student",
+				BirthDate = DateTime.ParseExact("2001-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+				Address = "Random Address",
+				IsActive = true
+			}
+		};
+
+		var roles = new List<IdentityRole<Guid>>
+		{
+			new()
+			{
+				Id = studentRoleId,
+				Name = "Student",
+				NormalizedName = "STUDENT",
+				ConcurrencyStamp = Guid.NewGuid().ToString()
+			}
+		};
+
+		var userRoles = new List<IdentityUserRole<Guid>>
+		{
+			new()
+			{
+				UserId = student1Id,
+				RoleId = studentRoleId
+			},
+			new()
+			{
+				UserId = student2Id,
+				RoleId = studentRoleId
+			}
+		};
+
+		await this._dbContextMock.Roles.AddRangeAsync(roles);
+		await this._dbContextMock.Users.AddRangeAsync(students);
+		await this._dbContextMock.UserRoles.AddRangeAsync(userRoles);
+		await this._dbContextMock.SaveChangesAsync();
+
+		// Act
+		IEnumerable<UserViewModel>? result = await this._sut.AllAsync();
+
+		// Assert
+		Assert.NotNull(result);
+		List<UserViewModel> resultViewModels = result!.ToList();
+		Assert.NotEmpty(resultViewModels);
+		Assert.Equal(students.Count, resultViewModels.Count);
+
+		foreach (var expectedUser in students)
+		{
+			var userViewModel = resultViewModels.FirstOrDefault(u => u.Id == expectedUser.Id.ToString());
+			Assert.NotNull(userViewModel);
+			Assert.Equal(expectedUser.Email, userViewModel!.Email);
+			Assert.Equal(expectedUser.GetFullName(), userViewModel.FullName);
+			Assert.Equal("Student", userViewModel.Role);
+			Assert.Equal(expectedUser.IsActive, userViewModel.IsActive);
+		}
+	}
+
+	[Fact]
+	public async Task AllAsync_ReturnsNullWhenStudentRoleIdIsInvalid()
+	{
+		// Arrange
+		var roles = new List<IdentityRole<Guid>>
+		{
+			new()
+			{
+				Id = Guid.NewGuid(),
+				Name = "Teacher",
+				NormalizedName = "TEACHER",
+				ConcurrencyStamp = Guid.NewGuid().ToString()
+			}
+		};
+
+		await this._dbContextMock.Roles.AddRangeAsync(roles);
+		await this._dbContextMock.SaveChangesAsync();
+
+		// Act
+		IEnumerable<UserViewModel>? result = await this._sut.AllAsync();
+
+		// Assert
+		Assert.Null(result);
+	}
+
 
 	public async void Dispose()
 	{

@@ -1,17 +1,17 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
 using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Web.ViewModels.Admin;
 
 public class GuardianServiceTests : IDisposable
-{ 
+{
 	private readonly DbContextOptions<KyberKlassDbContext> _options;
 	private readonly KyberKlassDbContext _dbContextMock;
 	private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
@@ -271,7 +271,7 @@ public class GuardianServiceTests : IDisposable
 			.ReturnsAsync(new List<ApplicationUser>());
 
 		// Act
-		var result = await this._sut.GetAllGuardiansAsync();
+		IEnumerable<BasicViewModel> result = await this._sut.GetAllGuardiansAsync();
 
 		// Assert
 		Assert.NotNull(result);

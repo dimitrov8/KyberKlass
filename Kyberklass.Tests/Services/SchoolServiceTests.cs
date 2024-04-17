@@ -1,13 +1,12 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
-using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin;
-using KyberKlass.Web.ViewModels.Admin.School;
 using Microsoft.EntityFrameworkCore;
+using Web.ViewModels.Admin;
+using Web.ViewModels.Admin.School;
 
 public class SchoolServiceTests : IDisposable
 {
@@ -667,34 +666,34 @@ public class SchoolServiceTests : IDisposable
 			PhoneNumber = "0888888888",
 			IsActive = true,
 			Classrooms = new List<Classroom>
+			{
+				new()
 				{
-					new()
+					Id = Guid.NewGuid(),
+					Name = "11E",
+					TeacherId = Guid.NewGuid(),
+					IsActive = true,
+					Students = new List<Student>
 					{
-						Id = Guid.NewGuid(),
-						Name = "11E",
-						TeacherId = Guid.NewGuid(),
-						IsActive = true,
-						Students = new List<Student>
+						new()
 						{
-							new()
+							Id = Guid.NewGuid(),
+							GuardianId = Guid.NewGuid(),
+							SchoolId = school1Id,
+							ClassroomId = Guid.NewGuid(),
+							ApplicationUser = new ApplicationUser
 							{
 								Id = Guid.NewGuid(),
-								GuardianId = Guid.NewGuid(),
-								SchoolId = school1Id,
-								ClassroomId = Guid.NewGuid(),
-								ApplicationUser = new ApplicationUser
-								{
-									Id = Guid.NewGuid(),
-									FirstName = "Alice",
-									LastName = "Barry",
-									Address = "Random Address 10",
-									BirthDate = DateTime.Parse("2000-01-01"),
-									IsActive = true
-								}
-							},
+								FirstName = "Alice",
+								LastName = "Barry",
+								Address = "Random Address 10",
+								BirthDate = DateTime.Parse("2000-01-01"),
+								IsActive = true
+							}
 						}
-					},
+					}
 				}
+			}
 		};
 
 		var school2 = new School
@@ -704,14 +703,14 @@ public class SchoolServiceTests : IDisposable
 			Address = "Address 2",
 			Email = "school2@test.com",
 			PhoneNumber = "0999999999",
-			IsActive = true,
+			IsActive = true
 		};
 
 		await this._dbContextMock.Schools.AddRangeAsync(school1, school2);
 		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
-		var result = await this._sut.AllAsync();
+		IEnumerable<SchoolDetailsViewModel> result = await this._sut.AllAsync();
 
 		// Assert
 		Assert.NotNull(result);
@@ -728,7 +727,7 @@ public class SchoolServiceTests : IDisposable
 			Assert.Equal(actualSchool.PhoneNumber, school.PhoneNumber);
 			Assert.Equal(actualSchool.IsActive, school.IsActive);
 
-			var expectedClassroomCount = await this._dbContextMock.Classrooms.CountAsync(c => c.SchoolId == actualSchool.Id);
+			int expectedClassroomCount = await this._dbContextMock.Classrooms.CountAsync(c => c.SchoolId == actualSchool.Id);
 			Assert.Equal(expectedClassroomCount, actualSchool.Classrooms.Count);
 
 			foreach (var classroom in school.Classrooms)
@@ -738,7 +737,7 @@ public class SchoolServiceTests : IDisposable
 				Assert.Equal(actualClassroom!.Name, classroom.Name);
 				Assert.Equal($"{actualClassroom.Teacher.ApplicationUser.FirstName} {actualClassroom.Teacher.ApplicationUser.LastName}", classroom.TeacherName);
 
-				var expectedStudentCount = await this._dbContextMock.Students.CountAsync(s => s.ClassroomId == actualClassroom.Id);
+				int expectedStudentCount = await this._dbContextMock.Students.CountAsync(s => s.ClassroomId == actualClassroom.Id);
 				Assert.Equal(expectedStudentCount, classroom.Students.Count);
 
 				foreach (var student in classroom.Students)
@@ -750,6 +749,7 @@ public class SchoolServiceTests : IDisposable
 			}
 		}
 	}
+
 	public async void Dispose()
 	{
 		await this._dbContextMock.DisposeAsync();

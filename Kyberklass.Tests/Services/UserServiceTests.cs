@@ -1,71 +1,82 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
 using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using Web.ViewModels.Admin.User;
 
 public class UserServiceTests : IDisposable
 {
-	private readonly Mock<KyberKlassDbContext> _dbContextMock;
+	private readonly DbContextOptions<KyberKlassDbContext> _options;
+	private readonly KyberKlassDbContext _dbContextMock;
 	private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
 	private readonly Mock<RoleManager<IdentityRole<Guid>>> _roleManagerMock;
 	private readonly Mock<IGuardianService> _guardianServiceMock;
-	private readonly Mock<IStudentService> _studentServiceMock;
 	private readonly Mock<ISchoolService> _schoolServiceMock;
 	private readonly UserService _sut;
 
 	public UserServiceTests()
 	{
-		this._dbContextMock = new Mock<KyberKlassDbContext>();
-		this._userManagerMock = this.MockUserManager<ApplicationUser>();
-		this._roleManagerMock = this.MockRoleManager<IdentityRole<Guid>>();
+		this._options = new DbContextOptionsBuilder<KyberKlassDbContext>()
+			.UseInMemoryDatabase(Guid.NewGuid().ToString())
+			.Options;
+
+		this._dbContextMock = new KyberKlassDbContext(this._options);
+
+		this._userManagerMock = new Mock<UserManager<ApplicationUser>>(
+			Mock.Of<IUserStore<ApplicationUser>>(),
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+
+		this._roleManagerMock = new Mock<RoleManager<IdentityRole<Guid>>>(
+			Mock.Of<IRoleStore<IdentityRole<Guid>>>(),
+			null,
+			null,
+			null,
+			null
+		);
+
 		this._guardianServiceMock = new Mock<IGuardianService>();
-		this._studentServiceMock = new Mock<IStudentService>();
 		this._schoolServiceMock = new Mock<ISchoolService>();
 
-		this._sut = new UserService(
-			this._dbContextMock.Object,
-			this._userManagerMock.Object,
-			this._roleManagerMock.Object,
-			this._guardianServiceMock.Object,
-			this._schoolServiceMock.Object
-		);
+		this._sut = new UserService(this._dbContextMock, this._userManagerMock.Object, this._roleManagerMock.Object, this._guardianServiceMock.Object,
+			this._schoolServiceMock.Object);
 	}
 
-	// Helper method to mock UserManager
-	private Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
-	{
-		var store = new Mock<IUserStore<TUser>>();
-		var userManagerMock = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
-		return userManagerMock;
-	}
-
-	// Helper method to mock RoleManager
-	private Mock<RoleManager<TRole>> MockRoleManager<TRole>() where TRole : class
-	{
-		var store = new Mock<IRoleStore<TRole>>();
-		var roleManagerMock = new Mock<RoleManager<TRole>>(store.Object, null, null, null, null);
-		return roleManagerMock;
-	}
 
 	[Fact]
-	public async Task GetUserById_Returns_User()
+	public async Task GetUserById_ReturnsUser()
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
 		var user = new ApplicationUser
 		{
-			Id = userId
+			Id = userId,
+			UserName = "test@test.com",
+			NormalizedUserName = "TES@TEST.COM",
+			Email = "test@test.com",
+			NormalizedEmail = "test@TEST.COM",
+			FirstName = "Test",
+			LastName = "Test",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Test Address",
+			IsActive = true
 		};
 
-		// Mock call to GetUserById
-		this._dbContextMock.Setup(m => m.Users.FindAsync(user.Id))
-			.ReturnsAsync(user);
+		await this._dbContextMock.Users.AddAsync(user);
+		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
 		var result = await this._sut.GetUserById(user.Id.ToString());
@@ -75,14 +86,10 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetUserById_Returns_Null_IfUserDoesNotExist()
+	public async Task GetUserById_ReturnsNullIfUserDoesNotExist()
 	{
 		// Arrange
 		var invalidUserId = Guid.NewGuid();
-
-		// Mock call to GetUserById
-		this._dbContextMock.Setup(m => m.Users.FindAsync(invalidUserId))
-			.ReturnsAsync((ApplicationUser?)null);
 
 		// Act
 		var result = await this._sut.GetUserById(invalidUserId.ToString());
@@ -91,7 +98,7 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetRoleNameByIdAsync_Returns_RoleName()
+	public async Task GetRoleNameByIdAsyncReturnsRoleName()
 	{
 		// Arrange
 		string roleId = Guid.NewGuid().ToString();
@@ -109,12 +116,11 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetRoleNameByIdAsync_Returns_Null_For_Invalid_RoleId()
+	public async Task GetRoleNameByIdAsync_ReturnsNullForInvalidRoleId()
 	{
 		// Arrange
 		string invalidRoleId = Guid.NewGuid().ToString();
 
-		// Setup mock to return null for an invalid role ID
 		this._roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId))
 			.ReturnsAsync((IdentityRole<Guid>)null!);
 
@@ -126,7 +132,7 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetDetailsAsync_Returns_UserWithNoRoleDetailsViewModel()
+	public async Task GetDetailsAsync_ReturnsUserWithNoRoleDetailsViewModel()
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
@@ -168,10 +174,9 @@ public class UserServiceTests : IDisposable
 			School = null
 		};
 
-		// Mock GetUserById to return the user
-		this._dbContextMock.Setup(m => m.Users.FindAsync(userId)).ReturnsAsync(user);
+		await this._dbContextMock.AddAsync(user);
+		await this._dbContextMock.SaveChangesAsync();
 
-		// Mock GetRoleAsync to return "No Role Assigned"
 		this._userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string>());
 
 		// Act
@@ -190,13 +195,10 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetDetailsAsync_Returns_NullViewModel_IfUserNotFound()
+	public async Task GetDetailsAsync_ReturnsNullViewModelIfUserNotFound()
 	{
 		// Arrange
 		string invalidUserId = Guid.NewGuid().ToString();
-
-		this._dbContextMock.Setup(m => m.Users.FindAsync(Guid.Parse(invalidUserId)))
-			.ReturnsAsync((ApplicationUser?)null);
 
 		// Act
 		var result = await this._sut.GetDetailsAsync(invalidUserId);
@@ -255,11 +257,9 @@ public class UserServiceTests : IDisposable
 
 		guardian.Students = new List<Student> { student };
 
-		// Mock the call to GetUserById to return the student user
-		this._dbContextMock.Setup(m => m.Users.FindAsync(student.Id))
-			.ReturnsAsync(studentUser);
+		await this._dbContextMock.Users.AddAsync(studentUser);
+		await this._dbContextMock.SaveChangesAsync();
 
-		// Mock UserManager to return "Student" role
 		this._userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
 			.ReturnsAsync(new List<string> { "Student" });
 
@@ -272,7 +272,7 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetForEditAsync_Returns_UserEditFormModel_When_UserExists()
+	public async Task GetForEditAsync_ReturnsUserEditFormModelWhenUserExists()
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
@@ -291,9 +291,8 @@ public class UserServiceTests : IDisposable
 			IsActive = true
 		};
 
-		// Mock the GetUserById method to return the user
-		this._dbContextMock.Setup(m => m.Users.FindAsync(userId))
-			.ReturnsAsync(user);
+		await this._dbContextMock.Users.AddAsync(user);
+		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
 		var result = await this._sut.GetForEditAsync(userId.ToString());
@@ -311,14 +310,10 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task GetForEditAsync_Returns_Null_When_UserDoesNotExist()
+	public async Task GetForEditAsync_ReturnsNullWhenUserDoesNotExist()
 	{
 		// Arrange
 		var invalidUserId = Guid.NewGuid();
-
-		// Mock the GetUserById method to return null for an invalid user ID
-		this._dbContextMock.Setup(m => m.Users.FindAsync(invalidUserId))
-			.ReturnsAsync((ApplicationUser?)null);
 
 		// Act
 		var result = await this._sut.GetForEditAsync(invalidUserId.ToString());
@@ -328,7 +323,7 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task EditAsync_Returns_UserEditFormModel_When_UserExists()
+	public async Task EditAsync_ReturnsUserEditFormModelWhenUserExists()
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
@@ -359,9 +354,8 @@ public class UserServiceTests : IDisposable
 			IsActive = true
 		};
 
-		// Mock the GetUserById method to return the user
-		this._dbContextMock.Setup(m => m.Users.FindAsync(userId))
-			.ReturnsAsync(user);
+		await this._dbContextMock.AddAsync(user);
+		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
 		var result = await this._sut.EditAsync(userId.ToString(), model);
@@ -379,26 +373,21 @@ public class UserServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task EditAsync_Returns_Null_When_UserDoesNotExist()
+	public async Task EditAsync_ReturnsNullWhenUserDoesNotExist()
 	{
 		// Arrange
 		var invalidUserId = Guid.NewGuid();
 		var model = new UserEditFormModel();
-
-		// Mock the GetUserById method to return null for an invalid user ID
-		this._dbContextMock.Setup(m => m.Users.FindAsync(invalidUserId))
-			.ReturnsAsync((ApplicationUser?)null);
 
 		// Act
 		var result = await this._sut.EditAsync(invalidUserId.ToString(), model);
 
 		// Assert
 		Assert.Null(result);
-		this._dbContextMock.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 	}
 
 	[Fact]
-	public async Task EditAsync_Updates_All_Properties()
+	public async Task EditAsync_UpdatesAllProperties()
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
@@ -413,7 +402,7 @@ public class UserServiceTests : IDisposable
 			IsActive = true
 		};
 
-		var initialUser = new ApplicationUser
+		var user = new ApplicationUser
 		{
 			Id = userId,
 			FirstName = "InitialFirstName",
@@ -425,26 +414,334 @@ public class UserServiceTests : IDisposable
 			IsActive = true
 		};
 
-		this._dbContextMock.Setup(m => m.Users.FindAsync(userId))
-			.ReturnsAsync(initialUser);
+		await this._dbContextMock.AddAsync(user);
+		await this._dbContextMock.SaveChangesAsync();
 
 		// Act
 		var result = await this._sut.EditAsync(userId.ToString(), model);
 
 		// Assert
 		Assert.NotNull(result);
-		this._dbContextMock.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
 
-		Assert.Equal(model.FirstName, initialUser.FirstName);
-		Assert.Equal(model.LastName, initialUser.LastName);
-		Assert.Equal(DateTime.ParseExact(model.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture), initialUser.BirthDate);
-		Assert.Equal(model.Address, initialUser.Address);
-		Assert.Equal(model.PhoneNumber, initialUser.PhoneNumber);
-		Assert.Equal(model.Email, initialUser.Email);
-		Assert.Equal(model.IsActive, initialUser.IsActive);
+		Assert.Equal(model.FirstName, user.FirstName);
+		Assert.Equal(model.LastName, user.LastName);
+		Assert.Equal(DateTime.ParseExact(model.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture), user.BirthDate);
+		Assert.Equal(model.Address, user.Address);
+		Assert.Equal(model.PhoneNumber, user.PhoneNumber);
+		Assert.Equal(model.Email, user.Email);
+		Assert.Equal(model.IsActive, user.IsActive);
 	}
 
-	public void Dispose()
+	[Fact]
+	public async Task AllAsync_ReturnsEmptyListWhenNoUsersExist()
 	{
+		// Act
+		IEnumerable<UserViewModel> result = await this._sut.AllAsync();
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task AllAsync_ReturnsAllUsersWithRoles()
+	{
+		// Arrange
+		var user1Id = Guid.NewGuid();
+		var user2Id = Guid.NewGuid();
+		var adminRoleId = Guid.NewGuid();
+
+		var users = new List<ApplicationUser>
+		{
+			new()
+			{
+				Id = user1Id,
+				UserName = "test@test.com",
+				NormalizedUserName = "TEST@TEST.COM",
+				Email = "test@test.com",
+				NormalizedEmail = "test@TEST.COM",
+				FirstName = "Random",
+				LastName = "User",
+				BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+				Address = "Random Address",
+				IsActive = true
+			},
+			new()
+			{
+				Id = user2Id,
+				UserName = "test2@test.com",
+				NormalizedUserName = "TEST2@TEST.COM",
+				Email = "test2@test.com",
+				NormalizedEmail = "test2@TEST.COM",
+				FirstName = "AnotherRandom",
+				LastName = "User",
+				BirthDate = DateTime.ParseExact("1999-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+				Address = "Random Address",
+				IsActive = true
+			}
+		};
+
+		var role = new IdentityRole<Guid>
+		{
+			Id = adminRoleId,
+			Name = "Admin"
+		};
+
+		var userRole = new IdentityUserRole<Guid>
+		{
+			UserId = user1Id,
+			RoleId = adminRoleId
+		};
+
+		await this._dbContextMock.Users.AddRangeAsync(users);
+		await this._dbContextMock.Roles.AddAsync(role);
+		await this._dbContextMock.UserRoles.AddAsync(userRole);
+		await this._dbContextMock.SaveChangesAsync();
+
+		// Act
+		IEnumerable<UserViewModel> result = await this._sut.AllAsync();
+
+		// Assert
+		Assert.Collection(result,
+			user =>
+			{
+				Assert.Equal(user1Id.ToString(), user.Id);
+				Assert.Equal("Random User", user.FullName);
+				Assert.Equal("test@test.com", user.Email);
+				Assert.Equal("Admin", user.Role);
+				Assert.True(user.IsActive);
+			},
+			user =>
+			{
+				Assert.Equal(user2Id.ToString(), user.Id);
+				Assert.Equal("AnotherRandom User", user.FullName);
+				Assert.Equal("test2@test.com", user.Email);
+				Assert.Equal("No Role Assigned", user.Role);
+				Assert.True(user.IsActive);
+			}
+		);
+	}
+
+	[Fact]
+	public async Task GetDetailsAsync_ReturnsGuardianViewModelIfUserHasStudentRole()
+	{
+		// Arrange
+		var guardianId = Guid.NewGuid();
+		var guardianUser = new ApplicationUser
+		{
+			Id = guardianId,
+			UserName = "test_guardian@test.com",
+			NormalizedUserName = "TEST_GUARDIAN@TEST.COM",
+			Email = "test_guardian@test.com",
+			NormalizedEmail = "TEST_GUARDIAN@TEST.COM",
+			FirstName = "Random",
+			LastName = "Guardian",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Random Address",
+			IsActive = true
+		};
+
+		var studentId = Guid.NewGuid();
+		var studentUser = new ApplicationUser
+		{
+			Id = studentId,
+			UserName = "test_student@test.com",
+			NormalizedUserName = "TEST_STUDENT@TEST.COM",
+			Email = "test_student@test.com",
+			NormalizedEmail = "TEST_STUDENT@TEST.COM",
+			FirstName = "Random",
+			LastName = "Student",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Random Address",
+			IsActive = true
+		};
+
+		var guardian = new Guardian
+		{
+			Id = guardianId,
+			ApplicationUser = guardianUser
+		};
+
+		var student = new Student
+		{
+			Id = studentId,
+			ApplicationUser = studentUser,
+			GuardianId = guardianId,
+			Guardian = guardian,
+			SchoolId = Guid.NewGuid(),
+			ClassroomId = Guid.NewGuid()
+		};
+
+		student.Guardian.Id = guardianId;
+		student.Guardian = guardian;
+
+		await this._dbContextMock.Users.AddAsync(studentUser);
+		await this._dbContextMock.Students.AddAsync(student);
+		await this._dbContextMock.SaveChangesAsync();
+
+		this._userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
+			.ReturnsAsync(new List<string> { "Student" });
+
+		this._guardianServiceMock.Setup(m => m.GetGuardianByUserIdAsync(studentId.ToString()))
+			.ReturnsAsync(guardian);
+
+		// Act
+		var result = await this._sut.GetDetailsAsync(studentId.ToString());
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal("Student", result!.Role);
+		Assert.NotNull(result.Guardian);
+		Assert.Equal(guardianId.ToString(), result.Guardian!.Id);
+		Assert.Equal(guardianUser.GetFullName(), result.Guardian.FullName);
+		Assert.Equal(guardianUser.Address, result.Guardian.Address);
+		Assert.Equal(guardianUser.Email, result.Guardian.Email);
+		Assert.Equal(guardianUser.PhoneNumber, result.Guardian.PhoneNumber);
+		Assert.NotNull(result.Students);
+	}
+
+	[Fact]
+	public async Task GetDetailsAsync_ReturnsStudentsIfUserHasGuardianRole()
+	{
+		// Arrange
+		var guardianId = Guid.NewGuid();
+		var guardianUser = new ApplicationUser
+		{
+			Id = guardianId,
+			UserName = "test_guardian@test.com",
+			NormalizedUserName = "TEST_GUARDIAN@TEST.COM",
+			Email = "test_guardian@test.com",
+			NormalizedEmail = "TEST_GUARDIAN@TEST.COM",
+			FirstName = "Random",
+			LastName = "Guardian",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Random Address",
+			IsActive = true
+		};
+
+		var studentId = Guid.NewGuid();
+		var studentUser = new ApplicationUser
+		{
+			Id = studentId,
+			UserName = "test_student@test.com",
+			NormalizedUserName = "TEST_STUDENT@TEST.COM",
+			Email = "test_student@test.com",
+			NormalizedEmail = "TEST_STUDENT@TEST.COM",
+			FirstName = "Random",
+			LastName = "Student",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Random Address",
+			IsActive = true
+		};
+
+		var guardian = new Guardian
+		{
+			Id = guardianId,
+			ApplicationUser = guardianUser
+		};
+
+		var student = new Student
+		{
+			Id = studentId,
+			ApplicationUser = studentUser,
+			GuardianId = guardianId,
+			Guardian = guardian,
+			SchoolId = Guid.NewGuid(),
+			ClassroomId = Guid.NewGuid()
+		};
+
+		student.Guardian.Id = guardianId;
+		student.Guardian = guardian;
+
+		await this._dbContextMock.Users.AddAsync(studentUser);
+		await this._dbContextMock.Students.AddAsync(student);
+		await this._dbContextMock.SaveChangesAsync();
+
+		this._userManagerMock.Setup(m => m.GetRolesAsync(guardianUser))
+			.ReturnsAsync(new List<string> { "Guardian" });
+
+		this._guardianServiceMock.Setup(m => m.GetGuardianByUserIdAsync(guardianId.ToString()))
+			.ReturnsAsync(guardian);
+
+		// Act
+		var result = await this._sut.GetDetailsAsync(guardianId.ToString());
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal("Guardian", result!.Role);
+		Assert.NotNull(result.Students);
+		Assert.Equal(guardianId.ToString(), result.Id);
+		Assert.Equal(guardianUser.GetFullName(), result.FullName);
+		Assert.Equal(guardianUser.Address, result.Address);
+		Assert.Equal(guardianUser.Email, result.Email);
+		Assert.Equal(guardianUser.PhoneNumber, result.PhoneNumber);
+	}
+
+	[Fact]
+	public async Task UpdateRoleAsync_UserNotFoundReturnsFalse()
+	{
+		// Arrange
+		var invalidUserId = Guid.NewGuid();
+		var roleId = Guid.NewGuid();
+
+		this._userManagerMock.Setup(m => m.FindByIdAsync(invalidUserId.ToString()))!
+			.ReturnsAsync((ApplicationUser?)null);
+
+		// Act
+		bool result = await this._sut.UpdateRoleAsync(invalidUserId.ToString(), roleId.ToString(), null, null, null);
+
+		// Assert
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task UpdateRoleAsync_RoleNotFoundReturnsFalse()
+	{
+		// Arrange
+		var userId = Guid.NewGuid();
+		var invalidRoleId = Guid.NewGuid();
+		var user = new ApplicationUser
+		{
+			Id = userId,
+			UserName = "test_user@test.com",
+			NormalizedUserName = "TEST_USER1@TEST.COM",
+			Email = "test_user1@test.com",
+			NormalizedEmail = "TEST_USER1@TEST.COM",
+			FirstName = "Random",
+			LastName = "User",
+			BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
+			Address = "Random Address",
+			IsActive = true
+		};
+
+		this._userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
+			.ReturnsAsync(user);
+
+		this._roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId.ToString()))!
+			.ReturnsAsync((IdentityRole<Guid>?)null);
+
+		// Act
+		bool result = await this._sut.UpdateRoleAsync(userId.ToString(), invalidRoleId.ToString(), null, null, null);
+
+		// Assert
+		Assert.False(result);
+	}
+
+	[Fact]
+	public async Task GetForUpdateRoleAsync_UserNotFoundReturnsNull()
+	{
+		// Arrange
+		string userId = Guid.NewGuid().ToString();
+
+		// Act
+		var result = await this._sut.GetForUpdateRoleAsync(userId);
+
+		// Assert
+		Assert.Null(result);
+	}
+
+	public async void Dispose()
+	{
+		await this._dbContextMock.DisposeAsync();
 	}
 }

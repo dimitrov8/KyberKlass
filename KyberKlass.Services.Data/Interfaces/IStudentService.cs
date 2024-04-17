@@ -1,7 +1,6 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
-using KyberKlass.Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Student;
 using Web.ViewModels.Admin.User;
 

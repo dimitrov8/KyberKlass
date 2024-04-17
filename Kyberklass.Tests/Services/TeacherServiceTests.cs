@@ -1,15 +1,15 @@
-﻿namespace Kyberklass.Tests.Services;
+﻿namespace KyberKlass.Tests.Services;
 
 using System.Globalization;
-using KyberKlass.Data;
-using KyberKlass.Data.Models;
+using Data;
+using Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin;
-using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Web.ViewModels.Admin;
+using Web.ViewModels.Admin.User;
 
 public class TeacherServiceTests : IDisposable
 {
@@ -345,7 +345,7 @@ public class TeacherServiceTests : IDisposable
 				BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
 				Address = "Test Address 2",
 				IsActive = true
-			},
+			}
 		};
 
 		await this._dbContextMock.Users.AddRangeAsync(teachers);
@@ -379,7 +379,7 @@ public class TeacherServiceTests : IDisposable
 	public async Task AllAsync_ReturnsNullWhenTeacherRoleIdNotFound()
 	{
 		// Act
-		var result = await this._sut.AllAsync();
+		List<UserViewModel>? result = await this._sut.AllAsync();
 
 		// Assert
 		Assert.Null(result);
