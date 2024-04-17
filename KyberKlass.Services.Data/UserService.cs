@@ -12,8 +12,9 @@ using Web.ViewModels.Admin.User;
 using static Common.FormattingConstants;
 
 /// <summary>
-///     Service for managing user-related operations.
+///     Service class responsible for managing users.
 /// </summary>
+
 public class UserService : IUserService
 {
     private readonly KyberKlassDbContext _dbContext;
@@ -22,6 +23,14 @@ public class UserService : IUserService
     private readonly IGuardianService _guardianService;
     private readonly ISchoolService _schoolService;
 
+    /// <summary>
+    /// Constructor for UserService.
+    /// </summary>
+    /// <param name="dbContext">The database context.</param>
+    /// <param name="userManager">The user manager.</param>
+    /// <param name="roleManager">The role manager.</param>
+    /// <param name="guardianService">The guardian service.</param>
+    /// <param name="schoolService">The school service.</param>
     public UserService(KyberKlassDbContext dbContext,
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
@@ -93,7 +102,7 @@ public class UserService : IUserService
 
         if (viewModel.Role == "Student")
         {
-            var guardian = await this._guardianService.GetGuardianByUserIdAsync(viewModel.Id);
+            var guardian = await this._guardianService.GetGuardianAssignedByUserIdAsync(viewModel.Id);
 
             if (guardian != null)
             {
@@ -112,7 +121,7 @@ public class UserService : IUserService
         }
         else if (viewModel.Role == "Guardian")
         {
-            var guardian = await this._guardianService.GetGuardianByUserIdAsync(viewModel.Id);
+            var guardian = await this._guardianService.GetGuardianAssignedByUserIdAsync(viewModel.Id);
 
             if (guardian != null)
             {

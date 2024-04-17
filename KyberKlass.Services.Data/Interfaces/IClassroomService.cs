@@ -27,13 +27,6 @@ public interface IClassroomService
     /// <returns>The information of the classroom if found; otherwise, null.</returns>
     Task<ClassroomDetailsViewModel?> GetClassroomAsync(string id);
 
-    ///// <summary>
-    ///// Retrieves details of a classroom by unique identifier asynchronously.
-    ///// </summary>
-    ///// <param name="id">The unique identifier of the classroom.</param>
-    ///// <returns>The details of the classroom if found; otherwise, null.</returns>
-    //Task<ClassroomDetailsViewModel?> GetDetailsAsync(string id);
-
     /// <summary>
     ///     Retrieves information about all classrooms of a given school by unique identifier asynchronously.
     /// </summary>

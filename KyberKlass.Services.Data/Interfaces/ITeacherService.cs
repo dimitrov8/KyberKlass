@@ -3,8 +3,15 @@
 using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
+/// <summary>
+///     Interface for managing teacher-related operations.
+/// </summary>
 public interface ITeacherService
 {
+    /// <summary>
+    /// Retrieves all teachers asynchronously.
+    /// </summary>
+    /// <returns>A list of UserViewModels representing teachers or null if none found.</returns>
     Task<List<UserViewModel>?> AllAsync();
 
     Task<IEnumerable<BasicViewModel>> GetUnassignedTeachersAsync();

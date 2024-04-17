@@ -102,7 +102,7 @@ public class ClassroomService : IClassroomService
             Name = c.Name,
             TeacherName = c.Teacher.ApplicationUser.GetFullName(),
             IsActive = c.IsActive,
-            Students = c.Students // todo classrooms
+            Students = c.Students
                 .Select(s => new BasicViewModel
                 {
                     Id = s.Id.ToString(),
@@ -168,6 +168,7 @@ public class ClassroomService : IClassroomService
         return true;
     }
 
+    /// <inheritdoc />
     public async Task<ClassroomDetailsViewModel?> GetForDeleteAsync(string id)
     {
         var viewModel = await this.GetClassroomAsync(id);
@@ -194,6 +195,7 @@ public class ClassroomService : IClassroomService
         return false;
     }
 
+    /// <inheritdoc />
     public async Task<bool> HasStudentsAssignedAsync(string id)
     {
         bool hasStudents = await this._dbContext

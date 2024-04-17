@@ -214,7 +214,7 @@ public class GuardianServiceTests : IDisposable
         await this._dbContextMock.SaveChangesAsync();
 
         // Act
-        var result = await this._sut.GetGuardianByUserIdAsync(studentId.ToString());
+        var result = await this._sut.GetGuardianAssignedByUserIdAsync(studentId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -228,7 +228,7 @@ public class GuardianServiceTests : IDisposable
         string userId = Guid.NewGuid().ToString();
 
         // Act
-        var result = await this._sut.GetGuardianByUserIdAsync(userId);
+        var result = await this._sut.GetGuardianAssignedByUserIdAsync(userId);
 
         // Assert
         Assert.Null(result);

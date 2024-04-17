@@ -7,17 +7,26 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin;
 
+/// <summary>
+///     Service class responsible for managing guardians.
+/// </summary>
 public class GuardianService : IGuardianService
 {
     private readonly KyberKlassDbContext _dbContext;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Constructor for GuardianService.
+    /// </summary>
+    /// <param name="dbContext">The database context.</param>
+    /// <param name="userManager">The user manager.</param>
     public GuardianService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
         this._dbContext = dbContext;
         this._userManager = userManager;
     }
 
+    /// <inheritdoc />
     public Task<Guardian?> GetByIdAsync(string id)
     {
         return this._dbContext
@@ -37,7 +46,8 @@ public class GuardianService : IGuardianService
         return isAssigned;
     }
 
-    public async Task<Guardian?> GetGuardianByUserIdAsync(string userId)
+    /// <inheritdoc />
+    public async Task<Guardian?> GetGuardianAssignedByUserIdAsync(string userId)
     {
         return await this._dbContext.Guardians
             .Include(g => g.ApplicationUser)

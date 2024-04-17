@@ -582,7 +582,7 @@ public class UserServiceTests : IDisposable
         this._userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
             .ReturnsAsync(new List<string> { "Student" });
 
-        this._guardianServiceMock.Setup(m => m.GetGuardianByUserIdAsync(studentId.ToString()))
+        this._guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(studentId.ToString()))
             .ReturnsAsync(guardian);
 
         // Act
@@ -660,7 +660,7 @@ public class UserServiceTests : IDisposable
         this._userManagerMock.Setup(m => m.GetRolesAsync(guardianUser))
             .ReturnsAsync(new List<string> { "Guardian" });
 
-        this._guardianServiceMock.Setup(m => m.GetGuardianByUserIdAsync(guardianId.ToString()))
+        this._guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(guardianId.ToString()))
             .ReturnsAsync(guardian);
 
         // Act

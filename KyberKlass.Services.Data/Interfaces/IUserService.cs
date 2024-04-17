@@ -75,5 +75,10 @@ public interface IUserService
     /// <returns>True if the role update was successful; otherwise, false.</returns>
     Task<bool> UpdateRoleAsync(string id, string roleId, string? guardianId, string? schoolId, string? classroomId);
 
+    /// <summary>
+    /// Retrieves a collection of basic view models representing students assigned to a guardian asynchronously.
+    /// </summary>
+    /// <param name="guardian">The guardian.</param>
+    /// <returns>A collection of basic view models representing students assigned to the guardian.</returns>
     Task<IEnumerable<BasicViewModel>> GetStudentsAssignedToGuardianAsync(Guardian guardian);
 }

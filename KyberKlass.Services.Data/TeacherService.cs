@@ -8,26 +8,27 @@ using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
+/// <summary>
+///     Service class responsible for managing teachers.
+/// </summary>
+
 public class TeacherService : ITeacherService
 {
     private readonly KyberKlassDbContext _dbContext;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Constructor for TeacherService.
+    /// </summary>
+    /// <param name="dbContext">The database context.</param>
+    /// <param name="userManager">The user manager.</param>
     public TeacherService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
         this._dbContext = dbContext;
         this._userManager = userManager;
     }
 
-    /// <summary>
-    ///     Retrieves all users assumed to be teachers from the database.
-    ///     The role of "Teacher" is hardcoded in the view model, as we are certain that
-    ///     the fetched users have this role. This approach avoids unnecessary queries
-    ///     to fetch the role for each user, leading to improved performance and efficiency.
-    /// </summary>
-    /// <returns>
-    ///     A collection of user view models representing teachers, or null if no teachers are found.
-    /// </returns>
+    /// <inheritdoc />
     public async Task<List<UserViewModel>?> AllAsync()
     {
         string teacherRoleName = "Teacher";
@@ -68,13 +69,7 @@ public class TeacherService : ITeacherService
         return null;
     }
 
-    /// <summary>
-    ///     Asynchronously retrieves a collection of basic user view models representing unassigned teachers.
-    /// </summary>
-    /// <returns>
-    ///     A collection of user basic view models representing unassigned teachers.
-    ///     If no unassigned teachers are found, an empty collection is returned.
-    /// </returns>
+    /// <inheritdoc />
     public async Task<IEnumerable<BasicViewModel>> GetUnassignedTeachersAsync()
     {
         IList<ApplicationUser> allTeachers = await this._userManager.GetUsersInRoleAsync("Teacher");
