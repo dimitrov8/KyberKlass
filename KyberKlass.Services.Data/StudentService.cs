@@ -3,7 +3,6 @@
 using Interfaces;
 using KyberKlass.Data;
 using KyberKlass.Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.Admin;
 using Web.ViewModels.Admin.Student;
@@ -12,17 +11,14 @@ using Web.ViewModels.Admin.User;
 public class StudentService : IStudentService
 {
 	private readonly KyberKlassDbContext _dbContext;
-	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly IUserService _userService;
 	private readonly IGuardianService _guardianService;
 
 	public StudentService(KyberKlassDbContext dbContext,
-		UserManager<ApplicationUser> userManager,
 		IUserService userService,
 		IGuardianService guardianService)
 	{
 		this._dbContext = dbContext;
-		this._userManager = userManager;
 		this._userService = userService;
 		this._guardianService = guardianService;
 	}
@@ -66,6 +62,13 @@ public class StudentService : IStudentService
 
 		return null;
 	}
+	public Task<Student?> GetByIdASync(string id)
+	{
+		return this._dbContext
+			.Students
+			.Include(s => s.Guardian)
+			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
+	}
 
 	public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
 	{
@@ -79,14 +82,6 @@ public class StudentService : IStudentService
 		};
 
 		return viewModel;
-	}
-
-	public Task<Student?> GetByIdASync(string id)
-	{
-		return this._dbContext
-			.Students
-			.Include(s => s.Guardian)
-			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
 	}
 
 	public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)

@@ -1,6 +1,8 @@
 ﻿namespace KyberKlass.Services.Data.Interfaces;
 
 using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin.Student;
+using KyberKlass.Web.ViewModels.Admin;
 using Web.ViewModels.Admin.User;
 
 /// <summary>
@@ -73,4 +75,6 @@ public interface IUserService
 	/// <param name="classroomId">The unique identifier of the classroom (if applicable).</param>
 	/// <returns>True if the role update was successful; otherwise, false.</returns>
 	Task<bool> UpdateRoleAsync(string id, string roleId, string? guardianId, string? schoolId, string? classroomId);
+
+	Task<IEnumerable<BasicViewModel>> GetStudentsAssignedToGuardianAsync(Guardian guardian);
 }

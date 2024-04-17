@@ -9,6 +9,10 @@ using Models;
 
 public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
+	public KyberKlassDbContext()
+	{
+	}
+
 	public KyberKlassDbContext(DbContextOptions<KyberKlassDbContext> options)
 		: base(options)
 	{

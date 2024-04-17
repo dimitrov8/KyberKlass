@@ -212,12 +212,11 @@ public class SchoolService : ISchoolService
 	/// <inheritdoc />
 	public async Task<bool> HasStudentsAssignedAsync(string id)
 	{
-		bool hasStudents = await this._dbContext
+		var school = await this._dbContext
 			.Schools
-			.Where(c => c.Id == Guid.Parse(id))
-			.AnyAsync(c => c.Students.Any());
+			.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
 
-		return hasStudents;
+		return school != null && school.Students.Any();
 	}
 
 	/// <inheritdoc />

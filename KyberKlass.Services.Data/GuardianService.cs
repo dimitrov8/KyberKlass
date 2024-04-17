@@ -37,6 +37,14 @@ public class GuardianService : IGuardianService
 		return isAssigned;
 	}
 
+	public async Task<Guardian?> GetGuardianByUserIdAsync(string userId)
+	{
+		return await this._dbContext.Guardians
+			.Include(g => g.ApplicationUser)
+			.AsNoTracking()
+			.FirstOrDefaultAsync(g => g.Students.Any(s => s.Id == Guid.Parse(userId)));
+	}
+
 	/// <inheritdoc />
 	public async Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync()
 	{

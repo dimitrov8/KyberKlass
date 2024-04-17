@@ -27,4 +27,6 @@ public interface IGuardianService
 	/// <param name="userId">The unique identifier of the guardian.</param>
 	/// <returns>True if the guardian is assigned to any student; otherwise, false.</returns>
 	Task<bool> IsGuardianAssignedToStudentAsync(string userId);
+
+	public Task<Guardian?> GetGuardianByUserIdAsync(string userId);
 }
