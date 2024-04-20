@@ -76,7 +76,7 @@ public interface IUserService
     Task<bool> UpdateRoleAsync(string id, string roleId, string? guardianId, string? schoolId, string? classroomId);
 
     /// <summary>
-    /// Retrieves a collection of basic view models representing students assigned to a guardian asynchronously.
+    ///     Retrieves a collection of basic view models representing students assigned to a guardian asynchronously.
     /// </summary>
     /// <param name="guardian">The guardian.</param>
     /// <returns>A collection of basic view models representing students assigned to the guardian.</returns>

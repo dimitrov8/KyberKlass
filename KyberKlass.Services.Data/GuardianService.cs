@@ -16,7 +16,7 @@ public class GuardianService : IGuardianService
     private readonly UserManager<ApplicationUser> _userManager;
 
     /// <summary>
-    /// Constructor for GuardianService.
+    ///     Constructor for GuardianService.
     /// </summary>
     /// <param name="dbContext">The database context.</param>
     /// <param name="userManager">The user manager.</param>

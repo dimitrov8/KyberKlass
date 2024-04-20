@@ -11,7 +11,6 @@ using Web.ViewModels.Admin.User;
 /// <summary>
 ///     Service class responsible for managing students.
 /// </summary>
-
 public class StudentService : IStudentService
 {
     private readonly KyberKlassDbContext _dbContext;
@@ -19,7 +18,7 @@ public class StudentService : IStudentService
     private readonly IGuardianService _guardianService;
 
     /// <summary>
-    /// Constructor for GuardianService.
+    ///     Constructor for GuardianService.
     /// </summary>
     /// <param name="dbContext">The database context.</param>
     /// <param name="userService">The user service.</param>

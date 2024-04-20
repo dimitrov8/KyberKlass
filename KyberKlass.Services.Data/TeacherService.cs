@@ -11,14 +11,13 @@ using Web.ViewModels.Admin.User;
 /// <summary>
 ///     Service class responsible for managing teachers.
 /// </summary>
-
 public class TeacherService : ITeacherService
 {
     private readonly KyberKlassDbContext _dbContext;
     private readonly UserManager<ApplicationUser> _userManager;
 
     /// <summary>
-    /// Constructor for TeacherService.
+    ///     Constructor for TeacherService.
     /// </summary>
     /// <param name="dbContext">The database context.</param>
     /// <param name="userManager">The user manager.</param>

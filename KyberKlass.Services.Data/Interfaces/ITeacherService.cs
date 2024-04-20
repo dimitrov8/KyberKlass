@@ -9,7 +9,7 @@ using Web.ViewModels.Admin.User;
 public interface ITeacherService
 {
     /// <summary>
-    /// Retrieves all teachers asynchronously.
+    ///     Retrieves all teachers asynchronously.
     /// </summary>
     /// <returns>A list of UserViewModels representing teachers or null if none found.</returns>
     Task<List<UserViewModel>?> AllAsync();

@@ -46,7 +46,15 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection AddApplicationIdentity(this IServiceCollection services, IConfiguration config)
     {
-        services.AddDefaultIdentity<ApplicationUser>(options => { options.SignIn.RequireConfirmedAccount = false; })
+        services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = config.GetValue<bool>("Identity:SignIn:RequireConfirmedAccount");
+
+                options.Password.RequireLowercase = config.GetValue<bool>("Identity:Password:RequireLowercase");
+                options.Password.RequireUppercase = config.GetValue<bool>("Identity:Password:RequireUppercase");
+                options.Password.RequireNonAlphanumeric = config.GetValue<bool>("Identity:Password:RequireNonAlphanumeric");
+                options.Password.RequiredLength = config.GetValue<int>("Identity:Password:RequiredLength");
+            })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<KyberKlassDbContext>();
 

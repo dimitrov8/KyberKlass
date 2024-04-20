@@ -14,7 +14,6 @@ using static Common.FormattingConstants;
 /// <summary>
 ///     Service class responsible for managing users.
 /// </summary>
-
 public class UserService : IUserService
 {
     private readonly KyberKlassDbContext _dbContext;
@@ -24,7 +23,7 @@ public class UserService : IUserService
     private readonly ISchoolService _schoolService;
 
     /// <summary>
-    /// Constructor for UserService.
+    ///     Constructor for UserService.
     /// </summary>
     /// <param name="dbContext">The database context.</param>
     /// <param name="userManager">The user manager.</param>
