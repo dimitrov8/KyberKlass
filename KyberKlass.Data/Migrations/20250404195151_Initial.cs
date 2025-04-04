@@ -285,25 +285,26 @@ namespace KyberKlass.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"), "d3406680-f622-417f-b378-6de170a9222a", "Admin", "ADMIN" },
-                    { new Guid("88602b9b-a646-4f28-83d0-cfd760c59b63"), "5252ff28-3d33-440f-9a1f-483fcb98e17a", "Teacher", "TEACHER" },
-                    { new Guid("ba5bba90-51d9-4970-a2e4-824b5edc4a09"), "3390a9c7-6b6f-4b40-865b-0ea6bce7fff7", "Guardian", "GUARDIAN" },
-                    { new Guid("ff7103d1-3456-48ed-953e-e4e73af115ae"), "51984443-831f-4a52-aa31-57e7aa4b5215", "Student", "STUDENT" }
+                    { new Guid("030e5da8-3353-47a2-9177-9b21ef1e6153"), "169716f1-c758-4f0e-9042-55f1ef72558a", "Teacher", "TEACHER" },
+                    { new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"), "8dd26cf5-b335-4e86-bb63-288c9b6b87fa", "Admin", "ADMIN" },
+                    { new Guid("7eec8f19-a7a5-488d-9539-9e4378e10342"), "66d91f5e-3ba1-4bad-9074-0461b8c40036", "Guardian", "GUARDIAN" },
+                    { new Guid("f167e1a7-8816-45d2-9379-185b1f32c1fd"), "61a77a0e-c24f-41e7-b1a4-58ba216144aa", "Student", "STUDENT" }
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsActive", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RoleId", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"), 0, "1416 Ryan Mountains", new DateTime(2001, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "d4f6406d-9b51-4290-994d-cf1bb9668b5e", "admin@kyberklass.com", false, "Admin", true, "User", false, null, "ADMIN@KYBERKLASS.COM", "ADMIN@KYBERKLASS.COM", "AQAAAAEAACcQAAAAEOJ7eTyzsRVPlFR3wmfYeF6+VdaQgC9WwNB7hWWZ1x36Tco8U0+sh9R4jNYll1DDnA==", "08888888888", false, null, "0DB9D047-3375-4739-9C32-217CC8337032", false, "admin@kyberklass.com" });
 
             migrationBuilder.InsertData(
                 table: "Schools",
                 columns: new[] { "Id", "Address", "Email", "IsActive", "Name", "PhoneNumber" },
                 values: new object[,]
                 {
-                    { new Guid("22a7fbd7-e44a-4be7-8ff1-b671e5fea0e8"), "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia", "st@example.com", true, "St. George International School", "02 414 4414" },
-                    { new Guid("75bdf071-39d4-40bc-a789-0f11bdc9c449"), "Sofia Center, Pozitano St 26, 1000 Sofia", "schoolb@ez.com", true, "91. Немска езикова гимназия „Проф. Константин Гълъбов“", "02 987 5305" }
+                    { new Guid("77b85c9a-7e44-464c-9505-a76bef835376"), "Rnd. Address", "test_schoolc@ez.com", true, "Test School", "02 987 0000" },
+                    { new Guid("7a9183f1-5805-4cba-bf48-95200ca103dd"), "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia", "st@example.com", true, "St. George International School", "02 414 4414" },
+                    { new Guid("80c02b02-1329-4af5-abb7-ebd99f46641a"), "Sofia Center, Pozitano St 26, 1000 Sofia", "schoolb@ez.com", true, "91. Немска езикова гимназия „Проф. Константин Гълъбов“", "02 987 5305" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsActive", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RoleId", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("e321fa43-9c90-4e01-8f0a-002eae899e98"), 0, "1416 Ryan Mountains", new DateTime(2001, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "d4f6406d-9b51-4290-994d-cf1bb9668b5e", "admin@kyberklass.com", false, "Admin", true, "User", false, null, "ADMIN@KYBERKLASS.COM", "ADMIN@KYBERKLASS.COM", "AQAAAAEAACcQAAAAED7GipdqIG2zZQk4tE1T+4t0FokOqU7K/3J7k6zmCOLWHjrv+p0Onu/FzwVjAieVQQ==", "08888888888", false, new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"), "0DB9D047-3375-4739-9C32-217CC8337032", false, "admin@kyberklass.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
