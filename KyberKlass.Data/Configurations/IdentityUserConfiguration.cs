@@ -12,13 +12,13 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     {
         builder.ToTable("AspNetUsers");
 
-        this.SeedAdminUser(builder);
+        SeedAdminUser(builder);
     }
 
-    private void SeedAdminUser(EntityTypeBuilder<ApplicationUser> builder)
+    private static void SeedAdminUser(EntityTypeBuilder<ApplicationUser> builder)
     {
         var passwordHasher = new PasswordHasher<ApplicationUser>();
-        string? hashedPassword = passwordHasher.HashPassword(null!, "admin");
+        string? hashedPassword = passwordHasher.HashPassword(null!, DEFAULT_ADMIN_PASSWORD);
 
         // Seeding the admin user
         builder.HasData(new ApplicationUser
@@ -29,14 +29,15 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
             Email = DEFAULT_ADMIN_EMAIL,
             NormalizedEmail = DEFAULT_ADMIN_EMAIL.ToUpper(),
             EmailConfirmed = false,
-            FirstName = "Admin",
-            LastName = "User",
-            BirthDate = DateTime.Parse("01/01/2001"),
-            Address = "1416 Ryan Mountains",
+            FirstName = DEFAULT_ADMIN_FIRST_NAME,
+            LastName = DEFAULT_ADMIN_LAST_NAME,
+            BirthDate = DateTime.Parse(DEFAULT_ADMIN_BIRTH_DATE),
+            Address = DEFAULT_ADMIN_ADDRESS,
+            RoleId = AdminRoleId,
             PasswordHash = hashedPassword,
-            SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
-            ConcurrencyStamp = "d4f6406d-9b51-4290-994d-cf1bb9668b5e",
-            PhoneNumber = "08888888888",
+            SecurityStamp = DEFAULT_ADMIN_PUBLIC_STAMP,
+            ConcurrencyStamp = DEFAULT_ADMIN_CONCURRENCYSTAMP,
+            PhoneNumber = DEFAULT_ADMIN_PHONE_NUMBER,
             PhoneNumberConfirmed = false,
             TwoFactorEnabled = false,
             LockoutEnd = null,
