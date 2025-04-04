@@ -128,9 +128,10 @@ namespace KyberKlass.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@KYBERKLASS.COM",
                             NormalizedUserName = "ADMIN@KYBERKLASS.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOJ7eTyzsRVPlFR3wmfYeF6+VdaQgC9WwNB7hWWZ1x36Tco8U0+sh9R4jNYll1DDnA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAED7GipdqIG2zZQk4tE1T+4t0FokOqU7K/3J7k6zmCOLWHjrv+p0Onu/FzwVjAieVQQ==",
                             PhoneNumber = "08888888888",
                             PhoneNumberConfirmed = false,
+                            RoleId = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
                             SecurityStamp = "0DB9D047-3375-4739-9C32-217CC8337032",
                             TwoFactorEnabled = false,
                             UserName = "admin@kyberklass.com"
@@ -163,7 +164,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Classrooms", (string)null);
+                    b.ToTable("Classrooms");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Guardian", b =>
@@ -173,7 +174,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guardians", (string)null);
+                    b.ToTable("Guardians");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.School", b =>
@@ -204,12 +205,12 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("22a7fbd7-e44a-4be7-8ff1-b671e5fea0e8"),
+                            Id = new Guid("7a9183f1-5805-4cba-bf48-95200ca103dd"),
                             Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
                             Email = "st@example.com",
                             IsActive = true,
@@ -218,12 +219,21 @@ namespace KyberKlass.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("75bdf071-39d4-40bc-a789-0f11bdc9c449"),
+                            Id = new Guid("80c02b02-1329-4af5-abb7-ebd99f46641a"),
                             Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                             Email = "schoolb@ez.com",
                             IsActive = true,
                             Name = "91. Немска езикова гимназия „Проф. Константин Гълъбов“",
                             PhoneNumber = "02 987 5305"
+                        },
+                        new
+                        {
+                            Id = new Guid("77b85c9a-7e44-464c-9505-a76bef835376"),
+                            Address = "Rnd. Address",
+                            Email = "test_schoolc@ez.com",
+                            IsActive = true,
+                            Name = "Test School",
+                            PhoneNumber = "02 987 0000"
                         });
                 });
 
@@ -249,7 +259,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("KyberKlass.Data.Models.Teacher", b =>
@@ -259,7 +269,7 @@ namespace KyberKlass.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teachers", (string)null);
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -293,28 +303,28 @@ namespace KyberKlass.Data.Migrations
                         new
                         {
                             Id = new Guid("420abb62-30a5-4983-835e-fe0a46b6f463"),
-                            ConcurrencyStamp = "d3406680-f622-417f-b378-6de170a9222a",
+                            ConcurrencyStamp = "8dd26cf5-b335-4e86-bb63-288c9b6b87fa",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("88602b9b-a646-4f28-83d0-cfd760c59b63"),
-                            ConcurrencyStamp = "5252ff28-3d33-440f-9a1f-483fcb98e17a",
+                            Id = new Guid("030e5da8-3353-47a2-9177-9b21ef1e6153"),
+                            ConcurrencyStamp = "169716f1-c758-4f0e-9042-55f1ef72558a",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = new Guid("ff7103d1-3456-48ed-953e-e4e73af115ae"),
-                            ConcurrencyStamp = "51984443-831f-4a52-aa31-57e7aa4b5215",
+                            Id = new Guid("f167e1a7-8816-45d2-9379-185b1f32c1fd"),
+                            ConcurrencyStamp = "61a77a0e-c24f-41e7-b1a4-58ba216144aa",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = new Guid("ba5bba90-51d9-4970-a2e4-824b5edc4a09"),
-                            ConcurrencyStamp = "3390a9c7-6b6f-4b40-865b-0ea6bce7fff7",
+                            Id = new Guid("7eec8f19-a7a5-488d-9539-9e4378e10342"),
+                            ConcurrencyStamp = "66d91f5e-3ba1-4bad-9074-0461b8c40036",
                             Name = "Guardian",
                             NormalizedName = "GUARDIAN"
                         });
