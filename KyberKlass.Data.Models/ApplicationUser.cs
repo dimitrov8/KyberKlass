@@ -26,6 +26,9 @@ public class ApplicationUser : IdentityUser<Guid>
     [Required]
     public string Address { get; set; } = null!;
 
+    public Guid? RoleId { get; set; }
+
+    [ForeignKey(nameof(RoleId))]
     public IdentityRole<Guid>? Role { get; set; }
 
     [Required]
