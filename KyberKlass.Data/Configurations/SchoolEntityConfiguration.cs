@@ -32,7 +32,15 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
                 Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                 Email = "schoolb@ez.com",
                 PhoneNumber = "02 987 5305"
-            }
+            },
+                new School
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test School",
+                    Address = "Rnd. Address",
+                    Email = "test_schoolc@ez.com",
+                    PhoneNumber = "02 987 0000"
+                }
         );
     }
 }
