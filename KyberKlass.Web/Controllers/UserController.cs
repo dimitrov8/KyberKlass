@@ -26,7 +26,7 @@ public class UserController : Controller
         this._guardianService = guardianService;
     }
 
-    private string GetViewPath(string viewName)
+    private static string GetViewPath(string viewName)
     {
         return $"~/Views/Admin/User/{viewName}.cshtml";
     }
@@ -36,7 +36,7 @@ public class UserController : Controller
     {
         IEnumerable<UserViewModel> allUsersViewModel = await this._userService.AllAsync();
 
-        return this.View(this.GetViewPath(nameof(this.All)), allUsersViewModel);
+        return this.View(GetViewPath(nameof(this.All)), allUsersViewModel);
     }
 
     [HttpGet]
@@ -60,7 +60,7 @@ public class UserController : Controller
                 //return this.NotFound();
             }
 
-            return this.View(this.GetViewPath(nameof(this.Details)), userDetailsViewModel);
+            return this.View(GetViewPath(nameof(this.Details)), userDetailsViewModel);
         }
         catch (Exception)
         {
@@ -89,7 +89,7 @@ public class UserController : Controller
                 //return this.NotFound();
             }
 
-            return this.View(this.GetViewPath(nameof(this.Edit)), userViewModel);
+            return this.View(GetViewPath(nameof(this.Edit)), userViewModel);
         }
         catch (Exception)
         {
@@ -112,7 +112,7 @@ public class UserController : Controller
         {
             this.TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
 
-            return this.View(this.GetViewPath(nameof(Edit)), model);
+            return this.View(GetViewPath(nameof(Edit)), model);
         }
 
         try
@@ -137,7 +137,7 @@ public class UserController : Controller
         {
             this.ModelState.AddModelError(string.Empty, string.Format(EDIT_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
 
-            return this.View(this.GetViewPath(nameof(Edit)), model);
+            return this.View(GetViewPath(nameof(Edit)), model);
         }
     }
 
@@ -162,7 +162,7 @@ public class UserController : Controller
                 //return this.NotFound();
             }
 
-            return this.View(this.GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
+            return this.View(GetViewPath(nameof(this.UpdateRole)), userUpdateRoleViewModel);
         }
         catch (Exception)
         {
