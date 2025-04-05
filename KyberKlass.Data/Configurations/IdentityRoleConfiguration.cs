@@ -1,10 +1,9 @@
-﻿namespace KyberKlass.Data.Configurations;
-
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using static Constants.SeedDataConstants.Admin;
+using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Admin;
 
+namespace KyberKlass.Data.Configurations;
 public class IdentityRoleConfiguration : IEntityTypeConfiguration<IdentityRole<Guid>>
 {
     public void Configure(EntityTypeBuilder<IdentityRole<Guid>> builder)

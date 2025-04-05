@@ -4,10 +4,10 @@ public class UserUpdateRoleViewModel
 {
     public UserUpdateRoleViewModel()
     {
-        this.AvailableRoles = new HashSet<UserRolesViewModel>();
-        this.AvailableGuardians = new HashSet<BasicViewModel>();
-        this.AvailableSchools = new HashSet<BasicViewModel>();
-        this.AvailableClassrooms = new HashSet<BasicViewModel>();
+        AvailableRoles = new HashSet<UserRolesViewModel>();
+        AvailableGuardians = new HashSet<BasicViewModel>();
+        AvailableSchools = new HashSet<BasicViewModel>();
+        AvailableClassrooms = new HashSet<BasicViewModel>();
     }
 
     public string Id { get; set; } = null!;

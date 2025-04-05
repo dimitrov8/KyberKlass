@@ -1,12 +1,11 @@
-﻿namespace KyberKlass.Data;
-
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Models;
+using System.Linq.Expressions;
+using System.Reflection;
 
+namespace KyberKlass.Data;
 public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public KyberKlassDbContext()
@@ -32,14 +31,14 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        foreach (var entityType in builder.Model.GetEntityTypes())
+        foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType entityType in builder.Model.GetEntityTypes())
         {
-            var isActiveProperty = entityType.FindProperty("IsActive");
+            Microsoft.EntityFrameworkCore.Metadata.IMutableProperty? isActiveProperty = entityType.FindProperty("IsActive");
 
             if (isActiveProperty != null && isActiveProperty.ClrType == typeof(bool))
             {
-                var parameter = Expression.Parameter(entityType.ClrType, "e");
-                var body = Expression.Equal(
+                ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "e");
+                BinaryExpression body = Expression.Equal(
                     Expression.Property(parameter, "IsActive"),
                     Expression.Constant(true));
 

@@ -1,8 +1,7 @@
-﻿namespace KyberKlass.Services.Data.Interfaces;
+﻿using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.User;
 
-using Web.ViewModels.Admin;
-using Web.ViewModels.Admin.User;
-
+namespace KyberKlass.Services.Data.Interfaces;
 /// <summary>
 ///     Interface for managing teacher-related operations.
 /// </summary>

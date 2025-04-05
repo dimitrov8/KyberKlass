@@ -1,14 +1,14 @@
-﻿#nullable disable
-
-namespace KyberKlass.Web.Areas.Identity.Pages.Account;
-
-using System.ComponentModel.DataAnnotations;
-using Data.Models;
+﻿
+using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using static Common.EntityValidations.BaseUser;
+using System.ComponentModel.DataAnnotations;
+using static KyberKlass.Common.EntityValidations.BaseUser;
 
+#nullable disable
+
+namespace KyberKlass.Web.Areas.Identity.Pages.Account;
 public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -20,9 +20,9 @@ public class RegisterModel : PageModel
         IUserStore<ApplicationUser> userStore,
         SignInManager<ApplicationUser> signInManager)
     {
-        this._userManager = userManager;
-        this._userStore = userStore;
-        this._signInManager = signInManager;
+        _userManager = userManager;
+        _userStore = userStore;
+        _signInManager = signInManager;
     }
 
     [BindProperty]
@@ -73,57 +73,52 @@ public class RegisterModel : PageModel
         public string PhoneNumber { get; set; }
     }
 
-    public async Task<IActionResult> OnGetAsync(string returnUrl = null)
+    public IActionResult OnGet(string returnUrl = null)
     {
-        this.ReturnUrl = returnUrl;
+        ReturnUrl = returnUrl;
 
-        if (this.User.Identity?.IsAuthenticated ?? false)
-        {
-            return this.RedirectToAction("Index", "Home");
-        }
-
-        return this.Page();
+        return User.Identity?.IsAuthenticated ?? false ? RedirectToAction("Index", "Home") : Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
-        returnUrl ??= this.Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
 
-        if (this.ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            var user = this.CreateUser();
+            ApplicationUser user = CreateUser();
 
-            await this._userStore.SetUserNameAsync(user, this.Input.Email, CancellationToken.None);
-            var result = await this._userManager.CreateAsync(user, this.Input.Password);
+            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+            IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
 
             if (result.Succeeded)
             {
-                await this._signInManager.SignInAsync(user, false);
-                return this.LocalRedirect(returnUrl);
+                await _signInManager.SignInAsync(user, false);
+                return LocalRedirect(returnUrl);
             }
 
-            foreach (var error in result.Errors)
+            foreach (IdentityError error in result.Errors)
             {
-                this.ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
         }
 
-        return this.Page();
+        return Page();
     }
 
     private ApplicationUser CreateUser()
     {
         try
         {
-            var user = new ApplicationUser
+            ApplicationUser user = new()
             {
-                FirstName = this.Input.FirstName,
-                LastName = this.Input.LastName,
-                BirthDate = this.Input.BirthDate,
-                Address = this.Input.Address,
-                UserName = this.Input.Email,
-                Email = this.Input.Email,
-                PhoneNumber = this.Input.PhoneNumber
+                FirstName = Input.FirstName,
+                LastName = Input.LastName,
+                BirthDate = Input.BirthDate,
+                Address = Input.Address,
+                UserName = Input.Email,
+                Email = Input.Email,
+                PhoneNumber = Input.PhoneNumber
             };
 
             return user;

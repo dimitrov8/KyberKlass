@@ -4,7 +4,7 @@ public class ManageClassroomsViewModel
 {
     public ManageClassroomsViewModel()
     {
-        this.Classrooms = new HashSet<ClassroomDetailsViewModel>();
+        Classrooms = new HashSet<ClassroomDetailsViewModel>();
     }
 
     public string SchoolId { get; set; } = null!;

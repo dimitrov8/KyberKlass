@@ -1,14 +1,14 @@
-﻿#nullable disable
-
-namespace KyberKlass.Web.Areas.Identity.Pages.Account;
-
-using System.ComponentModel.DataAnnotations;
-using Data.Models;
+﻿
+using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 
+#nullable disable
+
+namespace KyberKlass.Web.Areas.Identity.Pages.Account;
 public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -17,9 +17,9 @@ public class LoginModel : PageModel
 
     public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
-        this._signInManager = signInManager;
-        this._userManager = userManager;
-        this._roleManager = roleManager;
+        _signInManager = signInManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     [BindProperty]
@@ -43,58 +43,58 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(string returnUrl = null)
     {
-        if (!string.IsNullOrEmpty(this.ErrorMessage))
+        if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            this.ModelState.AddModelError(string.Empty, this.ErrorMessage);
+            ModelState.AddModelError(string.Empty, ErrorMessage);
         }
 
-        returnUrl ??= this.Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
 
-        if (this.User.Identity?.IsAuthenticated ?? false)
+        if (User.Identity?.IsAuthenticated ?? false)
         {
-            return this.RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         // Clear the existing external cookie to ensure a clean login process
-        await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-        this.ReturnUrl = returnUrl;
+        ReturnUrl = returnUrl;
 
-        return this.Page();
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
-        returnUrl ??= this.Url.Content("~/");
+        _ = returnUrl ?? Url.Content("~/");
 
-        if (this.ModelState.IsValid)
+        if (ModelState.IsValid)
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result = await this._signInManager.PasswordSignInAsync(this.Input.Email, this.Input.Password, true, false);
+            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, false);
 
             if (result.Succeeded)
             {
-                var user = await this._userManager.FindByEmailAsync(this.Input.Email);
+                ApplicationUser user = await _userManager.FindByEmailAsync(Input.Email);
 
                 if (user != null)
                 {
-                    string roleName = (await this._userManager.GetRolesAsync(user)).FirstOrDefault();
+                    string roleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
                     if (roleName != null)
                     {
-                        user.Role = await this._roleManager.FindByNameAsync(roleName);
+                        user.Role = await _roleManager.FindByNameAsync(roleName);
                     }
                 }
 
-                return this.RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
-            this.ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return this.Page();
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return Page();
         }
 
         // If we got this far, something failed, redisplay form
-        return this.Page();
+        return Page();
     }
 }

@@ -1,15 +1,16 @@
-﻿namespace KyberKlass.Web.Infrastructure.Extensions;
-
-using Data;
-using Data.Models;
+﻿using KyberKlass.Data;
+using KyberKlass.Data.Models;
+using KyberKlass.Services.Data;
+using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Services.Data.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Services.Data;
-using Services.Data.Interfaces;
 
+namespace KyberKlass.Web.Infrastructure.Extensions;
 public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtension
         services.AddAuthorization();
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
+        services.AddScoped<IGuardianService, GuardianService>();
         services.AddScoped<ISchoolService, SchoolService>();
         services.AddScoped<IClassroomService, ClassroomService>();
         services.AddScoped<ITeacherService, TeacherService>();

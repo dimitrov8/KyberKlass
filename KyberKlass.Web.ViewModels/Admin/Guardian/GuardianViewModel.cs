@@ -4,7 +4,7 @@ public class GuardianViewModel
 {
     public GuardianViewModel()
     {
-        this.Students = new HashSet<BasicViewModel>();
+        Students = new HashSet<BasicViewModel>();
     }
 
     public string Id { get; set; } = null!;

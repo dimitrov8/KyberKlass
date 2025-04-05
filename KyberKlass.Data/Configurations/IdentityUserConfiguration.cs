@@ -1,11 +1,10 @@
-﻿namespace KyberKlass.Data.Configurations;
-
+﻿using KyberKlass.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Models;
-using static Constants.SeedDataConstants.Admin;
+using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Admin;
 
+namespace KyberKlass.Data.Configurations;
 public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
@@ -17,7 +16,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
 
     private static void SeedAdminUser(EntityTypeBuilder<ApplicationUser> builder)
     {
-        var passwordHasher = new PasswordHasher<ApplicationUser>();
+        PasswordHasher<ApplicationUser> passwordHasher = new();
         string? hashedPassword = passwordHasher.HashPassword(null!, DEFAULT_ADMIN_PASSWORD);
 
         // Seeding the admin user

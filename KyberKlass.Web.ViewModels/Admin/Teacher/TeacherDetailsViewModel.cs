@@ -1,7 +1,6 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.Teacher;
+﻿using KyberKlass.Web.ViewModels.Admin.User;
 
-using User;
-
+namespace KyberKlass.Web.ViewModels.Admin.Teacher;
 public class TeacherDetailsViewModel : UserDetailsViewModel
 {
 }

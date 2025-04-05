@@ -1,16 +1,15 @@
-﻿namespace KyberKlass.Data.Models;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.School;
+using static KyberKlass.Common.EntityValidations.School;
 
+namespace KyberKlass.Data.Models;
 public class School
 {
     public School()
     {
-        this.Id = Guid.NewGuid();
-        this.Classrooms = new HashSet<Classroom>();
-        this.Students = new HashSet<Student>();
+        Id = Guid.NewGuid();
+        Classrooms = new HashSet<Classroom>();
+        Students = new HashSet<Student>();
     }
 
     [Key]

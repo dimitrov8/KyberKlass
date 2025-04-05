@@ -1,12 +1,11 @@
-﻿namespace KyberKlass.Web.Controllers;
-
-using Infrastructure.Extensions;
+﻿using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Web.Infrastructure.Extensions;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services.Data.Interfaces;
-using ViewModels.Admin.User;
-using static Common.CustomMessageConstants.Student;
+using static KyberKlass.Common.CustomMessageConstants.Student;
 
+namespace KyberKlass.Web.Controllers;
 [Authorize(Roles = "Admin")]
 public class StudentController : Controller
 {
@@ -15,7 +14,7 @@ public class StudentController : Controller
 
     public StudentController(IStudentService studentService)
     {
-        this._studentService = studentService;
+        _studentService = studentService;
     }
 
     private string GetViewPath(string viewName)
@@ -26,72 +25,66 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<IActionResult> All()
     {
-        IEnumerable<UserViewModel>? allStudentsViewModel = await this._studentService.AllAsync();
+        IEnumerable<UserViewModel>? allStudentsViewModel = await _studentService.AllAsync();
 
-        return this.View(this.GetViewPath(nameof(this.All)), allStudentsViewModel);
+        return View(GetViewPath(nameof(All)), allStudentsViewModel);
     }
 
     [HttpGet]
     public async Task<IActionResult> ChangeGuardian(string id)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            var viewModel = await this._studentService.GetStudentChangeGuardianAsync(id);
+            ViewModels.Admin.Student.StudentChangeGuardianViewModel viewModel = await _studentService.GetStudentChangeGuardianAsync(id);
 
-            if (viewModel.UserDetails == null)
-            {
-                return this.View("NotFound404");
-                //return this.NotFound();
-            }
-
-            return this.View(this.GetViewPath(nameof(this.ChangeGuardian)), viewModel);
+            return viewModel.UserDetails == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(ChangeGuardian)), viewModel);
         }
         catch (Exception)
         {
-            return this.RedirectToAction(nameof(this.ChangeGuardian));
+            return RedirectToAction(nameof(ChangeGuardian));
         }
     }
 
     [HttpPost]
     public async Task<IActionResult> ChangeGuardian(string id, string guardianId)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null) &&
-                            await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(guardianId, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null) &&
+                            ValidationExtensions.IsNotNullOrEmptyInput<string>(guardianId, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            bool successfulGuardianChange = await this._studentService.StudentChangeGuardianAsync(id, guardianId);
+            bool successfulGuardianChange = await _studentService.StudentChangeGuardianAsync(id, guardianId);
 
             if (successfulGuardianChange)
             {
-                this.TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_CHANGED_GUARDIAN, id);
+                TempData["SuccessMessage"] = string.Format(SUCCESSFULLY_CHANGED_GUARDIAN, id);
 
-                return this.RedirectToAction(nameof(this.ChangeGuardian), new { id, guardianId });
+                return RedirectToAction(nameof(ChangeGuardian), new { id, guardianId });
             }
 
-            this.TempData["ErrorMessage"] = GUARDIAN_ALREADY_SET;
+            TempData["ErrorMessage"] = GUARDIAN_ALREADY_SET;
 
-            return this.RedirectToAction(nameof(this.ChangeGuardian), new { id, guardianId });
+            return RedirectToAction(nameof(ChangeGuardian), new { id, guardianId });
         }
         catch (Exception)
         {
-            this.TempData["ErrorMessage"] = string.Format(FAILED_TO_CHANGE_GUARDIAN, id);
+            TempData["ErrorMessage"] = string.Format(FAILED_TO_CHANGE_GUARDIAN, id);
         }
 
-        return this.RedirectToAction(nameof(ChangeGuardian), new { id, guardianId });
+        return RedirectToAction(nameof(ChangeGuardian), new { id, guardianId });
     }
 }

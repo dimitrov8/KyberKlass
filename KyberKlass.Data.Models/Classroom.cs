@@ -1,16 +1,15 @@
-﻿namespace KyberKlass.Data.Models;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.Classroom;
+using static KyberKlass.Common.EntityValidations.Classroom;
 
+namespace KyberKlass.Data.Models;
 public class Classroom
 {
     public Classroom()
     {
-        this.Id = Guid.NewGuid();
+        Id = Guid.NewGuid();
 
-        this.Students = new HashSet<Student>();
+        Students = new HashSet<Student>();
     }
 
     [Key]
@@ -40,6 +39,6 @@ public class Classroom
 
     public override string ToString()
     {
-        return this.Name;
+        return Name;
     }
 }

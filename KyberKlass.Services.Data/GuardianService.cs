@@ -1,12 +1,11 @@
-﻿namespace KyberKlass.Services.Data;
-
-using Interfaces;
-using KyberKlass.Data;
+﻿using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Web.ViewModels.Admin;
 
+namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing guardians.
 /// </summary>
@@ -22,14 +21,14 @@ public class GuardianService : IGuardianService
     /// <param name="userManager">The user manager.</param>
     public GuardianService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
-        this._dbContext = dbContext;
-        this._userManager = userManager;
+        _dbContext = dbContext;
+        _userManager = userManager;
     }
 
     /// <inheritdoc />
     public Task<Guardian?> GetByIdAsync(string id)
     {
-        return this._dbContext
+        return _dbContext
             .Guardians
             .AsNoTracking()
             .FirstOrDefaultAsync(g => g.Id == Guid.Parse(id));
@@ -38,7 +37,7 @@ public class GuardianService : IGuardianService
     /// <inheritdoc />
     public async Task<bool> IsGuardianAssignedToStudentAsync(string userId)
     {
-        bool isAssigned = await this._dbContext
+        bool isAssigned = await _dbContext
             .Students
             .AsNoTracking()
             .AnyAsync(s => s.Guardian.Id == Guid.Parse(userId));
@@ -49,7 +48,7 @@ public class GuardianService : IGuardianService
     /// <inheritdoc />
     public async Task<Guardian?> GetGuardianAssignedByUserIdAsync(string userId)
     {
-        return await this._dbContext.Guardians
+        return await _dbContext.Guardians
             .Include(g => g.ApplicationUser)
             .AsNoTracking()
             .FirstOrDefaultAsync(g => g.Students.Any(s => s.Id == Guid.Parse(userId)));
@@ -58,7 +57,7 @@ public class GuardianService : IGuardianService
     /// <inheritdoc />
     public async Task<IEnumerable<BasicViewModel>> GetAllGuardiansAsync()
     {
-        IList<ApplicationUser> guardians = await this._userManager.GetUsersInRoleAsync("Guardian");
+        IList<ApplicationUser> guardians = await _userManager.GetUsersInRoleAsync("Guardian");
 
         IEnumerable<BasicViewModel> guardianViewModels = guardians
             .Select(g => new BasicViewModel
@@ -69,5 +68,20 @@ public class GuardianService : IGuardianService
             .ToArray();
 
         return guardianViewModels;
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<BasicViewModel>> GetStudentsAssignedToGuardianAsync(Guardian guardian)
+    {
+        return await _dbContext
+            .Students
+            .Where(s => s.Guardian.Id == guardian.Id)
+            .Select(s => new BasicViewModel
+            {
+                Id = s.Id.ToString(),
+                Name = s.ApplicationUser.GetFullName()
+            })
+          .AsNoTracking()
+            .ToArrayAsync();
     }
 }

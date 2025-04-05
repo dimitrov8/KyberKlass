@@ -1,9 +1,8 @@
-﻿namespace KyberKlass.Data.Configurations;
-
+﻿using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Models;
 
+namespace KyberKlass.Data.Configurations;
 public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
 {
     public void Configure(EntityTypeBuilder<School> builder)
@@ -11,7 +10,7 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
         builder
             .HasQueryFilter(c => c.IsActive);
 
-        this.SeedSchools(builder);
+        SeedSchools(builder);
     }
 
     private void SeedSchools(EntityTypeBuilder<School> builder)

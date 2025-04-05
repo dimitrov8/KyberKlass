@@ -1,9 +1,8 @@
-﻿namespace KyberKlass.Data.Configurations;
-
+﻿using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Models;
 
+namespace KyberKlass.Data.Configurations;
 public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>
 {
     public void Configure(EntityTypeBuilder<Teacher> builder)

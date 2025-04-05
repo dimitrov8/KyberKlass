@@ -1,16 +1,15 @@
-﻿namespace KyberKlass.Web.Controllers;
-
+﻿using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Mvc;
-using Services.Data.Interfaces;
-using ViewModels.Admin.User;
 
+namespace KyberKlass.Web.Controllers;
 public class TeacherController : Controller
 {
     private readonly ITeacherService _teacherService;
 
     public TeacherController(ITeacherService teacherService)
     {
-        this._teacherService = teacherService;
+        _teacherService = teacherService;
     }
 
     private string GetViewPath(string viewName)
@@ -21,8 +20,8 @@ public class TeacherController : Controller
     [HttpGet]
     public async Task<IActionResult> All()
     {
-        List<UserViewModel>? allTeachersViewModel = await this._teacherService.AllAsync();
+        List<UserViewModel>? allTeachersViewModel = await _teacherService.AllAsync();
 
-        return this.View(this.GetViewPath(nameof(this.All)), allTeachersViewModel);
+        return View(GetViewPath(nameof(All)), allTeachersViewModel);
     }
 }

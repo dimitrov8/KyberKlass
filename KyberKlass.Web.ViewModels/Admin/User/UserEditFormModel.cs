@@ -1,9 +1,8 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.User;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Common.EntityValidations.BaseUser;
+using static KyberKlass.Common.EntityValidations.BaseUser;
 
+namespace KyberKlass.Web.ViewModels.Admin.User;
 public class UserEditFormModel
 {
     [Required]

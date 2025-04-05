@@ -1,13 +1,12 @@
-﻿namespace KyberKlass.Services.Data;
-
-using Interfaces;
-using KyberKlass.Data;
+﻿using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Web.ViewModels.Admin;
-using Web.ViewModels.Admin.User;
 
+namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing teachers.
 /// </summary>
@@ -23,8 +22,8 @@ public class TeacherService : ITeacherService
     /// <param name="userManager">The user manager.</param>
     public TeacherService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
-        this._dbContext = dbContext;
-        this._userManager = userManager;
+        _dbContext = dbContext;
+        _userManager = userManager;
     }
 
     /// <inheritdoc />
@@ -32,7 +31,7 @@ public class TeacherService : ITeacherService
     {
         string teacherRoleName = "Teacher";
 
-        var teacherRoleId = await this._dbContext
+        Guid teacherRoleId = await _dbContext
             .Roles
             .AsNoTracking()
             .Where(r => r.Name == teacherRoleName)
@@ -42,9 +41,9 @@ public class TeacherService : ITeacherService
         if (teacherRoleId != Guid.Empty)
         {
             // Retrieve all users who have the "Teacher" role
-            List<ApplicationUser> teachers = await this._dbContext
+            List<ApplicationUser> teachers = await _dbContext
                 .Users
-                .Where(user => this._dbContext
+                .Where(user => _dbContext
                     .UserRoles
                     .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == teacherRoleId))
                 //.Include(user => user.Role)
@@ -71,14 +70,14 @@ public class TeacherService : ITeacherService
     /// <inheritdoc />
     public async Task<IEnumerable<BasicViewModel>> GetUnassignedTeachersAsync()
     {
-        IList<ApplicationUser> allTeachers = await this._userManager.GetUsersInRoleAsync("Teacher");
+        IList<ApplicationUser> allTeachers = await _userManager.GetUsersInRoleAsync("Teacher");
 
         if (allTeachers.Any() == false)
         {
             return Enumerable.Empty<BasicViewModel>();
         }
 
-        List<Guid> assignedTeacherIds = await this._dbContext.Classrooms
+        List<Guid> assignedTeacherIds = await _dbContext.Classrooms
             .Select(c => c.TeacherId)
             .ToListAsync();
 
@@ -97,7 +96,7 @@ public class TeacherService : ITeacherService
     /// <inheritdoc />
     public async Task<bool> IsTeacherAssignedToClassroomAsync(string userId)
     {
-        bool isAssigned = await this._dbContext
+        bool isAssigned = await _dbContext
             .Classrooms
             .AsNoTracking()
             .AnyAsync(c => c.TeacherId == Guid.Parse(userId));

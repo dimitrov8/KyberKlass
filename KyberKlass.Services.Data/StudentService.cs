@@ -1,13 +1,13 @@
-﻿namespace KyberKlass.Services.Data;
-
-using Interfaces;
-using KyberKlass.Data;
+﻿using KyberKlass.Data;
 using KyberKlass.Data.Models;
+using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.Student;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.EntityFrameworkCore;
-using Web.ViewModels.Admin;
-using Web.ViewModels.Admin.Student;
-using Web.ViewModels.Admin.User;
 
+namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing students.
 /// </summary>
@@ -27,9 +27,9 @@ public class StudentService : IStudentService
         IUserService userService,
         IGuardianService guardianService)
     {
-        this._dbContext = dbContext;
-        this._userService = userService;
-        this._guardianService = guardianService;
+        _dbContext = dbContext;
+        _userService = userService;
+        _guardianService = guardianService;
     }
 
     /// <inheritdoc />
@@ -37,7 +37,7 @@ public class StudentService : IStudentService
     {
         string studentRoleName = "Student";
 
-        var studentRoleId = await this._dbContext
+        Guid studentRoleId = await _dbContext
             .Roles
             .AsNoTracking()
             .Where(r => r.Name == studentRoleName)
@@ -47,9 +47,9 @@ public class StudentService : IStudentService
         if (studentRoleId != Guid.Empty)
         {
             // Retrieve all users who have the "Teacher" role
-            List<ApplicationUser> students = await this._dbContext
+            List<ApplicationUser> students = await _dbContext
                 .Users
-                .Where(user => this._dbContext
+                .Where(user => _dbContext
                     .UserRoles
                     .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
                 //.Include(user => user.Role)
@@ -76,7 +76,7 @@ public class StudentService : IStudentService
     /// <inheritdoc />
     public Task<Student?> GetByIdASync(string id)
     {
-        return this._dbContext
+        return _dbContext
             .Students
             .Include(s => s.Guardian)
             .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
@@ -85,10 +85,10 @@ public class StudentService : IStudentService
     /// <inheritdoc />
     public async Task<StudentChangeGuardianViewModel> GetStudentChangeGuardianAsync(string userId)
     {
-        var userDetails = await this._userService.GetDetailsAsync(userId);
-        IEnumerable<BasicViewModel> availableGuardians = await this._guardianService.GetAllGuardiansAsync();
+        UserDetailsViewModel? userDetails = await _userService.GetDetailsAsync(userId);
+        IEnumerable<BasicViewModel> availableGuardians = await _guardianService.GetAllGuardiansAsync();
 
-        var viewModel = new StudentChangeGuardianViewModel
+        StudentChangeGuardianViewModel viewModel = new()
         {
             UserDetails = userDetails,
             AvailableGuardians = availableGuardians
@@ -100,15 +100,15 @@ public class StudentService : IStudentService
     /// <inheritdoc />
     public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)
     {
-        var student = await this.GetByIdASync(userId);
-        var newGuardian = await this._guardianService.GetByIdAsync(guardianId);
+        Student? student = await GetByIdASync(userId);
+        Guardian? newGuardian = await _guardianService.GetByIdAsync(guardianId);
 
         if (student == null || newGuardian == null)
         {
             return false;
         }
 
-        var previousGuardianId = student.Guardian.Id;
+        Guid previousGuardianId = student.Guardian.Id;
 
         if (previousGuardianId == newGuardian.Id)
         {
@@ -118,7 +118,7 @@ public class StudentService : IStudentService
         student.GuardianId = Guid.Empty;
         student.GuardianId = newGuardian.Id;
 
-        await this._dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
         return true;
     }

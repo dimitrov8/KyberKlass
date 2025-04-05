@@ -1,9 +1,8 @@
-﻿namespace KyberKlass.Services.Data.Interfaces;
+﻿using KyberKlass.Data.Models;
+using KyberKlass.Web.ViewModels.Admin.Student;
+using KyberKlass.Web.ViewModels.Admin.User;
 
-using KyberKlass.Data.Models;
-using Web.ViewModels.Admin.Student;
-using Web.ViewModels.Admin.User;
-
+namespace KyberKlass.Services.Data.Interfaces;
 /// <summary>
 ///     Interface for managing student-related operations.
 /// </summary>

@@ -1,8 +1,7 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.School;
+﻿using System.ComponentModel.DataAnnotations;
+using static KyberKlass.Common.EntityValidations.School;
 
-using System.ComponentModel.DataAnnotations;
-using static Common.EntityValidations.School;
-
+namespace KyberKlass.Web.ViewModels.Admin.School;
 public class AddSchoolFormModel
 {
     [Required]

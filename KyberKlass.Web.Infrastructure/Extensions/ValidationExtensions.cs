@@ -12,7 +12,7 @@ public static class ValidationExtensions
     /// <param name="id">The ID to validate.</param>
     /// <param name="model">The model to validate.</param>
     /// <returns>True if the ID and model are not null or empty; otherwise, false.</returns>
-    public static async Task<bool> IsNotNullOrEmptyInputAsync<T>(string? id, T? model) where T : class
+    public static bool IsNotNullOrEmptyInput<T>(string? id, T? model) where T : class
     {
         // If id is null or empty, return false
         if (string.IsNullOrEmpty(id))
@@ -23,7 +23,7 @@ public static class ValidationExtensions
         // If model is provided and its Id property is null or empty, return false
         if (model != null)
         {
-            var idProperty = typeof(T).GetProperty("Id");
+            System.Reflection.PropertyInfo? idProperty = typeof(T).GetProperty("Id");
 
             if (idProperty != null && string.IsNullOrEmpty(idProperty.GetValue(model) as string))
             {

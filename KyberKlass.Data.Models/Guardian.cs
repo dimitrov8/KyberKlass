@@ -1,13 +1,12 @@
-﻿namespace KyberKlass.Data.Models;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+namespace KyberKlass.Data.Models;
 public class Guardian
 {
     public Guardian()
     {
-        this.Students = new HashSet<Student>();
+        Students = new HashSet<Student>();
     }
 
     [Key]

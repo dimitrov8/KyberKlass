@@ -1,8 +1,7 @@
-﻿namespace KyberKlass.Web.Infrastructure.Extensions;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
+namespace KyberKlass.Web.Infrastructure.Extensions;
 public class EndpointConfigurationExtension
 {
     public static void ConfigureEndpoints(IEndpointRouteBuilder endpoints)

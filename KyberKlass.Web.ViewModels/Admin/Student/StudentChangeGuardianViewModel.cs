@@ -1,12 +1,11 @@
-﻿namespace KyberKlass.Web.ViewModels.Admin.Student;
+﻿using KyberKlass.Web.ViewModels.Admin.User;
 
-using User;
-
+namespace KyberKlass.Web.ViewModels.Admin.Student;
 public class StudentChangeGuardianViewModel
 {
     public StudentChangeGuardianViewModel()
     {
-        this.AvailableGuardians = new HashSet<BasicViewModel>();
+        AvailableGuardians = new HashSet<BasicViewModel>();
     }
 
     public UserDetailsViewModel? UserDetails { get; set; }

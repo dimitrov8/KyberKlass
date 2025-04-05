@@ -1,8 +1,7 @@
-﻿namespace KyberKlass.Services.Data.Interfaces;
+﻿using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.Classroom;
 
-using Web.ViewModels.Admin;
-using Web.ViewModels.Admin.Classroom;
-
+namespace KyberKlass.Services.Data.Interfaces;
 public interface IClassroomService
 {
     /// <summary>

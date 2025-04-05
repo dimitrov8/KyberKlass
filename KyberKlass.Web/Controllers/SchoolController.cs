@@ -1,13 +1,12 @@
-﻿namespace KyberKlass.Web.Controllers;
-
-using Infrastructure.Extensions;
+﻿using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Web.Infrastructure.Extensions;
+using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.School;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services.Data.Interfaces;
-using ViewModels.Admin;
-using ViewModels.Admin.School;
-using static Common.CustomMessageConstants.Common;
+using static KyberKlass.Common.CustomMessageConstants.Common;
 
+namespace KyberKlass.Web.Controllers;
 /// <summary>
 ///     Controller responsible for managing schools in the system.
 /// </summary>
@@ -23,7 +22,7 @@ public class SchoolController : Controller
     /// <param name="schoolService">The service for managing schools.</param>
     public SchoolController(ISchoolService schoolService)
     {
-        this._schoolService = schoolService;
+        _schoolService = schoolService;
     }
 
     private string GetViewPath(string viewName)
@@ -37,9 +36,9 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> All()
     {
-        IEnumerable<SchoolDetailsViewModel> schools = await this._schoolService.AllAsync();
+        IEnumerable<SchoolDetailsViewModel> schools = await _schoolService.AllAsync();
 
-        return this.View(this.GetViewPath(nameof(this.All)), schools);
+        return View(GetViewPath(nameof(All)), schools);
     }
 
     /// <summary>
@@ -48,9 +47,9 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> GetSchools()
     {
-        IEnumerable<BasicViewModel> allSchools = await this._schoolService.BasicAllAsync();
+        IEnumerable<BasicViewModel> allSchools = await _schoolService.BasicAllAsync();
 
-        return this.Json(allSchools);
+        return Json(allSchools);
     }
 
     /// <summary>
@@ -59,7 +58,7 @@ public class SchoolController : Controller
     [HttpGet]
     public IActionResult Add()
     {
-        return this.View(this.GetViewPath(nameof(Add)));
+        return View(GetViewPath(nameof(Add)));
     }
 
     /// <summary>
@@ -68,31 +67,31 @@ public class SchoolController : Controller
     [HttpPost]
     public async Task<IActionResult> Add(AddSchoolFormModel model)
     {
-        if (this.ModelState.IsValid == false)
+        if (ModelState.IsValid == false)
         {
-            return this.View(this.GetViewPath(nameof(Add)), model);
+            return View(GetViewPath(nameof(Add)), model);
         }
 
         try
         {
-            bool addedSuccessfully = await this._schoolService.AddAsync(model);
+            bool addedSuccessfully = await _schoolService.AddAsync(model);
 
             if (addedSuccessfully == false)
             {
-                this.TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
+                TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
             else
             {
-                this.TempData["SuccessMessage"] = string.Format(ADDITION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Name);
+                TempData["SuccessMessage"] = string.Format(ADDITION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Name);
             }
 
-            return this.RedirectToAction(nameof(this.All));
+            return RedirectToAction(nameof(All));
         }
         catch (Exception)
         {
-            this.ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
+            ModelState.AddModelError(string.Empty, ADDITION_ERROR_MESSAGE);
 
-            return this.View(this.GetViewPath(nameof(Add)), model);
+            return View(GetViewPath(nameof(Add)), model);
         }
     }
 
@@ -103,29 +102,23 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> Details(string id)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            var schoolModel = await this._schoolService.ViewDetailsAsync(id);
+            SchoolDetailsViewModel? schoolModel = await _schoolService.ViewDetailsAsync(id);
 
-            if (schoolModel == null)
-            {
-                return this.View("NotFound404");
-                //return this.NotFound();
-            }
-
-            return this.View(this.GetViewPath(nameof(this.Details)), schoolModel);
+            return schoolModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Details)), schoolModel);
         }
         catch (Exception)
         {
-            return this.RedirectToAction(nameof(this.All)); // Maybe return custom error view
+            return RedirectToAction(nameof(All)); // Maybe return custom error view
         }
     }
 
@@ -136,29 +129,23 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            var schoolViewModel = await this._schoolService.GetForEditAsync(id);
+            AddSchoolFormModel? schoolViewModel = await _schoolService.GetForEditAsync(id);
 
-            if (schoolViewModel == null)
-            {
-                return this.View("NotFound404");
-                //return this.NotFound();
-            }
-
-            return this.View(this.GetViewPath(nameof(this.Edit)), schoolViewModel);
+            return schoolViewModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Edit)), schoolViewModel);
         }
         catch (Exception)
         {
-            return this.RedirectToAction(nameof(this.All));
+            return RedirectToAction(nameof(All));
         }
     }
 
@@ -170,44 +157,39 @@ public class SchoolController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(string id, AddSchoolFormModel model)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
-        if (this.ModelState.IsValid == false)
+        if (ModelState.IsValid == false)
         {
-            this.TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
+            TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
 
-            return this.View(this.GetViewPath(nameof(Edit)), model);
+            return View(GetViewPath(nameof(Edit)), model);
         }
 
         try
         {
-            bool editSuccessfully = await this._schoolService.EditAsync(id, model);
+            bool editSuccessfully = await _schoolService.EditAsync(id, model);
 
             if (editSuccessfully)
             {
-                if (model.IsActive == false)
-                {
-                    this.TempData["SuccessMessage"] = string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id);
-                }
-                else
-                {
-                    this.TempData["SuccessMessage"] = string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
-                }
+                TempData["SuccessMessage"] = model.IsActive == false
+                    ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
+                    : (object)string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
 
-            return this.RedirectToAction(nameof(this.All));
+            return RedirectToAction(nameof(All));
         }
         catch (Exception)
         {
-            this.ModelState.AddModelError(string.Empty, EDIT_ERROR_MESSAGE);
+            ModelState.AddModelError(string.Empty, EDIT_ERROR_MESSAGE);
 
-            return this.View(this.GetViewPath(nameof(Edit)), model);
+            return View(GetViewPath(nameof(Edit)), model);
         }
     }
 
@@ -218,29 +200,23 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> Delete(string id)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            var model = await this._schoolService.GetForDeleteAsync(id);
+            SchoolDetailsViewModel? model = await _schoolService.GetForDeleteAsync(id);
 
-            if (model == null)
-            {
-                return this.View("NotFound404");
-                //return this.NotFound();
-            }
-
-            return this.View(this.GetViewPath(nameof(this.Delete)), model);
+            return model == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Delete)), model);
         }
         catch (Exception)
         {
-            return this.RedirectToAction(nameof(this.All));
+            return RedirectToAction(nameof(All));
         }
     }
 
@@ -251,40 +227,40 @@ public class SchoolController : Controller
     [HttpPost]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
-        bool isValidInput = await ValidationExtensions.IsNotNullOrEmptyInputAsync<string>(id, null);
+        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
         if (isValidInput == false)
         {
-            return this.View("BadRequest400");
-            //return this.BadRequest(INVALID_INPUT_MESSAGE);
+            return View("BadRequest400");
+            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
         {
-            bool hasStudentsAssigned = await this._schoolService.HasStudentsAssignedAsync(id);
+            bool hasStudentsAssigned = await _schoolService.HasStudentsAssignedAsync(id);
 
             if (hasStudentsAssigned)
             {
-                this.TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, CONTROLLER_NAME.ToLower());
+                TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, CONTROLLER_NAME.ToLower());
 
-                return this.RedirectToAction(nameof(this.All), new { id });
+                return RedirectToAction(nameof(All), new { id });
             }
 
-            bool successfullyDeleted = await this._schoolService.DeleteAsync(id);
+            bool successfullyDeleted = await _schoolService.DeleteAsync(id);
 
             if (successfullyDeleted)
             {
-                this.TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, id);
+                TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, id);
 
-                return this.RedirectToAction(nameof(this.All));
+                return RedirectToAction(nameof(All));
             }
 
-            return this.BadRequest(string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id));
+            return BadRequest(string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id));
         }
         catch (Exception)
         {
-            this.TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id);
-            return this.RedirectToAction(nameof(this.All));
+            TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, id);
+            return RedirectToAction(nameof(All));
         }
     }
 }

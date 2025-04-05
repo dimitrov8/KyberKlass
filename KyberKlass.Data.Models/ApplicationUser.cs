@@ -1,12 +1,11 @@
-﻿namespace KyberKlass.Data.Models;
-
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
-using Microsoft.AspNetCore.Identity;
-using static Common.EntityValidations.BaseUser;
-using static Common.FormattingConstants;
+using static KyberKlass.Common.EntityValidations.BaseUser;
+using static KyberKlass.Common.FormattingConstants;
 
+namespace KyberKlass.Data.Models;
 public class ApplicationUser : IdentityUser<Guid>
 {
     [Required]
@@ -36,17 +35,17 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public string GetFullName()
     {
-        return $"{this.FirstName} {this.LastName}";
+        return $"{FirstName} {LastName}";
     }
 
     public string GetBirthDate()
     {
-        return $"{this.BirthDate.ToString(BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture)}";
+        return $"{BirthDate.ToString(BIRTH_DATE_FORMAT, CultureInfo.InvariantCulture)}";
     }
 
     public string GetStatus()
     {
-        return this.IsActive ? "True" : "False";
+        return IsActive ? "True" : "False";
     }
 
     public async Task<string> GetRoleAsync(UserManager<ApplicationUser> userManager)
