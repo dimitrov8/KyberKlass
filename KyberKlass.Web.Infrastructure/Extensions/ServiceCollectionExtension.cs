@@ -3,6 +3,7 @@ using KyberKlass.Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Services.Data.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

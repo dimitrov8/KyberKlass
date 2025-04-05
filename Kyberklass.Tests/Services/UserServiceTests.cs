@@ -1,34 +1,32 @@
-﻿namespace KyberKlass.Tests.Services;
-
-using System.Globalization;
-using Data;
-using Data.Models;
-using KyberKlass.Services.Data;
-using KyberKlass.Services.Data.Interfaces;
+﻿using KyberKlass.Data;
+using KyberKlass.Data.Models;
+using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Services.Data.User;
+using KyberKlass.Web.ViewModels.Admin.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Web.ViewModels.Admin.User;
+using System.Globalization;
 
+namespace KyberKlass.Tests.Services;
 public class UserServiceTests : IDisposable
 {
     private readonly DbContextOptions<KyberKlassDbContext> _options;
     private readonly KyberKlassDbContext _dbContextMock;
     private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
-    private readonly Mock<RoleManager<IdentityRole<Guid>>> _roleManagerMock;
     private readonly Mock<IGuardianService> _guardianServiceMock;
-    private readonly Mock<ISchoolService> _schoolServiceMock;
     private readonly UserService _sut;
 
     public UserServiceTests()
     {
-        this._options = new DbContextOptionsBuilder<KyberKlassDbContext>()
+        _options = new DbContextOptionsBuilder<KyberKlassDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        this._dbContextMock = new KyberKlassDbContext(this._options);
+        _dbContextMock = new KyberKlassDbContext(_options);
 
-        this._userManagerMock = new Mock<UserManager<ApplicationUser>>(
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        _userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null,
             null,
@@ -40,28 +38,17 @@ public class UserServiceTests : IDisposable
             null
         );
 
-        this._roleManagerMock = new Mock<RoleManager<IdentityRole<Guid>>>(
-            Mock.Of<IRoleStore<IdentityRole<Guid>>>(),
-            null,
-            null,
-            null,
-            null
-        );
+        _guardianServiceMock = new Mock<IGuardianService>();
 
-        this._guardianServiceMock = new Mock<IGuardianService>();
-        this._schoolServiceMock = new Mock<ISchoolService>();
-
-        this._sut = new UserService(this._dbContextMock, this._userManagerMock.Object, this._roleManagerMock.Object, this._guardianServiceMock.Object,
-            this._schoolServiceMock.Object);
+        _sut = new UserService(_dbContextMock, _userManagerMock.Object, _guardianServiceMock.Object);
     }
-
 
     [Fact]
     public async Task GetUserById_ReturnsUser()
     {
         // Arrange
-        var userId = Guid.NewGuid();
-        var user = new ApplicationUser
+        Guid userId = Guid.NewGuid();
+        ApplicationUser user = new()
         {
             Id = userId,
             UserName = "test@test.com",
@@ -75,11 +62,11 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        await this._dbContextMock.Users.AddAsync(user);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(user);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
-        var result = await this._sut.GetUserById(user.Id.ToString());
+        ApplicationUser? result = await _sut.GetUserById(user.Id.ToString());
 
         Assert.NotNull(result);
         Assert.Equal(userId, result!.Id);
@@ -89,45 +76,11 @@ public class UserServiceTests : IDisposable
     public async Task GetUserById_ReturnsNullIfUserDoesNotExist()
     {
         // Arrange
-        var invalidUserId = Guid.NewGuid();
+        Guid invalidUserId = Guid.NewGuid();
 
         // Act
-        var result = await this._sut.GetUserById(invalidUserId.ToString());
+        ApplicationUser? result = await _sut.GetUserById(invalidUserId.ToString());
 
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task GetRoleNameByIdAsyncReturnsRoleName()
-    {
-        // Arrange
-        string roleId = Guid.NewGuid().ToString();
-        string roleName = "Admin";
-        var role = new IdentityRole<Guid>(roleName);
-
-        this._roleManagerMock.Setup(m => m.FindByIdAsync(roleId))
-            .ReturnsAsync(role);
-
-        // Act
-        string? result = await this._sut.GetRoleNameByIdAsync(roleId);
-
-        // Assert
-        Assert.Equal(roleName, result);
-    }
-
-    [Fact]
-    public async Task GetRoleNameByIdAsync_ReturnsNullForInvalidRoleId()
-    {
-        // Arrange
-        string invalidRoleId = Guid.NewGuid().ToString();
-
-        this._roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId))
-            .ReturnsAsync((IdentityRole<Guid>)null!);
-
-        // Act
-        string? result = await this._sut.GetRoleNameByIdAsync(invalidRoleId);
-
-        // Assert
         Assert.Null(result);
     }
 
@@ -135,8 +88,8 @@ public class UserServiceTests : IDisposable
     public async Task GetDetailsAsync_ReturnsUserWithNoRoleDetailsViewModel()
     {
         // Arrange
-        var userId = Guid.NewGuid();
-        var user = new ApplicationUser
+        Guid userId = Guid.NewGuid();
+        ApplicationUser user = new()
         {
             Id = userId,
             UserName = "test@test.com",
@@ -159,7 +112,7 @@ public class UserServiceTests : IDisposable
         string expectedFullName = "Brendan Osborne";
         string expectedBirthDate = "1990-05-15";
 
-        var viewModel = new UserDetailsViewModel
+        UserDetailsViewModel viewModel = new()
         {
             Id = userId.ToString(),
             FullName = user.GetFullName(),
@@ -174,13 +127,13 @@ public class UserServiceTests : IDisposable
             School = null
         };
 
-        await this._dbContextMock.AddAsync(user);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.AddAsync(user);
+        await _dbContextMock.SaveChangesAsync();
 
-        this._userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string>());
+        _userManagerMock.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string>());
 
         // Act
-        var result = await this._sut.GetDetailsAsync(userId.ToString());
+        UserDetailsViewModel? result = await _sut.GetDetailsAsync(userId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -201,7 +154,7 @@ public class UserServiceTests : IDisposable
         string invalidUserId = Guid.NewGuid().ToString();
 
         // Act
-        var result = await this._sut.GetDetailsAsync(invalidUserId);
+        UserDetailsViewModel? result = await _sut.GetDetailsAsync(invalidUserId);
 
         // Assert
         Assert.Null(result);
@@ -211,7 +164,7 @@ public class UserServiceTests : IDisposable
     public async Task GetDetailsAsync_RoleIsSetRight()
     {
         // Arrange 
-        var studentUser = new ApplicationUser
+        ApplicationUser studentUser = new()
         {
             Id = Guid.NewGuid(),
             FirstName = "Brendan",
@@ -226,7 +179,7 @@ public class UserServiceTests : IDisposable
             NormalizedEmail = "TEST@TEST.COM"
         };
 
-        var guardianUser = new ApplicationUser
+        ApplicationUser guardianUser = new()
         {
             Id = Guid.NewGuid(),
             FirstName = "Brendan",
@@ -241,13 +194,13 @@ public class UserServiceTests : IDisposable
             NormalizedEmail = "TEST@TEST.COM"
         };
 
-        var guardian = new Guardian
+        Guardian guardian = new()
         {
             Id = guardianUser.Id,
             ApplicationUser = guardianUser
         };
 
-        var student = new Student
+        Student student = new()
         {
             Id = studentUser.Id,
             ApplicationUser = studentUser,
@@ -257,14 +210,14 @@ public class UserServiceTests : IDisposable
 
         guardian.Students = new List<Student> { student };
 
-        await this._dbContextMock.Users.AddAsync(studentUser);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(studentUser);
+        await _dbContextMock.SaveChangesAsync();
 
-        this._userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
+        _userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
             .ReturnsAsync(new List<string> { "Student" });
 
         // Act
-        var result = await this._sut.GetDetailsAsync(studentUser.Id.ToString());
+        UserDetailsViewModel? result = await _sut.GetDetailsAsync(studentUser.Id.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -275,9 +228,9 @@ public class UserServiceTests : IDisposable
     public async Task GetForEditAsync_ReturnsUserEditFormModelWhenUserExists()
     {
         // Arrange
-        var userId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
         string expectedBirthDate = "1990-05-15";
-        var user = new ApplicationUser
+        ApplicationUser user = new()
         {
             Id = userId,
             FirstName = "Brendan",
@@ -291,11 +244,11 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        await this._dbContextMock.Users.AddAsync(user);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(user);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
-        var result = await this._sut.GetForEditAsync(userId.ToString());
+        UserEditFormModel? result = await _sut.GetForEditAsync(userId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -313,10 +266,10 @@ public class UserServiceTests : IDisposable
     public async Task GetForEditAsync_ReturnsNullWhenUserDoesNotExist()
     {
         // Arrange
-        var invalidUserId = Guid.NewGuid();
+        Guid invalidUserId = Guid.NewGuid();
 
         // Act
-        var result = await this._sut.GetForEditAsync(invalidUserId.ToString());
+        UserEditFormModel? result = await _sut.GetForEditAsync(invalidUserId.ToString());
 
         // Assert
         Assert.Null(result);
@@ -326,9 +279,9 @@ public class UserServiceTests : IDisposable
     public async Task EditAsync_ReturnsUserEditFormModelWhenUserExists()
     {
         // Arrange
-        var userId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
         string expectedBirthDate = "1990-05-15";
-        var model = new UserEditFormModel
+        UserEditFormModel model = new()
         {
             Id = userId.ToString(),
             FirstName = "Brendan",
@@ -340,7 +293,7 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var user = new ApplicationUser
+        ApplicationUser user = new()
         {
             Id = userId,
             FirstName = "Brendan",
@@ -354,11 +307,11 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        await this._dbContextMock.AddAsync(user);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.AddAsync(user);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
-        var result = await this._sut.EditAsync(userId.ToString(), model);
+        UserEditFormModel? result = await _sut.EditAsync(userId.ToString(), model);
 
         // Assert
         Assert.NotNull(result);
@@ -376,11 +329,11 @@ public class UserServiceTests : IDisposable
     public async Task EditAsync_ReturnsNullWhenUserDoesNotExist()
     {
         // Arrange
-        var invalidUserId = Guid.NewGuid();
-        var model = new UserEditFormModel();
+        Guid invalidUserId = Guid.NewGuid();
+        UserEditFormModel model = new();
 
         // Act
-        var result = await this._sut.EditAsync(invalidUserId.ToString(), model);
+        UserEditFormModel? result = await _sut.EditAsync(invalidUserId.ToString(), model);
 
         // Assert
         Assert.Null(result);
@@ -390,8 +343,8 @@ public class UserServiceTests : IDisposable
     public async Task EditAsync_UpdatesAllProperties()
     {
         // Arrange
-        var userId = Guid.NewGuid();
-        var model = new UserEditFormModel
+        Guid userId = Guid.NewGuid();
+        UserEditFormModel model = new()
         {
             FirstName = "NewFirstName",
             LastName = "NewLastName",
@@ -402,7 +355,7 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var user = new ApplicationUser
+        ApplicationUser user = new()
         {
             Id = userId,
             FirstName = "InitialFirstName",
@@ -414,11 +367,11 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        await this._dbContextMock.AddAsync(user);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.AddAsync(user);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
-        var result = await this._sut.EditAsync(userId.ToString(), model);
+        UserEditFormModel? result = await _sut.EditAsync(userId.ToString(), model);
 
         // Assert
         Assert.NotNull(result);
@@ -436,7 +389,7 @@ public class UserServiceTests : IDisposable
     public async Task AllAsync_ReturnsEmptyListWhenNoUsersExist()
     {
         // Act
-        IEnumerable<UserViewModel> result = await this._sut.AllAsync();
+        IEnumerable<UserViewModel> result = await _sut.AllAsync();
 
         // Assert
         Assert.NotNull(result);
@@ -447,11 +400,11 @@ public class UserServiceTests : IDisposable
     public async Task AllAsync_ReturnsAllUsersWithRoles()
     {
         // Arrange
-        var user1Id = Guid.NewGuid();
-        var user2Id = Guid.NewGuid();
-        var adminRoleId = Guid.NewGuid();
+        Guid user1Id = Guid.NewGuid();
+        Guid user2Id = Guid.NewGuid();
+        Guid adminRoleId = Guid.NewGuid();
 
-        var users = new List<ApplicationUser>
+        List<ApplicationUser> users = new()
         {
             new()
             {
@@ -481,25 +434,25 @@ public class UserServiceTests : IDisposable
             }
         };
 
-        var role = new IdentityRole<Guid>
+        IdentityRole<Guid> role = new()
         {
             Id = adminRoleId,
             Name = "Admin"
         };
 
-        var userRole = new IdentityUserRole<Guid>
+        IdentityUserRole<Guid> userRole = new()
         {
             UserId = user1Id,
             RoleId = adminRoleId
         };
 
-        await this._dbContextMock.Users.AddRangeAsync(users);
-        await this._dbContextMock.Roles.AddAsync(role);
-        await this._dbContextMock.UserRoles.AddAsync(userRole);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddRangeAsync(users);
+        await _dbContextMock.Roles.AddAsync(role);
+        await _dbContextMock.UserRoles.AddAsync(userRole);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
-        IEnumerable<UserViewModel> result = await this._sut.AllAsync();
+        IEnumerable<UserViewModel> result = await _sut.AllAsync();
 
         // Assert
         Assert.Collection(result,
@@ -526,8 +479,8 @@ public class UserServiceTests : IDisposable
     public async Task GetDetailsAsync_ReturnsGuardianViewModelIfUserHasStudentRole()
     {
         // Arrange
-        var guardianId = Guid.NewGuid();
-        var guardianUser = new ApplicationUser
+        Guid guardianId = Guid.NewGuid();
+        ApplicationUser guardianUser = new()
         {
             Id = guardianId,
             UserName = "test_guardian@test.com",
@@ -541,8 +494,8 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var studentId = Guid.NewGuid();
-        var studentUser = new ApplicationUser
+        Guid studentId = Guid.NewGuid();
+        ApplicationUser studentUser = new()
         {
             Id = studentId,
             UserName = "test_student@test.com",
@@ -556,13 +509,13 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var guardian = new Guardian
+        Guardian guardian = new()
         {
             Id = guardianId,
             ApplicationUser = guardianUser
         };
 
-        var student = new Student
+        Student student = new()
         {
             Id = studentId,
             ApplicationUser = studentUser,
@@ -575,18 +528,18 @@ public class UserServiceTests : IDisposable
         student.Guardian.Id = guardianId;
         student.Guardian = guardian;
 
-        await this._dbContextMock.Users.AddAsync(studentUser);
-        await this._dbContextMock.Students.AddAsync(student);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(studentUser);
+        await _dbContextMock.Students.AddAsync(student);
+        await _dbContextMock.SaveChangesAsync();
 
-        this._userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
+        _userManagerMock.Setup(m => m.GetRolesAsync(studentUser))
             .ReturnsAsync(new List<string> { "Student" });
 
-        this._guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(studentId.ToString()))
+        _guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(studentId.ToString()))
             .ReturnsAsync(guardian);
 
         // Act
-        var result = await this._sut.GetDetailsAsync(studentId.ToString());
+        UserDetailsViewModel? result = await _sut.GetDetailsAsync(studentId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -604,8 +557,8 @@ public class UserServiceTests : IDisposable
     public async Task GetDetailsAsync_ReturnsStudentsIfUserHasGuardianRole()
     {
         // Arrange
-        var guardianId = Guid.NewGuid();
-        var guardianUser = new ApplicationUser
+        Guid guardianId = Guid.NewGuid();
+        ApplicationUser guardianUser = new()
         {
             Id = guardianId,
             UserName = "test_guardian@test.com",
@@ -619,8 +572,8 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var studentId = Guid.NewGuid();
-        var studentUser = new ApplicationUser
+        Guid studentId = Guid.NewGuid();
+        ApplicationUser studentUser = new()
         {
             Id = studentId,
             UserName = "test_student@test.com",
@@ -634,13 +587,13 @@ public class UserServiceTests : IDisposable
             IsActive = true
         };
 
-        var guardian = new Guardian
+        Guardian guardian = new()
         {
             Id = guardianId,
             ApplicationUser = guardianUser
         };
 
-        var student = new Student
+        Student student = new()
         {
             Id = studentId,
             ApplicationUser = studentUser,
@@ -653,18 +606,18 @@ public class UserServiceTests : IDisposable
         student.Guardian.Id = guardianId;
         student.Guardian = guardian;
 
-        await this._dbContextMock.Users.AddAsync(studentUser);
-        await this._dbContextMock.Students.AddAsync(student);
-        await this._dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(studentUser);
+        await _dbContextMock.Students.AddAsync(student);
+        await _dbContextMock.SaveChangesAsync();
 
-        this._userManagerMock.Setup(m => m.GetRolesAsync(guardianUser))
+        _userManagerMock.Setup(m => m.GetRolesAsync(guardianUser))
             .ReturnsAsync(new List<string> { "Guardian" });
 
-        this._guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(guardianId.ToString()))
+        _guardianServiceMock.Setup(m => m.GetGuardianAssignedByUserIdAsync(guardianId.ToString()))
             .ReturnsAsync(guardian);
 
         // Act
-        var result = await this._sut.GetDetailsAsync(guardianId.ToString());
+        UserDetailsViewModel? result = await _sut.GetDetailsAsync(guardianId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -677,71 +630,9 @@ public class UserServiceTests : IDisposable
         Assert.Equal(guardianUser.PhoneNumber, result.PhoneNumber);
     }
 
-    [Fact]
-    public async Task UpdateRoleAsync_UserNotFoundReturnsFalse()
+    public void Dispose()
     {
-        // Arrange
-        var invalidUserId = Guid.NewGuid();
-        var roleId = Guid.NewGuid();
-
-        this._userManagerMock.Setup(m => m.FindByIdAsync(invalidUserId.ToString()))!
-            .ReturnsAsync((ApplicationUser?)null);
-
-        // Act
-        bool result = await this._sut.UpdateRoleAsync(invalidUserId.ToString(), roleId.ToString(), null, null, null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task UpdateRoleAsync_RoleNotFoundReturnsFalse()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var invalidRoleId = Guid.NewGuid();
-        var user = new ApplicationUser
-        {
-            Id = userId,
-            UserName = "test_user@test.com",
-            NormalizedUserName = "TEST_USER1@TEST.COM",
-            Email = "test_user1@test.com",
-            NormalizedEmail = "TEST_USER1@TEST.COM",
-            FirstName = "Random",
-            LastName = "User",
-            BirthDate = DateTime.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
-            Address = "Random Address",
-            IsActive = true
-        };
-
-        this._userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
-            .ReturnsAsync(user);
-
-        this._roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId.ToString()))!
-            .ReturnsAsync((IdentityRole<Guid>?)null);
-
-        // Act
-        bool result = await this._sut.UpdateRoleAsync(userId.ToString(), invalidRoleId.ToString(), null, null, null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task GetForUpdateRoleAsync_UserNotFoundReturnsNull()
-    {
-        // Arrange
-        string userId = Guid.NewGuid().ToString();
-
-        // Act
-        var result = await this._sut.GetForUpdateRoleAsync(userId);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    public async void Dispose()
-    {
-        await this._dbContextMock.DisposeAsync();
+        _dbContextMock.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Services.Data.Interfaces.Guardians;
+using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.User;
