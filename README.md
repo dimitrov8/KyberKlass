@@ -11,7 +11,7 @@ KyberKlass is designed to be:
 - 🧩 **Modularity** — Organized ViewModels, Extension Methods, and Scalable Routing
 - 🔍 **Maintainable**: Separation of concerns, ViewModels, and extensions
 
-- ## 🔐 Authentication & Roles
+## 🔐 Authentication & Roles
 
 - Managed by ASP.NET Identity with GUID-based users
 - Roles: `Admin`, `Teacher`, `Guardian`, `Student`
