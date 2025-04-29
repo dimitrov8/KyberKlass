@@ -11,6 +11,12 @@ KyberKlass is designed to be:
 - 🧩 **Modularity** — Organized ViewModels, Extension Methods, and Scalable Routing
 - 🔍 **Maintainable**: Separation of concerns, ViewModels, and extensions
 
+- ## 🔐 Authentication & Roles
+
+- Managed by ASP.NET Identity with GUID-based users
+- Roles: `Admin`, `Teacher`, `Guardian`, `Student`
+- Role-specific access guards in views and controllers
+
 ## ✅ Core Features (Admin)
 
 Currently, the `Admin` role provides full CRUD and user management access. Admins can:
@@ -64,9 +70,4 @@ Currently, the `Admin` role provides full CRUD and user management access. Admin
 | Database      | SQL Server                              |
 | Dev Tools     | Visual Studio                           |
 
-## 🔐 Authentication & Roles
-
-- Managed by ASP.NET Identity with GUID-based users
-- Roles: `Admin`, `Teacher`, `Guardian`, `Student`
-- Role-specific access guards in views and controllers
 
