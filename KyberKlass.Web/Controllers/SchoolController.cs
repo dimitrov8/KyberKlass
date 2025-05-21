@@ -1,8 +1,10 @@
-﻿using KyberKlass.Services.Data.Interfaces;
+﻿using AspNetCoreGeneratedDocument;
+using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.School;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using static KyberKlass.Common.CustomMessageConstants.Common;
 
@@ -34,10 +36,16 @@ public class SchoolController : Controller
     ///     Retrieves all schools and renders the corresponding view.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> All()
+    public async Task<IActionResult> All(string? searchTerm)
     {
-        IEnumerable<SchoolDetailsViewModel> schools = await _schoolService.AllAsync();
+        IEnumerable<SchoolDetailsViewModel> schools = await _schoolService.AllAsync(searchTerm);
 
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            return PartialView(GetViewPath("_AllPartial"), schools);
+        }
+
+        ViewData["searchTerm"] = searchTerm;
         return View(GetViewPath(nameof(All)), schools);
     }
 

@@ -1,0 +1,63 @@
+﻿.action-btn {
+    min-width: 100px;
+    padding: 0.375rem 0.75rem;
+    margin: 0 4px 8px 0;
+}
+
+.custom-table {
+    width: 100%;
+    word-wrap: break-word;
+}
+
+    .custom-table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #555555;
+        cursor: pointer;
+    }
+
+    .custom-table td, .custom-table th {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+.custom-table_paginate {
+    text-align: center !important;
+    width: 100%;
+}
+
+.dt-top-left {
+    flex: 1 1 auto;
+    max-width: 40%;
+    color: red;
+}
+
+
+.dt-top-right {
+    flex: 0 0 auto;
+}
+
+.dt-bottom-left {
+    flex: 0 0 auto;
+}
+
+    .dt-bottom-left select {
+        padding: 4px 8px;
+    }
+
+.dt-bottom-center {
+    flex: 1 1 auto;
+    display: flex !important;
+    justify-content: center;
+    text-align: center;
+}
+
+.action-container {
+    max-width: 350px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}

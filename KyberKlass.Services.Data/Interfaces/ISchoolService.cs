@@ -15,10 +15,11 @@ public interface ISchoolService
     Task<bool> AddAsync(AddSchoolFormModel model);
 
     /// <summary>
-    ///     Retrieves all schools asynchronously.
+    ///     Retrieves all schools asynchronously, optionally filtered by a search term.
     /// </summary>
-    /// <returns>A collection of school view models.</returns>
-    Task<IEnumerable<SchoolDetailsViewModel>> AllAsync();
+    /// <param name="searchTerm">Optional search term to filter schools by name, address, email, or phone.</param>
+    /// <returns>A collection of school view models matching the search criteria.</returns>
+    Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm);
 
     /// <summary>
     ///     Retrieves basic information about all schools asynchronously.

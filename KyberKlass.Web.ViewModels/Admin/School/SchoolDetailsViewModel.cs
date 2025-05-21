@@ -29,4 +29,6 @@ public class SchoolDetailsViewModel
     public int TotalStudents => Classrooms.Sum(s => s.StudentsCount);
 
     public IEnumerable<ClassroomDetailsViewModel> Classrooms { get; set; }
+
+    public string? SearchTerm { get; set; }
 }

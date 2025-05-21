@@ -24,16 +24,29 @@ public class SchoolService : ISchoolService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync()
+    public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm)
     {
-        School[] schools = await _dbContext
+        IQueryable<School> query = _dbContext
             .Schools
             .Include(s => s.Classrooms)
             .ThenInclude(c => c.Teacher.ApplicationUser)
             .Include(s => s.Classrooms)
             .ThenInclude(c => c.Students)
             .AsNoTracking()
-            .ToArrayAsync();
+            .Where(s => s.IsActive == true); // Filter to include only active schools
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            string term = searchTerm.ToLower();
+
+            query = query.Where(s =>
+            s.Name.ToLower().Contains(term) ||
+            s.Address.ToLower().Contains(term) ||
+            s.Email.ToLower().Contains(term) ||
+            s.PhoneNumber.Contains(term));
+        }
+
+        School[] schools = await query.ToArrayAsync();
 
         IEnumerable<SchoolDetailsViewModel> viewModel = schools
             .Select(s => new SchoolDetailsViewModel
@@ -246,5 +259,10 @@ public class SchoolService : ISchoolService
             .Schools
             .AsNoTracking()
             .AnyAsync(s => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
+    }
+
+    public Task<IEnumerable<SchoolDetailsViewModel>> AllAsync()
+    {
+        throw new NotImplementedException();
     }
 }
