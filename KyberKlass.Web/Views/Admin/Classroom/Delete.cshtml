@@ -8,7 +8,7 @@
 	<h1 class="mb-4">@ViewData["Title"]</h1>
 	<hr/>
 
-	@await Html.PartialAsync("~/Views/Admin/Classroom/_ClassroomDetailsCommon.cshtml", Model)
+	@await Html.PartialAsync("~/Views/Admin/Classroom/_DetailsPartial.cshtml", Model)
 
 	<div class="mt-5">
 		<form asp-controller="Classroom" asp-action="DeleteConfirmed" method="post">
