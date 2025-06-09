@@ -45,9 +45,12 @@ public class StudentService : IStudentService
             .Select(r => r.Id)
             .FirstOrDefaultAsync();
 
-        if (studentRoleId != Guid.Empty)
+        if (studentRoleId == Guid.Empty)
         {
-            // Retrieve all users who have the "Teacher" role
+            return Enumerable.Empty<UserViewModel>();
+        }
+
+
             List<ApplicationUser> students = await _dbContext
                 .Users
                 .Where(user => _dbContext
@@ -64,15 +67,11 @@ public class StudentService : IStudentService
                     Email = t.Email,
                     FullName = t.GetFullName(),
                     Role = studentRoleName, // Hardcode the role as "Student" to avoid unnecessary role queries
-                    IsActive = t.IsActive
                 })
                 .ToList();
 
             return studentViewModels;
         }
-
-        return null;
-    }
 
     /// <inheritdoc />
     public Task<Student?> GetByIdASync(string id)

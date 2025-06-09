@@ -30,7 +30,6 @@ else if (TempData["ErrorMessage"] != null)
 			<th>Email</th>
 			<th>Full Name</th>
 			<th style="width: 50px;">Role</th>
-			<th style="width: 50px;">IsActive</th>
 			<th style="width: 370px;">Actions</th>
 		</tr>
 		</thead>
@@ -42,9 +41,6 @@ else if (TempData["ErrorMessage"] != null)
 				<td>@user.Email</td>
 				<td>@user.FullName</td>
 				<td>@user.Role</td>
-				<td>
-					<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(user.IsActive ? "checked" : "")/>
-				</td>
 				<td>
 
 					<!-- Edit button -->
