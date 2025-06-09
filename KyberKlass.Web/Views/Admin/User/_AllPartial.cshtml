@@ -1,0 +1,48 @@
+﻿@model IEnumerable<UserViewModel>
+
+@{
+    var gridClass = "not-four-buttons";
+}
+
+<table id="usersTable" class="table table-bordered table-active table-hover custom-table">
+	<thead>
+		<tr>
+			<th class="email-col">Email</th>
+			<th class="name-col">Full Name</th>
+			<th class="role-col">Role</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td class="email-col">@user.Email</td>
+				<td class="name-col">@user.FullName</td>
+				<td class="role-col">@user.Role</td>
+				<td>
+                    <div class="action-container @gridClass">
+
+                            <!-- Edit button -->
+                            <form asp-controller="User" asp-action="Edit" method="get">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <button type="submit" class="btn btn-secondary btn-sm fw-bold action-btn">Edit</button>
+                            </form>
+
+                            <!-- Details button -->
+                            <form asp-controller="User" asp-action="Details" method="get">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <button type="submit" class="btn btn-info btn-sm fw-bold action-btn">Details</button>
+                            </form>
+
+                            <!-- Update Role button -->
+                            <form asp-controller="User" asp-action="UpdateRole" method="get">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <button type="submit" class="btn btn-warning btn-sm fw-bold action-btn">Update Role</button>
+                            </form>
+                        </div>
+                </td>
+            </tr>
+        }
+	</tbody>
+</table>

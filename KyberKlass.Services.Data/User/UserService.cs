@@ -36,37 +36,40 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<UserViewModel>> AllAsync()
+    public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
-        var usersWithRoles = await _dbContext
-            .Users
-            .Select(user => new
-            {
-                User = user,
-                Roles = _dbContext
-                    .UserRoles
-                    .Where(ur => ur.UserId == user.Id)
-                    .Join(_dbContext.Roles,
-                        ur => ur.RoleId,
-                        role => role.Id,
-                        (ur, role) => role.Name)
-                    .ToArray()
-            })
+        var query = from user in _dbContext.Users
+                    where user.IsActive == true // Filter to include only active users
+                    join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId into userRoles
+                    from userRole in userRoles.DefaultIfEmpty()
+                    join role in _dbContext.Roles on userRole.RoleId equals role.Id into roles
+                    from role in roles.DefaultIfEmpty()
+                    select new
+                    {
+                        User = user,
+                        RoleName = role.Name
+                    };
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            string term = searchTerm.ToLower();
+            query = query.Where(u =>
+                u.User.FirstName.ToLower().Contains(term) ||
+                u.User.LastName.ToLower().Contains(term) ||
+                u.User.Email.ToLower().Contains(term));
+        }
+
+        var result = await query
             .AsNoTracking()
             .ToArrayAsync();
 
-        IEnumerable<UserViewModel> userViewModels = usersWithRoles
-            .Select(u => new UserViewModel
-            {
-                Id = u.User.Id.ToString(),
-                FullName = u.User.GetFullName(),
-                Email = u.User.Email,
-                Role = u.Roles.FirstOrDefault() ?? "No Role Assigned",
-                IsActive = u.User.IsActive
-            })
-            .ToArray();
-
-        return userViewModels;
+        return result.Select(u => new UserViewModel
+        {
+            Id = u.User.Id.ToString(),
+            Email = u.User.Email,
+            FullName = u.User.GetFullName(),
+            Role = u.RoleName ?? "No Role Asssigned", // Handle null role names
+        });
     }
 
     /// <inheritdoc />

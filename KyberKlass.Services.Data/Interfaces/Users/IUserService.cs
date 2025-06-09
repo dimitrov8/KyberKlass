@@ -10,9 +10,11 @@ namespace KyberKlass.Services.Data.Interfaces.Users
     {
         /// <summary>
         ///     Retrieves a collection of user view models asynchronously.
+        ///     Optionally filters by search term.
         /// </summary>
+        /// <param name="searchTerm"> Optional search term to filter users.</param> 
         /// <returns>A collection of user view models.</returns>
-        Task<IEnumerable<UserViewModel>> AllAsync();
+        Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null);
 
         /// <summary>
         ///     Retrieves a user entity by its unique identifier asynchronously.
