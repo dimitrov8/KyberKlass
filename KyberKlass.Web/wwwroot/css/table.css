@@ -1,7 +1,24 @@
-﻿.action-btn {
-    min-width: 100px;
-    padding: 0.375rem 0.75rem;
-    margin: 0 4px 8px 0;
+﻿.action-container {
+    display: grid;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: fit-content;
+}
+
+    .action-container.four-buttons {
+        grid-template-columns: repeat(2, max-content);
+    }
+
+    .action-container.not-four-buttons {
+        grid-auto-flow: column;
+        grid-auto-columns: max-content;
+    }
+
+.action-btn {
+    width: 100px;
+    padding: 6px 6px;
+    text-align: center;
 }
 
 .custom-table {
@@ -10,8 +27,7 @@
 }
 
     .custom-table th {
-        vertical-align: middle;
-        text-align: center;
+        text-align: start;
     }
 
     .custom-table tbody tr:hover {
@@ -20,9 +36,52 @@
     }
 
     .custom-table td, .custom-table th {
+        padding: 8px 12px;
+        vertical-align: middle;
         white-space: normal;
         word-wrap: break-word;
     }
+
+    .custom-table .name-col {
+        max-width: 160px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .custom-table .address-col {
+        max-width: 160px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .custom-table .email-col {
+        max-width: 160px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .custom-table .phone-col {
+        max-width: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-table .role-col {
+        max-width: 80px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .custom-table td:last-child,
+    .custom-table th:last-child {
+        white-space: nowrap;
+        max-width: 340px;
+        width: 1%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+  
 
 .custom-table_paginate {
     text-align: center !important;
@@ -53,11 +112,4 @@
     display: flex !important;
     justify-content: center;
     text-align: center;
-}
-
-.action-container {
-    max-width: 350px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
 }
