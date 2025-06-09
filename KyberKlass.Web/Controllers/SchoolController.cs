@@ -38,7 +38,7 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> All(string? searchTerm)
     {
-        IEnumerable<SchoolDetailsViewModel> schools = await _schoolService.AllAsync(searchTerm);
+        IEnumerable<SchoolViewModel> schools = await _schoolService.AllAsync(searchTerm);
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {
