@@ -24,14 +24,10 @@ public class SchoolService : ISchoolService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm)
+    public async Task<IEnumerable<SchoolViewModel>> AllAsync(string? searchTerm = null)
     {
         IQueryable<School> query = _dbContext
             .Schools
-            .Include(s => s.Classrooms)
-            .ThenInclude(c => c.Teacher.ApplicationUser)
-            .Include(s => s.Classrooms)
-            .ThenInclude(c => c.Students)
             .AsNoTracking()
             .Where(s => s.IsActive == true); // Filter to include only active schools
 
@@ -46,32 +42,16 @@ public class SchoolService : ISchoolService
             s.PhoneNumber.Contains(term));
         }
 
-        School[] schools = await query.ToArrayAsync();
-
-        IEnumerable<SchoolDetailsViewModel> viewModel = schools
-            .Select(s => new SchoolDetailsViewModel
+        IEnumerable<SchoolViewModel> viewModel = await query
+            .Select(s => new SchoolViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.Name,
                 Address = s.Address,
                 Email = s.Email,
-                PhoneNumber = s.PhoneNumber,
-                IsActive = s.IsActive,
-                Classrooms = s.Classrooms
-                    .Select(c => new ClassroomDetailsViewModel
-                    {
-                        Id = c.Id.ToString(),
-                        Name = c.Name,
-                        TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-                        Students = c.Students
-                            .Select(st => new BasicViewModel
-                            {
-                                Id = st.Id.ToString(),
-                                Name = st.ApplicationUser.GetFullName()
-                            })
-                            .ToArray()
-                    })
-            });
+                PhoneNumber = s.PhoneNumber
+            })
+            .ToArrayAsync();
 
         return viewModel;
     }

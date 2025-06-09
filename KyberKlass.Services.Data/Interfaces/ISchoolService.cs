@@ -16,10 +16,11 @@ public interface ISchoolService
 
     /// <summary>
     ///     Retrieves all schools asynchronously, optionally filtered by a search term.
+    ///     Optionally filters by search term.
     /// </summary>
-    /// <param name="searchTerm">Optional search term to filter schools by name, address, email, or phone.</param>
+    /// <param name="searchTerm">Optional search term to filter schools.</param>
     /// <returns>A collection of school view models matching the search criteria.</returns>
-    Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm);
+    Task<IEnumerable<SchoolViewModel>> AllAsync(string? searchTerm = null);
 
     /// <summary>
     ///     Retrieves basic information about all schools asynchronously.
