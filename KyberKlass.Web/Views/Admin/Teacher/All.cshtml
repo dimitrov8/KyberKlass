@@ -16,7 +16,6 @@
 			<th>Email</th>
 			<th>Full Name</th>
 			<th style="width: 50px;">Role</th>
-			<th style="width: 50px;">IsActive</th>
 			<th style="width: 190px;">Actions</th>
 		</tr>
 		</thead>
@@ -28,9 +27,6 @@
 				<td>@user.Email</td>
 				<td>@user.FullName</td>
 				<td>@user.Role</td>
-				<td>
-					<input type="checkbox" id="isActiveCheckbox" name="isActive" disabled @(user.IsActive ? "checked" : "")/>
-				</td>
 				<td>
 					<!-- Details button -->
 					<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">

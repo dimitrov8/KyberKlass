@@ -57,7 +57,6 @@ public class TeacherService : ITeacherService
                     Email = t.Email,
                     FullName = t.GetFullName(),
                     Role = teacherRoleName, // Hardcode the role as "Teacher" to avoid unnecessary role queries
-                    IsActive = t.IsActive
                 })
                 .ToList();
 
