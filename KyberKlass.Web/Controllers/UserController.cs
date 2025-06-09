@@ -35,11 +35,17 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> All()
+    public async Task<IActionResult> All(string? searchTerm)
     {
-        IEnumerable<UserViewModel> allUsersViewModel = await _userService.AllAsync();
+        IEnumerable<UserViewModel> users = await _userService.AllAsync(searchTerm);
 
-        return View(GetViewPath(nameof(All)), allUsersViewModel);
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            return PartialView(GetViewPath("_AllPartial"), users);
+        }
+
+        ViewData["searchTerm"] = searchTerm;
+        return View(GetViewPath(nameof(All)), users);
     }
 
     [HttpGet]
