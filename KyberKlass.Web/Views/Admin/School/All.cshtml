@@ -22,7 +22,11 @@ else if (TempData["ErrorMessage"] != null)
 <h2 class="text-center">@ViewData["Title"]</h2>
 <hr />
 
-<div class="card-body">
+<div class="card-body d-flex flex-column">
+	<div id="searchContainer" style="max-width: 300px; display: none;">
+		<input type="search" id="searchInput" placeholder="Search..." class="form-control form-control-sm">
+	</div>
+
 	<div id="schoolsTableContainer">@await Html.PartialAsync("_AllPartial.cshtml", Model)</div>
 </div>
 
@@ -43,10 +47,12 @@ else if (TempData["ErrorMessage"] != null)
 	<script src="~/js/initDataTable.js"></script>
 	<script>
 		setupDataTable({
-			searchInputSelector: '#searchTerm',
 			resultContainerSelector: '#schoolsTableContainer',
 			searchUrl: '@Url.Action("All", "School")',
-			tableSelector: '#schoolsTable'
-		})
+			tableSelector: '#schoolsTable',
+			onInitComplete: function () {
+			document.getElementById('searchContainer').style.display = 'block';
+		}
+		});
 	</script>
 }
