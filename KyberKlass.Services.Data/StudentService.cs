@@ -34,7 +34,7 @@ public class StudentService : IStudentService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<UserViewModel>?> AllAsync()
+    public async Task<IEnumerable<UserViewModel>?> AllAsync(string? searchTerm = null)
     {
         string studentRoleName = "Student";
 

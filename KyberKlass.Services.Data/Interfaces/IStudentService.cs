@@ -9,10 +9,11 @@ namespace KyberKlass.Services.Data.Interfaces;
 public interface IStudentService
 {
     /// <summary>
-    ///     Retrieves all users asynchronously.
+    ///     Retrieves all users asynchronously, optionally filtered by a search term.
     /// </summary>
-    /// <returns>A collection of UserViewModels or null if none found.</returns>
-    Task<IEnumerable<UserViewModel>?> AllAsync();
+    /// <param name="searchTerm">Optional search term to filter schools.</param>
+    /// <returns>A collection of user view models.</returns>
+    Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null);
 
     /// <summary>
     ///     Retrieves a student by their unique identifier asynchronously.
