@@ -39,7 +39,7 @@ public class UserService : IUserService
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
         var query = from user in _dbContext.Users
-                    where user.IsActive == true // Filter to include only active users
+                    where user.IsActive == true 
                     join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId into userRoles
                     from userRole in userRoles.DefaultIfEmpty()
                     join role in _dbContext.Roles on userRole.RoleId equals role.Id into roles
@@ -68,7 +68,7 @@ public class UserService : IUserService
             Id = u.User.Id.ToString(),
             Email = u.User.Email,
             FullName = u.User.GetFullName(),
-            Role = u.RoleName ?? "No Role Asssigned", // Handle null role names
+            Role = u.RoleName ?? "No Role Asssigned", 
         });
     }
 

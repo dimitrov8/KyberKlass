@@ -9,8 +9,7 @@ namespace KyberKlass.Services.Data.Interfaces.Users
     public interface IUserService
     {
         /// <summary>
-        ///     Retrieves a collection of user view models asynchronously.
-        ///     Optionally filters by search term.
+        ///     Retrieves a collection of user view models asynchronously,  optionally filtered by a search term.
         /// </summary>
         /// <param name="searchTerm"> Optional search term to filter users.</param> 
         /// <returns>A collection of user view models.</returns>
