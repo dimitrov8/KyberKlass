@@ -133,14 +133,14 @@
     width: 100%;
 }
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
     .action-container {
         display: flex !important;
         flex-wrap: wrap;
         justify-content: flex-start;
         gap: 0.5rem;
         max-width: 100% !important;
-        padding 0 0.5rem;
+        padding: 0 0.5rem;
     }
 
     .action-btn {
@@ -153,8 +153,5 @@
     .card-body {
         overflow-x: auto;
     }
-}
+}*/
 
-.container {
-    display:
-}
