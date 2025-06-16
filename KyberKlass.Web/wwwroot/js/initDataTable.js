@@ -1,6 +1,6 @@
 ﻿
 (function ($) {
-    function setupDataTable({ resultContainerSelector, searchUrl, tableSelector }) {
+    function setupDataTable({ resultContainerSelector, searchUrl, tableSelector, onInitComplete }) {
         const config = {
             dom:
                 "<'d-flex justify-content-between align-items-center'<'dt-top-left'><'dt-top-right'B>>" +
@@ -15,6 +15,11 @@
             pageLength: 10,
             lengthMenu: [10, 25],
             responsive: true,
+            initComplete: function () {
+                if (typeof onInitComplete === 'function') {
+                    onInitComplete();
+                }
+            }
         };
 
         function initDataTable() {
