@@ -8,10 +8,11 @@ namespace KyberKlass.Services.Data.Interfaces;
 public interface ITeacherService
 {
     /// <summary>
-    ///     Retrieves all teachers asynchronously.
+    ///     Retrieves  a collection of teacher view models asynchronously, optionally filtered by a search term.
     /// </summary>
-    /// <returns>A list of UserViewModels representing teachers or null if none found.</returns>
-    Task<List<UserViewModel>?> AllAsync();
+    ///   /// <param name="searchTerm">Optional search term to filter users.</param>
+    /// <returns>A collection of user view models.</returns>
+    Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null);
 
     Task<IEnumerable<BasicViewModel>> GetUnassignedTeachersAsync();
 

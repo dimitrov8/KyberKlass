@@ -1,72 +1,44 @@
-﻿@model List<UserViewModel>
+﻿@model IEnumerable<UserViewModel>
 @{
 	ViewData["Title"] = "Manage Teachers";
-
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2 class="text-center">@ViewData["Title"] </h2>
 <hr/>
 
-<div class="card-body">
-	<table id="id" class="table table-bordered table-striped">
-		<thead>
-		<tr>
-			<th style="width: 320px;">ID</th>
-			<th>Email</th>
-			<th>Full Name</th>
-			<th style="width: 50px;">Role</th>
-			<th style="width: 190px;">Actions</th>
-		</tr>
-		</thead>
-		<tbody>
-		@foreach (var user in Model)
-		{
-			<tr>
-				<td>@user.Id</td>
-				<td>@user.Email</td>
-				<td>@user.FullName</td>
-				<td>@user.Role</td>
-				<td>
-					<!-- Details button -->
-					<form asp-controller="User" asp-action="Details" method="get" style="display : inline;">
-						<input type="hidden" name="id" value="@user.Id"/>
-						<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
-					</form>
+<div class="card-body d-flex flex-column">
+	<div id="searchContainer" style="max-width: 300px; display: none;">
+		<input type="search" id="searchInput" placeholder="Search..." class="form-control form-control-sm">
+	</div>
 
-					<!-- Update Role button -->
-					<form asp-controller="User" asp-action="UpdateRole" method="get" style="display : inline;">
-						<input type="hidden" name="id" value="@user.Id"/>
-						<button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
-					</form>
-
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
-
-	@if (!Model.Any())
-	{
-		<p>No users found.</p>
-	}
-
-	@* Include necessary scripts for DataTables.js and DataTables.Export *@
-
-	@section scripts
-	{
-		<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-		<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-		<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-		<script src="~/plugins/jszip/jszip.min.js"></script>
-		<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
-		<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-		<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-	}
-
+	<div id="teachersTableContainer">@await Html.PartialAsync("_AllPartial.cshtml", Model)</div>
 </div>
+
+@section scripts
+{
+	<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/jszip/jszip.min.js"></script>
+	<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+	<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+	<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+	<script src="~/js/initDataTable.js"></script>
+	<script>
+		setupDataTable({
+		resultContainerSelector: '#teachersTableContainer',
+		searchUrl: '@Url.Action("All", "Teacher")',
+		tableSelector: '#teachersTable',
+		onInitComplete: function () {
+			document.getElementById('searchContainer').style.display = 'block';
+		}
+		});
+	</script>
+	}

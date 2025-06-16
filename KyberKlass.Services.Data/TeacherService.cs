@@ -27,7 +27,7 @@ public class TeacherService : ITeacherService
     }
 
     /// <inheritdoc />
-    public async Task<List<UserViewModel>?> AllAsync()
+    public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
         string teacherRoleName = "Teacher";
 
@@ -40,30 +40,36 @@ public class TeacherService : ITeacherService
 
         if (teacherRoleId != Guid.Empty)
         {
-            // Retrieve all users who have the "Teacher" role
-            List<ApplicationUser> teachers = await _dbContext
-                .Users
-                .Where(user => _dbContext
-                    .UserRoles
-                    .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == teacherRoleId))
-                //.Include(user => user.Role)
+            var query = from user in _dbContext.Users
+                        where user.IsActive
+                        join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
+                        join role in _dbContext.Roles on userRole.RoleId equals role.Id
+                        where role.Id == teacherRoleId
+                        select user;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                string term = searchTerm.ToLower();
+                query = query.Where(u =>
+                    u.FirstName.ToLower().Contains(term) ||
+                    u.LastName.ToLower().Contains(term) ||
+                    u.Email.ToLower().Contains(term));
+            }
+
+            var result = await query
                 .AsNoTracking()
-                .ToListAsync();
+                .ToArrayAsync();
 
-            List<UserViewModel> teacherViewModels = teachers
-                .Select(t => new UserViewModel
-                {
-                    Id = t.Id.ToString(),
-                    Email = t.Email,
-                    FullName = t.GetFullName(),
-                    Role = teacherRoleName, // Hardcode the role as "Teacher" to avoid unnecessary role queries
-                })
-                .ToList();
-
-            return teacherViewModels;
+            return result.Select(t => new UserViewModel
+            {
+                Id = t.Id.ToString(),
+                Email = t.Email,
+                FullName = t.GetFullName(),
+                Role = teacherRoleName,
+            });
         }
 
-        return null;
+        return Enumerable.Empty<UserViewModel>();
     }
 
     /// <inheritdoc />
