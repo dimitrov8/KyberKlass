@@ -10,6 +10,7 @@ using static KyberKlass.Common.CustomMessageConstants.Common;
 using static KyberKlass.Common.CustomMessageConstants.User;
 
 namespace KyberKlass.Web.Controllers;
+
 [Authorize(Roles = "Admin")]
 public class UserController : Controller
 {
@@ -35,16 +36,17 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> All(string? searchTerm)
+    public async Task<IActionResult> All(string? searchTerm, string? roleFilter)
     {
-        IEnumerable<UserViewModel> users = await _userService.AllAsync(searchTerm);
+        IEnumerable<UserViewModel> users = await _userService.AllAsync(searchTerm, roleFilter);
 
-        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
             return PartialView(GetViewPath("_AllPartial"), users);
         }
 
         ViewData["searchTerm"] = searchTerm;
+        ViewData["roleFilter"] = roleFilter;
         return View(GetViewPath(nameof(All)), users);
     }
 
@@ -63,7 +65,7 @@ public class UserController : Controller
         {
             UserDetailsViewModel? userDetailsViewModel = await _userService.GetDetailsAsync(id);
 
-            return userDetailsViewModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Details)), userDetailsViewModel);
+            return userDetailsViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Details)), userDetailsViewModel);
         }
         catch (Exception)
         {
@@ -86,7 +88,7 @@ public class UserController : Controller
         {
             UserEditFormModel? userViewModel = await _userService.GetForEditAsync(id);
 
-            return userViewModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Edit)), userViewModel);
+            return userViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Edit)), userViewModel);
         }
         catch (Exception)
         {
@@ -120,7 +122,7 @@ public class UserController : Controller
             {
                 TempData["SuccessMessage"] = model.IsActive == false
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
-                    : (object)string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Id);
+                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Id);
             }
 
             return RedirectToAction(nameof(All));
@@ -150,7 +152,7 @@ public class UserController : Controller
 
             return userUpdateRoleViewModel == null
                 ? View("NotFound404")
-                : (IActionResult)View(GetViewPath(nameof(UpdateRole)), userUpdateRoleViewModel);
+                : View(GetViewPath(nameof(UpdateRole)), userUpdateRoleViewModel);
         }
         catch (Exception)
         {

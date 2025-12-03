@@ -36,39 +36,39 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
+    public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null, string? roleFilter = null)
     {
-        var query = from user in _dbContext.Users
-                    where user.IsActive == true 
-                    join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId into userRoles
-                    from userRole in userRoles.DefaultIfEmpty()
-                    join role in _dbContext.Roles on userRole.RoleId equals role.Id into roles
-                    from role in roles.DefaultIfEmpty()
-                    select new
-                    {
-                        User = user,
-                        RoleName = role.Name
-                    };
+        IQueryable<ApplicationUser> query = _dbContext.Users
+             .Where(u => u.IsActive)
+             .Include(u => u.Role)
+             .AsNoTracking();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             string term = searchTerm.ToLower();
             query = query.Where(u =>
-                u.User.FirstName.ToLower().Contains(term) ||
-                u.User.LastName.ToLower().Contains(term) ||
-                u.User.Email.ToLower().Contains(term));
+                u.FirstName.ToLower().Contains(term) ||
+                u.LastName.ToLower().Contains(term) ||
+                u.Email.ToLower().Contains(term));
         }
 
-        var result = await query
-            .AsNoTracking()
-            .ToArrayAsync();
-
-        return result.Select(u => new UserViewModel
+        if (!string.IsNullOrEmpty(roleFilter))
         {
-            Id = u.User.Id.ToString(),
-            Email = u.User.Email,
-            FullName = u.User.GetFullName(),
-            Role = u.RoleName ?? "No Role Asssigned", 
+            query = roleFilter.Equals("NoRoleAssigned")
+                ? query.Where(u => u.Role == null)
+                : query.Where(u => u.Role != null && u.Role.Name.ToLower() == roleFilter.ToLower());
+        }
+
+        List<ApplicationUser> users = await query
+            .AsNoTracking()
+            .ToListAsync();
+
+        return users.Select(u => new UserViewModel
+        {
+            Id = u.Id.ToString(),
+            Email = u.Email,
+            FullName = u.GetFullName(),
+            Role = u.Role?.Name ?? "No Role Assigned"
         });
     }
 
@@ -147,7 +147,7 @@ public class UserService : IUserService
         user.NormalizedEmail = model.Email.ToUpper();
         user.IsActive = model.IsActive;
 
-        await _dbContext.SaveChangesAsync();
+        _ = await _dbContext.SaveChangesAsync();
 
         return model;
     }
@@ -183,5 +183,10 @@ public class UserService : IUserService
         return await _dbContext
             .Users
             .FindAsync(Guid.Parse(id));
+    }
+
+    public Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
+    {
+        throw new NotImplementedException();
     }
 }

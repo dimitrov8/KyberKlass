@@ -9,11 +9,12 @@ namespace KyberKlass.Services.Data.Interfaces.Users
     public interface IUserService
     {
         /// <summary>
-        ///     Retrieves a collection of user view models asynchronously,  optionally filtered by a search term.
+        ///     Retrieves a collection of user view models asynchronously,  optionally filtered by a search term/role.
         /// </summary>
         /// <param name="searchTerm"> Optional search term to filter users.</param> 
+        /// <param name="roleFilter"> Optional role filter.</param> 
         /// <returns>A collection of user view models.</returns>
-        Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null);
+        Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null, string? roleFilter = null);
 
         /// <summary>
         ///     Retrieves a user entity by its unique identifier asynchronously.
