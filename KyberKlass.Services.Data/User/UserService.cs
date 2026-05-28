@@ -31,37 +31,41 @@ public class UserService(KyberKlassDbContext dbContext,
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null, string? roleFilter = null)
     {
-        IQueryable<ApplicationUser> query = _dbContext.Users
-             .Where(u => u.IsActive)
-             .Include(u => u.Role)
-             .AsNoTracking();
+        var query = _dbContext.Users
+            .Where(u => u.IsActive)
+            .Select(u => new
+            {
+                User = u,
+                RoleName = _dbContext.UserRoles
+                    .Where(ur => ur.UserId == u.Id)
+                    .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
+                    .FirstOrDefault()
+            });
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             string term = searchTerm.ToLower();
-            query = query.Where(u =>
-                u.FirstName.ToLower().Contains(term) ||
-                u.LastName.ToLower().Contains(term) ||
-                u.Email.ToLower().Contains(term));
+            query = query.Where(x =>
+                x.User.FirstName.ToLower().Contains(term) ||
+                x.User.LastName.ToLower().Contains(term) ||
+                x.User.Email.ToLower().Contains(term));
         }
 
         if (!string.IsNullOrEmpty(roleFilter))
         {
             query = roleFilter.Equals("NoRoleAssigned")
-                ? query.Where(u => u.Role == null)
-                : query.Where(u => u.Role != null && u.Role.Name.ToLower() == roleFilter.ToLower());
+                ? query.Where(x => x.RoleName == null)
+                : query.Where(x => x.RoleName != null && x.RoleName.ToLower() == roleFilter.ToLower());
         }
 
-        List<ApplicationUser> users = await query
-            .AsNoTracking()
-            .ToListAsync();
+        var results = await query.ToListAsync();
 
-        return users.Select(u => new UserViewModel
+        return results.Select(x => new UserViewModel
         {
-            Id = u.Id.ToString(),
-            Email = u.Email,
-            FullName = u.GetFullName(),
-            Role = u.Role?.Name ?? "No Role Assigned"
+            Id = x.User.Id.ToString(),
+            Email = x.User.Email,
+            FullName = x.User.GetFullName(),
+            Role = x.RoleName ?? "No Role Assigned"
         });
     }
 

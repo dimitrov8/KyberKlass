@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace KyberKlass.Data;
 
@@ -9,8 +8,7 @@ public class KyberKlassDbContextFactory : IDesignTimeDbContextFactory<KyberKlass
     public KyberKlassDbContext CreateDbContext(string[] args)
     {
         DbContextOptionsBuilder<KyberKlassDbContext> optionsBuilder = new();
-        optionsBuilder.UseSqlServer("Server=localhost;Database=KyberKlass;User Id=sa;Password=KyberKlassS!;TrustServerCertificate=True")
-            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+        optionsBuilder.UseSqlServer("Server=localhost;Database=KyberKlass;User Id=sa;Password=KyberKlassS!;TrustServerCertificate=True");
 
         return new KyberKlassDbContext(optionsBuilder.Options);
     }

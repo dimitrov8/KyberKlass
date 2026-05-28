@@ -28,7 +28,6 @@ public static class ServiceCollectionExtension
         services.AddScoped<IClassroomService, ClassroomService>();
         services.AddScoped<ITeacherService, TeacherService>();
         services.AddScoped<IStudentService, StudentService>();
-        services.AddScoped<IGuardianService, GuardianService>();
 
         services.AddControllersWithViews(options => { options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()); });
 
@@ -41,8 +40,7 @@ public static class ServiceCollectionExtension
                                   throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<KyberKlassDbContext>(options =>
-            options.UseSqlServer(connectionString)
-                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+            options.UseSqlServer(connectionString));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 

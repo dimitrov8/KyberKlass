@@ -353,10 +353,10 @@ public class TeacherServiceTests : IDisposable
     public async Task AllAsync_ReturnsNullWhenTeacherRoleIdNotFound()
     {
         // Act
-        List<UserViewModel>? result = (await _sut.AllAsync()).ToList();
+        List<UserViewModel> result = (await _sut.AllAsync()).ToList();
 
         // Assert
-        Assert.Null(result);
+        Assert.Empty(result);
     }
 
     public async void Dispose()

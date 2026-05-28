@@ -440,10 +440,10 @@ public class StudentServiceTests : IDisposable
          await _dbContextMock.SaveChangesAsync();
 
         // Act
-        IEnumerable<UserViewModel>? result = await _sut.AllAsync();
+        IEnumerable<UserViewModel> result = await _sut.AllAsync();
 
         // Assert
-        Assert.Null(result);
+        Assert.Empty(result);
     }
 
 
