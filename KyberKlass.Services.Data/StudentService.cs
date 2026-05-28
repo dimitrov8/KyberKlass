@@ -1,4 +1,6 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Services.Data.Interfaces.Guardians;
@@ -6,9 +8,13 @@ using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Student;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.EntityFrameworkCore;
 
+#endregion
+
 namespace KyberKlass.Services.Data;
+
 /// <summary>
 ///     Service class responsible for managing students.
 /// </summary>
@@ -23,8 +29,9 @@ public class StudentService(KyberKlassDbContext dbContext,
     IGuardianService guardianService) : IStudentService
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
-    private readonly IUserService _userService = userService;
     private readonly IGuardianService _guardianService = guardianService;
+    private readonly IUserService _userService = userService;
+
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
@@ -33,8 +40,8 @@ public class StudentService(KyberKlassDbContext dbContext,
         Guid studentRoleId = await _dbContext
             .Roles
             .AsNoTracking()
-            .Where(r => r.Name == studentRoleName)
-            .Select(r => r.Id)
+            .Where(predicate: r => r.Name == studentRoleName)
+            .Select(selector: r => r.Id)
             .FirstOrDefaultAsync();
 
         if (studentRoleId == Guid.Empty)
@@ -45,7 +52,7 @@ public class StudentService(KyberKlassDbContext dbContext,
 
         List<ApplicationUser> students = await _dbContext
             .Users
-            .Where(user => _dbContext
+            .Where(predicate: user => _dbContext
                 .UserRoles
                 .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
             //.Include(user => user.Role)
@@ -53,12 +60,12 @@ public class StudentService(KyberKlassDbContext dbContext,
             .ToListAsync();
 
         List<UserViewModel> studentViewModels = students
-            .Select(t => new UserViewModel
+            .Select(selector: t => new UserViewModel
             {
                 Id = t.Id.ToString(),
                 Email = t.Email,
                 FullName = t.GetFullName(),
-                Role = studentRoleName, // Hardcode the role as "Student" to avoid unnecessary role queries
+                Role = studentRoleName // Hardcode the role as "Student" to avoid unnecessary role queries
             })
             .ToList();
 
@@ -70,8 +77,8 @@ public class StudentService(KyberKlassDbContext dbContext,
     {
         return _dbContext
             .Students
-            .Include(s => s.Guardian)
-            .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
+            .Include(navigationPropertyPath: s => s.Guardian)
+            .FirstOrDefaultAsync(predicate: s => s.Id == Guid.Parse(id));
     }
 
     /// <inheritdoc />
@@ -82,8 +89,7 @@ public class StudentService(KyberKlassDbContext dbContext,
 
         StudentChangeGuardianViewModel viewModel = new()
         {
-            UserDetails = userDetails,
-            AvailableGuardians = availableGuardians
+            UserDetails = userDetails, AvailableGuardians = availableGuardians
         };
 
         return viewModel;

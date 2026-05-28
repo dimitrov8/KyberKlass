@@ -1,4 +1,8 @@
+#region
+
 using KyberKlass.Web.Infrastructure.Extensions;
+
+#endregion
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +32,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.UseEndpoints(configure: endpoints =>
 {
     EndpointConfigurationExtension.ConfigureEndpoints(endpoints);
     EndpointConfigurationExtension.ConfigureRazorPages(endpoints);

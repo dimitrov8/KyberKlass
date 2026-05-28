@@ -1,8 +1,16 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
+using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.Classroom;
+using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
+#endregion
 
 namespace KyberKlass.Web.Controllers;
 
@@ -21,9 +29,10 @@ public class TeacherController(
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
-        var teacher = await userManager.GetUserAsync(User);
+        ApplicationUser? teacher = await userManager.GetUserAsync(User);
 
-        var classrooms = await classroomService.GetTeacherClassroomsAsync(teacher?.Id.ToString());
+        IEnumerable<ClassroomDetailsViewModel> classrooms =
+            await classroomService.GetTeacherClassroomsAsync(teacher?.Id.ToString());
 
         return View(GetViewPath(nameof(Dashboard)), classrooms);
     }
@@ -31,7 +40,7 @@ public class TeacherController(
     [HttpGet]
     public async Task<IActionResult> ClassroomStudents(string id)
     {
-        var students = await classroomService.GetClassroomStudentsAsync(id);
+        IEnumerable<BasicViewModel> students = await classroomService.GetClassroomStudentsAsync(id);
 
         return View(GetViewPath(nameof(ClassroomStudents)), students);
     }
@@ -40,7 +49,7 @@ public class TeacherController(
     [HttpGet]
     public async Task<IActionResult> All(string? searchTerm = null)
     {
-        var teachers = await teacherService.AllAsync(searchTerm);
+        IEnumerable<UserViewModel> teachers = await teacherService.AllAsync(searchTerm);
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {

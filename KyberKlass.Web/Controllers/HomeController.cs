@@ -1,8 +1,15 @@
-﻿using KyberKlass.Web.ViewModels.Home;
-using Microsoft.AspNetCore.Mvc;
+﻿#region
+
 using System.Diagnostics;
 
+using KyberKlass.Web.ViewModels.Home;
+
+using Microsoft.AspNetCore.Mvc;
+
+#endregion
+
 namespace KyberKlass.Web.Controllers;
+
 public class HomeController : Controller
 {
     public IActionResult Index()

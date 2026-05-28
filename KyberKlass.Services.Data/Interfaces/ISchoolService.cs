@@ -1,8 +1,12 @@
-﻿using KyberKlass.Data.Configurations;
+﻿#region
+
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.School;
 
+#endregion
+
 namespace KyberKlass.Services.Data.Interfaces;
+
 /// <summary>
 ///     Interface for managing school-related operations.
 /// </summary>
@@ -14,7 +18,7 @@ public interface ISchoolService
     /// <param name="model">The model containing information about the school to add.</param>
     /// <returns>True if the school was added successfully; otherwise, false.</returns>
     Task<bool> AddAsync(AddSchoolFormModel model);
-    
+
     /// <summary>
     ///     Retrieves a collection of school view models asynchronously, optionally filtered by a search term.
     /// </summary>

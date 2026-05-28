@@ -1,7 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
+
 using static KyberKlass.Common.EntityValidations.School;
 
+#endregion
+
 namespace KyberKlass.Web.ViewModels.Admin.School;
+
 public class AddSchoolFormModel
 {
     [Required]

@@ -1,5 +1,9 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using KyberKlass.Data.Models;
 using KyberKlass.Web.ViewModels.Admin.User;
+
+#endregion
 
 namespace KyberKlass.Services.Data.Interfaces.Users;
 

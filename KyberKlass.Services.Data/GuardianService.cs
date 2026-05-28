@@ -1,11 +1,17 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces.Guardians;
 using KyberKlass.Web.ViewModels.Admin;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+#endregion
+
 namespace KyberKlass.Services.Data;
+
 /// <summary>
 ///     Service class responsible for managing guardians.
 /// </summary>
@@ -18,13 +24,14 @@ public class GuardianService(KyberKlassDbContext dbContext, UserManager<Applicat
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
+
     /// <inheritdoc />
     public Task<Guardian?> GetByIdAsync(string id)
     {
         return _dbContext
             .Guardians
             .AsNoTracking()
-            .FirstOrDefaultAsync(g => g.Id == Guid.Parse(id));
+            .FirstOrDefaultAsync(predicate: g => g.Id == Guid.Parse(id));
     }
 
     /// <inheritdoc />
@@ -33,7 +40,7 @@ public class GuardianService(KyberKlassDbContext dbContext, UserManager<Applicat
         bool isAssigned = await _dbContext
             .Students
             .AsNoTracking()
-            .AnyAsync(s => s.Guardian.Id == Guid.Parse(userId));
+            .AnyAsync(predicate: s => s.Guardian.Id == Guid.Parse(userId));
 
         return isAssigned;
     }
@@ -42,9 +49,9 @@ public class GuardianService(KyberKlassDbContext dbContext, UserManager<Applicat
     public async Task<Guardian?> GetGuardianAssignedByUserIdAsync(string userId)
     {
         return await _dbContext.Guardians
-            .Include(g => g.ApplicationUser)
+            .Include(navigationPropertyPath: g => g.ApplicationUser)
             .AsNoTracking()
-            .FirstOrDefaultAsync(g => g.Students.Any(s => s.Id == Guid.Parse(userId)));
+            .FirstOrDefaultAsync(predicate: g => g.Students.Any(s => s.Id == Guid.Parse(userId)));
     }
 
     /// <inheritdoc />
@@ -53,11 +60,7 @@ public class GuardianService(KyberKlassDbContext dbContext, UserManager<Applicat
         IList<ApplicationUser> guardians = await _userManager.GetUsersInRoleAsync("Guardian");
 
         IEnumerable<BasicViewModel> guardianViewModels = guardians
-            .Select(g => new BasicViewModel
-            {
-                Id = g.Id.ToString(),
-                Name = g.GetFullName()
-            })
+            .Select(selector: g => new BasicViewModel { Id = g.Id.ToString(), Name = g.GetFullName() })
             .ToArray();
 
         return guardianViewModels;
@@ -68,13 +71,9 @@ public class GuardianService(KyberKlassDbContext dbContext, UserManager<Applicat
     {
         return await _dbContext
             .Students
-            .Where(s => s.Guardian.Id == guardian.Id)
-            .Select(s => new BasicViewModel
-            {
-                Id = s.Id.ToString(),
-                Name = s.ApplicationUser.GetFullName()
-            })
-          .AsNoTracking()
+            .Where(predicate: s => s.Guardian.Id == guardian.Id)
+            .Select(selector: s => new BasicViewModel { Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName() })
+            .AsNoTracking()
             .ToArrayAsync();
     }
 }

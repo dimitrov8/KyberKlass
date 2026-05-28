@@ -1,13 +1,19 @@
-﻿using KyberKlass.Services.Data.Interfaces;
+﻿#region
+
+using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Services.Data.Interfaces.Guardians;
 using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using static KyberKlass.Common.CustomMessageConstants.Common;
 using static KyberKlass.Common.CustomMessageConstants.User;
+
+#endregion
 
 namespace KyberKlass.Web.Controllers;
 
@@ -47,7 +53,7 @@ public class UserController(
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -57,7 +63,9 @@ public class UserController(
         {
             UserDetailsViewModel? userDetailsViewModel = await userService.GetDetailsAsync(id);
 
-            return userDetailsViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Details)), userDetailsViewModel);
+            return userDetailsViewModel == null
+                ? View("NotFound404")
+                : View(GetViewPath(nameof(Details)), userDetailsViewModel);
         }
         catch (Exception)
         {
@@ -70,7 +78,7 @@ public class UserController(
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -93,13 +101,13 @@ public class UserController(
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
 
@@ -112,7 +120,7 @@ public class UserController(
 
             if (userToEdit != null)
             {
-                TempData["SuccessMessage"] = model.IsActive == false
+                TempData["SuccessMessage"] = !model.IsActive
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
                     : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Id);
             }
@@ -132,7 +140,7 @@ public class UserController(
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -153,12 +161,17 @@ public class UserController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateRoleConfirmed(string id, string roleId, string? guardianId, string? schoolId, string? classroomId)
+    public async Task<IActionResult> UpdateRoleConfirmed(
+    string id,
+    string roleId,
+    string? guardianId,
+    string? schoolId,
+    string? classroomId)
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null) &&
                             ValidationExtensions.IsNotNullOrEmptyInput<string>(roleId, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -166,12 +179,18 @@ public class UserController(
 
         try
         {
-            UserUpdateRoleViewModel? userUpdateRoleViewModel = await userRoleService.GetForUpdateRoleAsync(id); // Retrieve the user viewmodel
+            UserUpdateRoleViewModel?
+                userUpdateRoleViewModel =
+                    await userRoleService.GetForUpdateRoleAsync(id); // Retrieve the user viewmodel
 
-            string? currentRole = userUpdateRoleViewModel?.PreviousRoleName; // Gets the name of the role before the update
-            string? roleToUpdateTo = await userRoleService.GetRoleNameByIdAsync(roleId); // Get the name of the role which we want to update to
+            string? currentRole =
+                userUpdateRoleViewModel?.PreviousRoleName; // Gets the name of the role before the update
+            string? roleToUpdateTo =
+                await userRoleService
+                    .GetRoleNameByIdAsync(roleId); // Get the name of the role which we want to update to
 
-            if (roleToUpdateTo != null && currentRole == "Teacher") // If user wants to update to a valid role and his current role is "Teacher"
+            if (roleToUpdateTo != null &&
+                currentRole == "Teacher") // If user wants to update to a valid role and his current role is "Teacher"
             {
                 // Checks if teacher is assigned to a classroom
                 bool isTeacherAssignedToClassroom = await teacherService.IsTeacherAssignedToClassroomAsync(id);
@@ -183,7 +202,10 @@ public class UserController(
                     return RedirectToAction(nameof(All));
                 }
             }
-            else if (roleToUpdateTo != null && currentRole == "Guardian") // If user wants to update to a valid role and his current role is "Guardian"
+            else if
+                (roleToUpdateTo != null &&
+                 currentRole ==
+                 "Guardian") // If user wants to update to a valid role and his current role is "Guardian"
             {
                 // Checks if guardian is assigned to any student
                 bool isGuardianAssignedToStudent = await guardianService.IsGuardianAssignedToStudentAsync(id);
@@ -196,7 +218,8 @@ public class UserController(
                 }
             }
 
-            bool successfulRoleUpdate = await userRoleService.UpdateRoleAsync(id, roleId, guardianId, schoolId, classroomId);
+            bool successfulRoleUpdate =
+                await userRoleService.UpdateRoleAsync(id, roleId, guardianId, schoolId, classroomId);
 
             if (successfulRoleUpdate)
             {
@@ -223,11 +246,7 @@ public class UserController(
         IEnumerable<BasicViewModel> guardians = await guardianService.GetAllGuardiansAsync(); // Fetch guardians
         IEnumerable<BasicViewModel> schools = await schoolService.BasicAllAsync(); // Fetch schools
 
-        var data = new
-        {
-            Guardians = guardians,
-            Schools = schools
-        };
+        var data = new { Guardians = guardians, Schools = schools };
 
         return Json(data);
     }

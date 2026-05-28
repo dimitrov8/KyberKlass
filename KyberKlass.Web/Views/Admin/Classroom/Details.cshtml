@@ -1,16 +1,17 @@
 ﻿@model ClassroomDetailsViewModel
 
 @{
-	ViewData["Title"] = "Classroom Details";
+    ViewData["Title"] = "Classroom Details";
 }
 
 <div class="container mt-5">
-	<h1 class="mb-4">@ViewData["Title"]</h1>
-	<hr/>
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+    <hr/>
 
-	@await Html.PartialAsync("~/Views/Admin/Classroom/_DetailsPartial.cshtml", Model)
+    @await Html.PartialAsync("~/Views/Admin/Classroom/_DetailsPartial.cshtml", Model)
 
-	<div class="mt-5">
-		<a class="btn btn-secondary fw-bold" asp-controller="Classroom" asp-action="Manage" asp-route-schoolId="@Model.SchoolId">Back to List</a>
-	</div>
+    <div class="mt-5">
+        <a class="btn btn-secondary fw-bold" asp-controller="Classroom" asp-action="Manage"
+           asp-route-schoolId="@Model.SchoolId">Back to List</a>
+    </div>
 </div>

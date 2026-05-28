@@ -1,13 +1,19 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+#endregion
+
 namespace KyberKlass.Services.Data;
+
 /// <summary>
 ///     Service class responsible for managing teachers.
 /// </summary>
@@ -20,6 +26,7 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
+
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
@@ -28,23 +35,23 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
         Guid teacherRoleId = await _dbContext
             .Roles
             .AsNoTracking()
-            .Where(r => r.Name == teacherRoleName)
-            .Select(r => r.Id)
+            .Where(predicate: r => r.Name == teacherRoleName)
+            .Select(selector: r => r.Id)
             .FirstOrDefaultAsync();
 
         if (teacherRoleId != Guid.Empty)
         {
             IQueryable<ApplicationUser> query = from user in _dbContext.Users
-                                                where user.IsActive
-                                                join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
-                                                join role in _dbContext.Roles on userRole.RoleId equals role.Id
-                                                where role.Id == teacherRoleId
-                                                select user;
+                where user.IsActive
+                join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
+                join role in _dbContext.Roles on userRole.RoleId equals role.Id
+                where role.Id == teacherRoleId
+                select user;
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 string term = searchTerm.ToLower();
-                query = query.Where(u =>
+                query = query.Where(predicate: u =>
                     u.Email != null && (u.FirstName.ToLower().Contains(term) ||
                                         u.LastName.ToLower().Contains(term) ||
                                         u.Email.ToLower().Contains(term)));
@@ -54,12 +61,9 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
                 .AsNoTracking()
                 .ToArrayAsync();
 
-            return result.Select(t => new UserViewModel
+            return result.Select(selector: t => new UserViewModel
             {
-                Id = t.Id.ToString(),
-                Email = t.Email,
-                FullName = t.GetFullName(),
-                Role = teacherRoleName,
+                Id = t.Id.ToString(), Email = t.Email, FullName = t.GetFullName(), Role = teacherRoleName
             });
         }
 
@@ -77,16 +81,12 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
         }
 
         List<Guid> assignedTeacherIds = await _dbContext.Classrooms
-            .Select(c => c.TeacherId)
+            .Select(selector: c => c.TeacherId)
             .ToListAsync();
 
         List<BasicViewModel> unassignedTeachers = allTeachers
-            .Where(t => assignedTeacherIds.Contains(t.Id) == false)
-            .Select(t => new BasicViewModel
-            {
-                Id = t.Id.ToString(),
-                Name = t.GetFullName()
-            })
+            .Where(predicate: t => !assignedTeacherIds.Contains(t.Id))
+            .Select(selector: t => new BasicViewModel { Id = t.Id.ToString(), Name = t.GetFullName() })
             .ToList();
 
         return unassignedTeachers;
@@ -98,7 +98,7 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
         bool isAssigned = await _dbContext
             .Classrooms
             .AsNoTracking()
-            .AnyAsync(c => c.TeacherId == Guid.Parse(userId));
+            .AnyAsync(predicate: c => c.TeacherId == Guid.Parse(userId));
 
         return isAssigned;
     }
@@ -107,24 +107,23 @@ public class TeacherService(KyberKlassDbContext dbContext, UserManager<Applicati
     {
         IEnumerable<Classroom> classrooms = await _dbContext
             .Classrooms
-            .Where(c => c.TeacherId == Guid.Parse(teacherId))
-            .Include(c => c.Students)
-            .ThenInclude(s => s.ApplicationUser)
-            .Include(c => c.Teacher.ApplicationUser)
+            .Where(predicate: c => c.TeacherId == Guid.Parse(teacherId))
+            .Include(navigationPropertyPath: c => c.Students)
+            .ThenInclude(navigationPropertyPath: s => s.ApplicationUser)
+            .Include(navigationPropertyPath: c => c.Teacher.ApplicationUser)
             .AsNoTracking()
             .ToArrayAsync();
 
-        return classrooms.Select(c => new ClassroomDetailsViewModel
+        return classrooms.Select(selector: c => new ClassroomDetailsViewModel
         {
             Id = c.Id.ToString(),
             Name = c.Name,
             TeacherName = c.Teacher.ApplicationUser.GetFullName(),
             IsActive = c.IsActive,
             Students = c.Students
-                .Select(s => new BasicViewModel
+                .Select(selector: s => new BasicViewModel
                 {
-                    Id = s.Id.ToString(),
-                    Name = s.ApplicationUser.GetFullName()
+                    Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName()
                 })
                 .ToArray()
         });

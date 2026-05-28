@@ -1,5 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#region
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+
+#endregion
 
 namespace KyberKlass.Data;
 
@@ -8,7 +12,8 @@ public class KyberKlassDbContextFactory : IDesignTimeDbContextFactory<KyberKlass
     public KyberKlassDbContext CreateDbContext(string[] args)
     {
         DbContextOptionsBuilder<KyberKlassDbContext> optionsBuilder = new();
-        optionsBuilder.UseSqlServer("Server=localhost;Database=KyberKlass;User Id=sa;Password=KyberKlassS!;TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer(
+        "Server=localhost;Database=KyberKlass;User Id=sa;Password=KyberKlassS!;TrustServerCertificate=True");
 
         return new KyberKlassDbContext(optionsBuilder.Options);
     }

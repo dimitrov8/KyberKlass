@@ -1,7 +1,13 @@
-﻿using KyberKlass.Web.ViewModels.Admin.Classroom;
+﻿#region
+
 using System.ComponentModel.DataAnnotations;
 
+using KyberKlass.Web.ViewModels.Admin.Classroom;
+
+#endregion
+
 namespace KyberKlass.Web.ViewModels.Admin.School;
+
 public class SchoolDetailsViewModel
 {
     public string Id { get; set; } = null!;
@@ -21,7 +27,7 @@ public class SchoolDetailsViewModel
     public int TotalClassrooms => Classrooms.Count();
 
     [Display(Name = "Total Students")]
-    public int TotalStudents => Classrooms.Sum(s => s.StudentsCount);
+    public int TotalStudents => Classrooms.Sum(selector: s => s.StudentsCount);
 
     public IEnumerable<ClassroomDetailsViewModel> Classrooms { get; set; } = new HashSet<ClassroomDetailsViewModel>();
 

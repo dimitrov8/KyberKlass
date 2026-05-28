@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <AnalysisLevel>latest</AnalysisLevel>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\KyberKlass.Common\KyberKlass.Common.csproj"/>
-        <ProjectReference Include="..\KyberKlass.Data.Models\KyberKlass.Data.Models.csproj"/>
-        <ProjectReference Include="..\KyberKlass.Data\KyberKlass.Data.csproj"/>
-        <ProjectReference Include="..\KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KyberKlass.Common\KyberKlass.Common.csproj"/>
+    <ProjectReference Include="..\KyberKlass.Data.Models\KyberKlass.Data.Models.csproj"/>
+    <ProjectReference Include="..\KyberKlass.Data\KyberKlass.Data.csproj"/>
+    <ProjectReference Include="..\KyberKlass.Web.ViewModels\KyberKlass.Web.ViewModels.csproj"/>
+  </ItemGroup>
 
 </Project>

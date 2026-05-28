@@ -1,7 +1,12 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using KyberKlass.Data.Models;
 using KyberKlass.Web.ViewModels.Admin;
 
+#endregion
+
 namespace KyberKlass.Services.Data.Interfaces.Guardians;
+
 /// <summary>
 ///     Interface defining operations for retrieving guardian information.
 /// </summary>

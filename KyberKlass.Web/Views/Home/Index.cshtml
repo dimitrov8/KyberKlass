@@ -4,26 +4,26 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-	if (User.IsInRole("Admin"))
-	{
-		ViewData["Title"] = "Admin Page";
-	}
-	else
-	{
-		ViewData["Title"] = "Home Page";
-	}
+    if (User.IsInRole("Admin"))
+    {
+        ViewData["Title"] = "Admin Page";
+    }
+    else
+    {
+        ViewData["Title"] = "Home Page";
+    }
 
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="text-center">
-	<h1 class="display-4">Welcome</h1>
-	@if (SignInManager.IsSignedIn(User))
-	{
-		var user = await UserManager.GetUserAsync(User);
-		IList<string>? roles = await UserManager.GetRolesAsync(user);
+    <h1 class="display-4">Welcome</h1>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        IList<string>? roles = await UserManager.GetRolesAsync(user);
 
-		<p>Welcome, @user.UserName! Your role(s): @string.Join(", ", roles)</p>
-	}
+        <p>Welcome, @user.UserName! Your role(s): @string.Join(", ", roles)</p>
+    }
 
 </div>

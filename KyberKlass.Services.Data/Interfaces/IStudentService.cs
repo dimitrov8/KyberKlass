@@ -1,8 +1,13 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using KyberKlass.Data.Models;
 using KyberKlass.Web.ViewModels.Admin.Student;
 using KyberKlass.Web.ViewModels.Admin.User;
 
+#endregion
+
 namespace KyberKlass.Services.Data.Interfaces;
+
 /// <summary>
 ///     Interface for managing student-related operations.
 /// </summary>

@@ -1,9 +1,16 @@
-﻿using KyberKlass.Services.Data.Interfaces;
+﻿#region
+
+using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.Infrastructure.Extensions;
+using KyberKlass.Web.ViewModels.Admin.Student;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using static KyberKlass.Common.CustomMessageConstants.Student;
+
+#endregion
 
 namespace KyberKlass.Web.Controllers;
 
@@ -36,7 +43,7 @@ public class StudentController(IStudentService studentService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -44,9 +51,11 @@ public class StudentController(IStudentService studentService) : Controller
 
         try
         {
-            ViewModels.Admin.Student.StudentChangeGuardianViewModel viewModel = await studentService.GetStudentChangeGuardianAsync(id);
+            StudentChangeGuardianViewModel viewModel = await studentService.GetStudentChangeGuardianAsync(id);
 
-            return viewModel.UserDetails == null ? View("NotFound404") : View(GetViewPath(nameof(ChangeGuardian)), viewModel);
+            return viewModel.UserDetails == null
+                ? View("NotFound404")
+                : View(GetViewPath(nameof(ChangeGuardian)), viewModel);
         }
         catch (Exception)
         {
@@ -60,7 +69,7 @@ public class StudentController(IStudentService studentService) : Controller
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null) &&
                             ValidationExtensions.IsNotNullOrEmptyInput<string>(guardianId, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);

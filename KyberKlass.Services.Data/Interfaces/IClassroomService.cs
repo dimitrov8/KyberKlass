@@ -1,7 +1,12 @@
-﻿using KyberKlass.Web.ViewModels.Admin;
+﻿#region
+
+using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 
+#endregion
+
 namespace KyberKlass.Services.Data.Interfaces;
+
 public interface IClassroomService
 {
     /// <summary>

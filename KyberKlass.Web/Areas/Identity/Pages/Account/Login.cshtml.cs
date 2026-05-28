@@ -1,16 +1,25 @@
-﻿
+﻿#nullable disable
+
+#region
+
+using System.ComponentModel.DataAnnotations;
+
 using KyberKlass.Data.Models;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 
-#nullable disable
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+
+#endregion
 
 namespace KyberKlass.Web.Areas.Identity.Pages.Account;
 
-public class LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager) : PageModel
+public class LoginModel(SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager,
+    RoleManager<IdentityRole<Guid>> roleManager) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; }
@@ -19,17 +28,6 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager, UserManage
 
     [TempData]
     public string ErrorMessage { get; set; }
-
-    public class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-    }
 
     public async Task<IActionResult> OnGetAsync(string returnUrl = null)
     {
@@ -61,7 +59,7 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager, UserManage
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, false);
+            SignInResult result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, false);
 
             if (result.Succeeded)
             {
@@ -86,5 +84,16 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager, UserManage
 
         // If we got this far, something failed, redisplay form
         return Page();
+    }
+
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
     }
 }

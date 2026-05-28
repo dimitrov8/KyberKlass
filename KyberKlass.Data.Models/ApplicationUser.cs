@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿#region
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+
+using Microsoft.AspNetCore.Identity;
+
 using static KyberKlass.Common.EntityValidations.BaseUser;
 using static KyberKlass.Common.FormattingConstants;
 
+#endregion
+
 namespace KyberKlass.Data.Models;
+
 public class ApplicationUser : IdentityUser<Guid>
 {
     [Required]
@@ -50,7 +57,7 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public async Task<string> GetRoleAsync(UserManager<ApplicationUser> userManager)
     {
-        IList<string>? userRoles = await userManager.GetRolesAsync(this);
+        IList<string> userRoles = await userManager.GetRolesAsync(this);
         return userRoles.FirstOrDefault() ?? "No Role Assigned";
     }
 }

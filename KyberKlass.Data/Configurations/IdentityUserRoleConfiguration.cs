@@ -1,12 +1,16 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Admin;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Teacher;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Role;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Guardian;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Student;
+
+#endregion
 
 namespace KyberKlass.Data.Configurations;
 
@@ -24,45 +28,21 @@ public class IdentityUserRoleConfiguration : IEntityTypeConfiguration<IdentityUs
         try
         {
             // Admin
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = DefaultAdminUserId,
-                RoleId = AdminRoleId 
-            });
+            builder.HasData(new IdentityUserRole<Guid> { UserId = DefaultAdminUserId, RoleId = AdminRoleId });
 
             // Teacher A
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = TeacherAId, 
-                RoleId = TeacherRoleId
-            });
-            
+            builder.HasData(new IdentityUserRole<Guid> { UserId = TeacherAId, RoleId = TeacherRoleId });
+
             // Teacher B
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = TeacherBId, 
-                RoleId = TeacherRoleId
-            }); 
-            
+            builder.HasData(new IdentityUserRole<Guid> { UserId = TeacherBId, RoleId = TeacherRoleId });
+
             // Guardian 1
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = Guardian1Id, 
-                RoleId = GuardianRoleId
-            });
-            
+            builder.HasData(new IdentityUserRole<Guid> { UserId = Guardian1Id, RoleId = GuardianRoleId });
+
             // Student 1
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = Student1Id, 
-                RoleId = StudentRoleId
-            });
-            
-            builder.HasData(new IdentityUserRole<Guid>
-            {
-                UserId = Student2Id, 
-                RoleId = StudentRoleId
-            });
+            builder.HasData(new IdentityUserRole<Guid> { UserId = Student1Id, RoleId = StudentRoleId });
+
+            builder.HasData(new IdentityUserRole<Guid> { UserId = Student2Id, RoleId = StudentRoleId });
         }
         catch (Exception ex)
         {

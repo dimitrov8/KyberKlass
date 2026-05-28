@@ -1,34 +1,42 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Services.Data.Interfaces.Guardians;
 using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.School;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+
+#endregion
 
 namespace KyberKlass.Services.Data.User;
 
-public class UserRoleService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IUserService userService, ISchoolService schoolService, IGuardianService guardianService) : IUserRoleService
+public class UserRoleService(KyberKlassDbContext dbContext,
+    UserManager<ApplicationUser> userManager,
+    RoleManager<IdentityRole<Guid>> roleManager,
+    IUserService userService,
+    ISchoolService schoolService,
+    IGuardianService guardianService) : IUserRoleService
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
-    private readonly IUserService _userService = userService;
-    private readonly ISchoolService _schoolService = schoolService;
     private readonly IGuardianService _guardianService = guardianService;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
+    private readonly ISchoolService _schoolService = schoolService;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IUserService _userService = userService;
 
     /// <inheritdoc />
     public async Task<IEnumerable<UserRolesViewModel>> GetAllRolesAsync()
     {
         IEnumerable<UserRolesViewModel> allRoles = await _roleManager
             .Roles
-            .Select(r => new UserRolesViewModel
-            {
-                Id = r.Id.ToString(),
-                Name = r.Name
-            })
+            .Select(selector: r => new UserRolesViewModel { Id = r.Id.ToString(), Name = r.Name })
             .AsNoTracking()
             .ToArrayAsync(); // Retrieve all roles from the RoleManager and map them to UserRolesViewModel objects
 
@@ -64,11 +72,10 @@ public class UserRoleService(KyberKlassDbContext dbContext, UserManager<Applicat
         {
             IEnumerable<BasicViewModel> students = await _dbContext
                 .Students
-                .Where(s => s.Guardian.Id == user.Id)
-                .Select(s => new BasicViewModel
+                .Where(predicate: s => s.Guardian.Id == user.Id)
+                .Select(selector: s => new BasicViewModel
                 {
-                    Id = s.Id.ToString(),
-                    Name = s.ApplicationUser.GetFullName()
+                    Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName()
                 })
                 .AsNoTracking()
                 .ToArrayAsync();
@@ -88,7 +95,12 @@ public class UserRoleService(KyberKlassDbContext dbContext, UserManager<Applicat
     }
 
     /// <inheritdoc />
-    public async Task<bool> UpdateRoleAsync(string userId, string roleId, string? guardianId, string? schoolId, string? classroomId)
+    public async Task<bool> UpdateRoleAsync(
+    string userId,
+    string roleId,
+    string? guardianId,
+    string? schoolId,
+    string? classroomId)
     {
         ApplicationUser? user = await _userService.GetUserById(userId);
         if (user == null)
@@ -119,27 +131,28 @@ public class UserRoleService(KyberKlassDbContext dbContext, UserManager<Applicat
         {
             // Validations for guardian school and classroom to assign to "Student"
             Guardian? guardianToAssign = await _guardianService.GetByIdAsync(guardianId);
-            Web.ViewModels.Admin.School.SchoolDetailsViewModel? schoolToAssign = await _schoolService.GetByIdAsync(schoolId);
+            SchoolDetailsViewModel? schoolToAssign = await _schoolService.GetByIdAsync(schoolId);
             bool classroomExistsInSchool = await _schoolService.ClassroomExistsInSchoolAsync(schoolId, classroomId);
 
             // If any of the validations fail return false
-            if (guardianToAssign == null || schoolToAssign == null || classroomExistsInSchool == false)
+            if (guardianToAssign == null || schoolToAssign == null || !classroomExistsInSchool)
             {
                 return false;
             }
         }
 
         // Start a transaction
-        await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
+        await using IDbContextTransaction transaction = await _dbContext.Database.BeginTransactionAsync();
 
         try
         {
             if (currentRoleName != "No Role Assigned")
             {
                 // Update user's role in the identity system
-                IdentityResult removeResult = await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                IdentityResult removeResult =
+                    await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
 
-                if (removeResult.Succeeded == false)
+                if (!removeResult.Succeeded)
                 {
                     // Roll back transaction if removing roles fails
                     await transaction.RollbackAsync();
@@ -149,7 +162,7 @@ public class UserRoleService(KyberKlassDbContext dbContext, UserManager<Applicat
 
             IdentityResult addResult = await _userManager.AddToRoleAsync(user, roleToUpdate.Name);
 
-            if (addResult.Succeeded == false)
+            if (!addResult.Succeeded)
             {
                 // Roll back transaction if adding roles fails
                 await transaction.RollbackAsync();

@@ -1,11 +1,17 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
+
 using Microsoft.EntityFrameworkCore;
 
+#endregion
+
 namespace KyberKlass.Services.Data;
+
 /// <summary>
 ///     Service class responsible for managing classrooms.
 /// </summary>
@@ -16,6 +22,7 @@ namespace KyberKlass.Services.Data;
 public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
+
     /// <inheritdoc />
     public async Task<bool> AddAsync(AddClassroomViewModel model)
     {
@@ -31,10 +38,7 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
 
         Classroom newClassroom = new()
         {
-            Id = Guid.NewGuid(),
-            Name = model.Name,
-            TeacherId = teacherIdAsGuid,
-            SchoolId = schoolIdAsGuid
+            Id = Guid.NewGuid(), Name = model.Name, TeacherId = teacherIdAsGuid, SchoolId = schoolIdAsGuid
         };
 
         await _dbContext.Classrooms.AddAsync(newClassroom);
@@ -49,7 +53,7 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
         return await _dbContext
             .Classrooms
             .AsNoTracking()
-            .AnyAsync(c => c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
+            .AnyAsync(predicate: c => c.Name == classroomName && c.SchoolId == Guid.Parse(schoolId));
     }
 
     /// <inheritdoc />
@@ -57,8 +61,8 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         return await _dbContext
             .Classrooms
-            .Where(c => c.Id == Guid.Parse(id))
-            .Select(c => new ClassroomDetailsViewModel
+            .Where(predicate: c => c.Id == Guid.Parse(id))
+            .Select(selector: c => new ClassroomDetailsViewModel
             {
                 Id = c.Id.ToString(),
                 SchoolId = c.SchoolId.ToString(),
@@ -66,11 +70,7 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
                 TeacherName = c.Teacher.ApplicationUser.GetFullName(),
                 IsActive = c.IsActive,
                 Students = c.Students
-                    .Select(s => new BasicViewModel
-                    {
-                        Id = s.Id.ToString(),
-                        Name = s.ApplicationUser.GetFullName()
-                    })
+                    .Select(s => new BasicViewModel { Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName() })
                     .ToArray()
             })
             .AsNoTracking()
@@ -82,27 +82,27 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         IEnumerable<Classroom> classrooms = await _dbContext
             .Classrooms
-            .Where(c => c.SchoolId == Guid.Parse(schoolId))
-            .Include(c => c.Students)
-            .ThenInclude(s => s.ApplicationUser)
-            .Include(u => u.Teacher.ApplicationUser)
+            .Where(predicate: c => c.SchoolId == Guid.Parse(schoolId))
+            .Include(navigationPropertyPath: c => c.Students)
+            .ThenInclude(navigationPropertyPath: s => s.ApplicationUser)
+            .Include(navigationPropertyPath: u => u.Teacher.ApplicationUser)
             .AsNoTracking()
             .ToArrayAsync();
 
-        IEnumerable<ClassroomDetailsViewModel> classroomViewModels = classrooms.Select(c => new ClassroomDetailsViewModel
-        {
-            Id = c.Id.ToString(),
-            Name = c.Name,
-            TeacherName = c.Teacher.ApplicationUser.GetFullName(),
-            IsActive = c.IsActive,
-            Students = c.Students
-                .Select(s => new BasicViewModel
-                {
-                    Id = s.Id.ToString(),
-                    Name = s.ApplicationUser.GetFullName()
-                })
-                .ToArray()
-        });
+        IEnumerable<ClassroomDetailsViewModel> classroomViewModels = classrooms.Select(selector: c
+            => new ClassroomDetailsViewModel
+            {
+                Id = c.Id.ToString(),
+                Name = c.Name,
+                TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+                IsActive = c.IsActive,
+                Students = c.Students
+                    .Select(selector: s => new BasicViewModel
+                    {
+                        Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName()
+                    })
+                    .ToArray()
+            });
 
         return classroomViewModels;
     }
@@ -112,12 +112,8 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         IEnumerable<BasicViewModel> allClassrooms = await _dbContext
             .Classrooms
-            .Where(c => c.SchoolId == Guid.Parse(schoolId))
-            .Select(c => new BasicViewModel
-            {
-                Id = c.Id.ToString(),
-                Name = c.Name
-            })
+            .Where(predicate: c => c.SchoolId == Guid.Parse(schoolId))
+            .Select(selector: c => new BasicViewModel { Id = c.Id.ToString(), Name = c.Name })
             .AsNoTracking()
             .ToArrayAsync();
 
@@ -129,8 +125,8 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         AddClassroomViewModel? viewModel = await _dbContext
             .Classrooms
-            .Where(c => c.Id == Guid.Parse(id))
-            .Select(c => new AddClassroomViewModel
+            .Where(predicate: c => c.Id == Guid.Parse(id))
+            .Select(selector: c => new AddClassroomViewModel
             {
                 Id = c.Id,
                 Name = c.Name,
@@ -173,11 +169,11 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     public async Task<bool> DeleteAsync(string id)
     {
         Classroom? classroomToDelete = await _dbContext
-            .Classrooms.Include(classroom => classroom.Students)
-            .FirstOrDefaultAsync(c => c.Id == Guid.Parse(id));
+            .Classrooms.Include(navigationPropertyPath: classroom => classroom.Students)
+            .FirstOrDefaultAsync(predicate: c => c.Id == Guid.Parse(id));
 
         // If the classroom exists and there are no students in this classrooms
-        if (classroomToDelete != null && classroomToDelete.Students.Any() == false)
+        if (classroomToDelete != null && !classroomToDelete.Students.Any())
         {
             _dbContext.Classrooms.Remove(classroomToDelete);
             await _dbContext.SaveChangesAsync();
@@ -193,8 +189,8 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         bool hasStudents = await _dbContext
             .Classrooms
-            .Where(c => c.Id == Guid.Parse(id))
-            .AnyAsync(c => c.Students.Any());
+            .Where(predicate: c => c.Id == Guid.Parse(id))
+            .AnyAsync(predicate: c => c.Students.Any());
 
         return hasStudents;
     }
@@ -203,24 +199,23 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         IEnumerable<Classroom> classrooms = await _dbContext
             .Classrooms
-            .Where(c => c.TeacherId == Guid.Parse(teacherId!))
-            .Include(c => c.Students)
-            .ThenInclude(s => s.ApplicationUser)
-            .Include(c => c.Teacher.ApplicationUser)
+            .Where(predicate: c => c.TeacherId == Guid.Parse(teacherId!))
+            .Include(navigationPropertyPath: c => c.Students)
+            .ThenInclude(navigationPropertyPath: s => s.ApplicationUser)
+            .Include(navigationPropertyPath: c => c.Teacher.ApplicationUser)
             .AsNoTracking()
             .ToArrayAsync();
 
-        return classrooms.Select(c => new ClassroomDetailsViewModel
+        return classrooms.Select(selector: c => new ClassroomDetailsViewModel
         {
             Id = c.Id.ToString(),
             Name = c.Name,
             TeacherName = c.Teacher.ApplicationUser.GetFullName(),
             IsActive = c.IsActive,
             Students = c.Students
-                .Select(s => new BasicViewModel
+                .Select(selector: s => new BasicViewModel
                 {
-                    Id = s.Id.ToString(),
-                    Name = s.ApplicationUser.GetFullName()
+                    Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName()
                 })
                 .ToArray()
         });
@@ -230,15 +225,14 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
     {
         IEnumerable<Student> students = await _dbContext
             .Students
-            .Where(s => s.ClassroomId == Guid.Parse(classroomId))
-            .Include(s => s.ApplicationUser)
+            .Where(predicate: s => s.ClassroomId == Guid.Parse(classroomId))
+            .Include(navigationPropertyPath: s => s.ApplicationUser)
             .AsNoTracking()
             .ToArrayAsync();
 
-        return students.Select(s => new BasicViewModel
+        return students.Select(selector: s => new BasicViewModel
         {
-            Id = s.Id.ToString(),
-            Name = s.ApplicationUser.GetFullName()
+            Id = s.Id.ToString(), Name = s.ApplicationUser.GetFullName()
         });
     }
 }

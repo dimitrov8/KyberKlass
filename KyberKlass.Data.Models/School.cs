@@ -1,8 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using static KyberKlass.Common.EntityValidations.School;
 
+#endregion
+
 namespace KyberKlass.Data.Models;
+
 public class School
 {
     public School()

@@ -1,16 +1,24 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using System.Globalization;
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces.Guardians;
 using KyberKlass.Services.Data.Interfaces.Users;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Guardian;
 using KyberKlass.Web.ViewModels.Admin.User;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
+
 using static KyberKlass.Common.FormattingConstants;
 
+#endregion
+
 namespace KyberKlass.Services.Data.User;
+
 /// <summary>
 ///     Service class responsible for managing users.
 /// </summary>
@@ -25,15 +33,15 @@ public class UserService(KyberKlassDbContext dbContext,
     IGuardianService guardianService) : IUserService
 {
     private readonly KyberKlassDbContext _dbContext = dbContext;
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IGuardianService _guardianService = guardianService;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
 
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null, string? roleFilter = null)
     {
         var query = _dbContext.Users
-            .Where(u => u.IsActive)
-            .Select(u => new
+            .Where(predicate: u => u.IsActive)
+            .Select(selector: u => new
             {
                 User = u,
                 RoleName = _dbContext.UserRoles
@@ -45,7 +53,7 @@ public class UserService(KyberKlassDbContext dbContext,
         if (!string.IsNullOrEmpty(searchTerm))
         {
             string term = searchTerm.ToLower();
-            query = query.Where(x =>
+            query = query.Where(predicate: x =>
                 x.User.FirstName.ToLower().Contains(term) ||
                 x.User.LastName.ToLower().Contains(term) ||
                 x.User.Email.ToLower().Contains(term));
@@ -54,13 +62,13 @@ public class UserService(KyberKlassDbContext dbContext,
         if (!string.IsNullOrEmpty(roleFilter))
         {
             query = roleFilter.Equals("NoRoleAssigned")
-                ? query.Where(x => x.RoleName == null)
-                : query.Where(x => x.RoleName != null && x.RoleName.ToLower() == roleFilter.ToLower());
+                ? query.Where(predicate: x => x.RoleName == null)
+                : query.Where(predicate: x => x.RoleName != null && x.RoleName.ToLower() == roleFilter.ToLower());
         }
 
         var results = await query.ToListAsync();
 
-        return results.Select(x => new UserViewModel
+        return results.Select(selector: x => new UserViewModel
         {
             Id = x.User.Id.ToString(),
             Email = x.User.Email,
@@ -97,7 +105,8 @@ public class UserService(KyberKlassDbContext dbContext,
 
             if (guardian != null)
             {
-                IEnumerable<BasicViewModel> guardianStudents = await _guardianService.GetStudentsAssignedToGuardianAsync(guardian);
+                IEnumerable<BasicViewModel> guardianStudents =
+                    await _guardianService.GetStudentsAssignedToGuardianAsync(guardian);
 
                 viewModel.Guardian = new GuardianViewModel
                 {
@@ -116,7 +125,8 @@ public class UserService(KyberKlassDbContext dbContext,
 
             if (guardian != null)
             {
-                IEnumerable<BasicViewModel> students = await _guardianService.GetStudentsAssignedToGuardianAsync(guardian);
+                IEnumerable<BasicViewModel> students =
+                    await _guardianService.GetStudentsAssignedToGuardianAsync(guardian);
 
                 viewModel.Students = students;
             }

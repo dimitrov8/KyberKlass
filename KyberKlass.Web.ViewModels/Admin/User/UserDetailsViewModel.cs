@@ -1,7 +1,12 @@
-﻿using KyberKlass.Web.ViewModels.Admin.Guardian;
+﻿#region
+
+using KyberKlass.Web.ViewModels.Admin.Guardian;
 using KyberKlass.Web.ViewModels.Admin.School;
 
+#endregion
+
 namespace KyberKlass.Web.ViewModels.Admin.User;
+
 public class UserDetailsViewModel
 {
     public UserDetailsViewModel()

@@ -1,7 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+#endregion
+
 namespace KyberKlass.Data.Models;
+
 public class Guardian
 {
     public Guardian()

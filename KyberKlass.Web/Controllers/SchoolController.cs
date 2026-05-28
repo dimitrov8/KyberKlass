@@ -1,12 +1,19 @@
-﻿using KyberKlass.Services.Data.Interfaces;
+﻿#region
+
+using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.School;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using static KyberKlass.Common.CustomMessageConstants.Common;
 
+#endregion
+
 namespace KyberKlass.Web.Controllers;
+
 /// <summary>
 ///     Controller responsible for managing schools in the system.
 /// </summary>
@@ -17,8 +24,8 @@ namespace KyberKlass.Web.Controllers;
 [Authorize(Roles = "Admin")]
 public class SchoolController(ISchoolService schoolService) : Controller
 {
-    private readonly ISchoolService _schoolService = schoolService;
     private const string CONTROLLER_NAME = "School";
+    private readonly ISchoolService _schoolService = schoolService;
 
     private string GetViewPath(string viewName)
     {
@@ -77,7 +84,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
         {
             bool addedSuccessfully = await _schoolService.AddAsync(model);
 
-            if (addedSuccessfully == false)
+            if (!addedSuccessfully)
             {
                 TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
@@ -105,7 +112,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -132,7 +139,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -160,13 +167,13 @@ public class SchoolController(ISchoolService schoolService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
 
@@ -179,7 +186,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
 
             if (editSuccessfully)
             {
-                TempData["SuccessMessage"] = model.IsActive == false
+                TempData["SuccessMessage"] = !model.IsActive
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
                     : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
@@ -203,7 +210,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);
@@ -230,7 +237,7 @@ public class SchoolController(ISchoolService schoolService) : Controller
     {
         bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
 
-        if (isValidInput == false)
+        if (!isValidInput)
         {
             return View("BadRequest400");
             //return BadRequest(INVALID_INPUT_MESSAGE);

@@ -1,12 +1,18 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.School;
+
 using Microsoft.EntityFrameworkCore;
 
+#endregion
+
 namespace KyberKlass.Services.Data;
+
 /// <summary>
 ///     Service class responsible for managing schools.
 /// </summary>
@@ -18,16 +24,16 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
 {
     public async Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm)
     {
-        var query = dbContext
+        IQueryable<School> query = dbContext
             .Schools
             .AsNoTracking()
-            .Where(s => s.IsActive == true); // Filter to include only active schools
+            .Where(predicate: s => s.IsActive == true); // Filter to include only active schools
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            var term = searchTerm.ToLower();
+            string term = searchTerm.ToLower();
 
-            query = query.Where(s =>
+            query = query.Where(predicate: s =>
                 s.Name.ToLower().Contains(term) ||
                 s.Address.ToLower().Contains(term) ||
                 s.Email.ToLower().Contains(term) ||
@@ -35,7 +41,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
         }
 
         IEnumerable<SchoolDetailsViewModel> viewModel = await query
-            .Select(s => new SchoolDetailsViewModel
+            .Select(selector: s => new SchoolDetailsViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.Name,
@@ -52,14 +58,13 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
                         Students = c.Students
                             .Select(st => new BasicViewModel
                             {
-                                Id = st.Id.ToString(),
-                                Name = st.ApplicationUser.GetFullName()
+                                Id = st.Id.ToString(), Name = st.ApplicationUser.GetFullName()
                             })
                             .ToArray()
                     })
                     .ToArray()
             })
-            .ToArrayAsync(); 
+            .ToArrayAsync();
 
         return viewModel;
     }
@@ -69,11 +74,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
     {
         return await dbContext
             .Schools
-            .Select(s => new BasicViewModel
-            {
-                Id = s.Id.ToString(),
-                Name = s.Name
-            })
+            .Select(selector: s => new BasicViewModel { Id = s.Id.ToString(), Name = s.Name })
             .AsNoTracking()
             .ToArrayAsync();
     }
@@ -92,7 +93,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
         }; // Create a new School object with data from the provided model
 
         // Check if a school with the same name already exists
-        bool schoolExists = await dbContext.Schools.AnyAsync(s => s.Name == model.Name);
+        bool schoolExists = await dbContext.Schools.AnyAsync(predicate: s => s.Name == model.Name);
 
         if (schoolExists)
         {
@@ -111,8 +112,8 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
     {
         SchoolDetailsViewModel? viewModel = await dbContext
             .Schools
-            .Where(s => s.Id == Guid.Parse(id))
-            .Select(s => new SchoolDetailsViewModel
+            .Where(predicate: s => s.Id == Guid.Parse(id))
+            .Select(selector: s => new SchoolDetailsViewModel
             {
                 Id = s.Id.ToString(),
                 Name = s.Name,
@@ -129,8 +130,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
                         Students = c.Students
                             .Select(st => new BasicViewModel
                             {
-                                Id = st.Id.ToString(),
-                                Name = st.ApplicationUser.GetFullName()
+                                Id = st.Id.ToString(), Name = st.ApplicationUser.GetFullName()
                             })
                             .ToArray()
                     })
@@ -147,8 +147,8 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
     {
         AddSchoolFormModel? viewModel = await dbContext
             .Schools
-            .Where(s => s.Id == Guid.Parse(id))
-            .Select(s => new AddSchoolFormModel
+            .Where(predicate: s => s.Id == Guid.Parse(id))
+            .Select(selector: s => new AddSchoolFormModel
             {
                 Name = s.Name,
                 Address = s.Address,
@@ -197,7 +197,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
     {
         School? schoolToDelete = await dbContext.Schools.FindAsync(Guid.Parse(id));
 
-        if (schoolToDelete != null && schoolToDelete.Students.Any() == false && schoolToDelete.Classrooms.Any() == false)
+        if (schoolToDelete != null && !schoolToDelete.Students.Any() && !schoolToDelete.Classrooms.Any())
         {
             // Remove the school from the database
             dbContext.Schools.Remove(schoolToDelete);
@@ -213,8 +213,8 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
     public async Task<bool> HasStudentsAssignedAsync(string id)
     {
         School? school = await dbContext
-            .Schools.Include(school => school.Students)
-            .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
+            .Schools.Include(navigationPropertyPath: school => school.Students)
+            .FirstOrDefaultAsync(predicate: s => s.Id == Guid.Parse(id));
 
         return school != null && school.Students.Any();
     }
@@ -225,7 +225,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
         School? school = await dbContext
             .Schools
             .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id));
+            .FirstOrDefaultAsync(predicate: s => s.Id == Guid.Parse(id));
 
         return school != null
             ? new SchoolDetailsViewModel
@@ -246,6 +246,7 @@ public class SchoolService(KyberKlassDbContext dbContext) : ISchoolService
         return await dbContext
             .Schools
             .AsNoTracking()
-            .AnyAsync(s => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
+            .AnyAsync(predicate: s
+                => s.Id == Guid.Parse(schoolId) && s.Classrooms.Any(c => c.Id == Guid.Parse(classroomId)));
     }
 }

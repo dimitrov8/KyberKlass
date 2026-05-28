@@ -1,22 +1,25 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using System.Linq.Expressions;
+using System.Reflection;
+
+using KyberKlass.Data.Models;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+#endregion
 
 namespace KyberKlass.Data;
 
 public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
-    public KyberKlassDbContext()
-    {
-    }
+    public KyberKlassDbContext() {}
 
     public KyberKlassDbContext(DbContextOptions<KyberKlassDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) {}
 
     public DbSet<School> Schools { get; set; } = null!;
 
@@ -32,19 +35,19 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType entityType in builder.Model.GetEntityTypes())
+        foreach (IMutableEntityType entityType in builder.Model.GetEntityTypes())
         {
-            Microsoft.EntityFrameworkCore.Metadata.IMutableProperty? isActiveProperty = entityType.FindProperty("IsActive");
+            IMutableProperty? isActiveProperty = entityType.FindProperty("IsActive");
 
             if (isActiveProperty != null && isActiveProperty.ClrType == typeof(bool))
             {
                 ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "e");
                 BinaryExpression body = Expression.Equal(
-                    Expression.Property(parameter, "IsActive"),
-                    Expression.Constant(true));
+                Expression.Property(parameter, "IsActive"),
+                Expression.Constant(true));
 
                 builder.Entity(entityType.ClrType)
-                  .HasQueryFilter(Expression.Lambda(body, parameter));
+                    .HasQueryFilter(Expression.Lambda(body, parameter));
             }
         }
 

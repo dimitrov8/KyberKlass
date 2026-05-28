@@ -1,8 +1,13 @@
-﻿using KyberKlass.Web.ViewModels.Admin;
+﻿#region
+
+using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.User;
 
+#endregion
+
 namespace KyberKlass.Services.Data.Interfaces;
+
 /// <summary>
 ///     Interface for managing teacher-related operations.
 /// </summary>

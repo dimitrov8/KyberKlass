@@ -1,12 +1,18 @@
-﻿using KyberKlass.Data.Models;
+﻿#region
+
+using KyberKlass.Data.Models;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Admin;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Teacher;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Role;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Guardian;
 using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Student;
+
+#endregion
 
 namespace KyberKlass.Data.Configurations;
 
@@ -27,7 +33,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedAdminUser(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, DEFAULT_ADMIN_PASSWORD);
+        string hashedPassword = passwordHasher.HashPassword(null!, DEFAULT_ADMIN_PASSWORD);
 
         builder.HasData(new ApplicationUser
         {
@@ -57,7 +63,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedTeacherAUser(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, TEACHER_PASSWORD);
+        string hashedPassword = passwordHasher.HashPassword(null!, TEACHER_PASSWORD);
 
         builder.HasData(new ApplicationUser
         {
@@ -86,7 +92,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedTeacherBUser(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, TEACHER_PASSWORD);
+        string hashedPassword = passwordHasher.HashPassword(null!, TEACHER_PASSWORD);
 
         builder.HasData(new ApplicationUser
         {
@@ -115,7 +121,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedGuardianUser(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, GUARDIAN_PASSWORD);
+        string hashedPassword = passwordHasher.HashPassword(null!, GUARDIAN_PASSWORD);
 
         builder.HasData(new ApplicationUser
         {
@@ -144,8 +150,8 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedStudent1User(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, STUDENT_PASSWORD);
-     
+        string hashedPassword = passwordHasher.HashPassword(null!, STUDENT_PASSWORD);
+
         builder.HasData(new ApplicationUser
         {
             Id = Student1Id,
@@ -173,8 +179,8 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<ApplicationUse
     private static void SeedStudent2User(EntityTypeBuilder<ApplicationUser> builder)
     {
         PasswordHasher<ApplicationUser> passwordHasher = new();
-        var hashedPassword = passwordHasher.HashPassword(null!, STUDENT_2_PASSWORD);
-        
+        string hashedPassword = passwordHasher.HashPassword(null!, STUDENT_2_PASSWORD);
+
         builder.HasData(new ApplicationUser
         {
             Id = Student2Id,

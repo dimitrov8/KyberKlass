@@ -1,8 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using static KyberKlass.Common.EntityValidations.BaseUser;
 
+#endregion
+
 namespace KyberKlass.Web.ViewModels.Admin.User;
+
 public class UserEditFormModel
 {
     [Required]

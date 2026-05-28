@@ -1,4 +1,10 @@
-﻿namespace KyberKlass.Web.Infrastructure.Extensions;
+﻿#region
+
+using System.Reflection;
+
+#endregion
+
+namespace KyberKlass.Web.Infrastructure.Extensions;
 
 /// <summary>
 ///     Extension methods for input validation.
@@ -23,7 +29,7 @@ public static class ValidationExtensions
         // If model is provided and its Id property is null or empty, return false
         if (model != null)
         {
-            System.Reflection.PropertyInfo? idProperty = typeof(T).GetProperty("Id");
+            PropertyInfo? idProperty = typeof(T).GetProperty("Id");
 
             if (idProperty != null && string.IsNullOrEmpty(idProperty.GetValue(model) as string))
             {

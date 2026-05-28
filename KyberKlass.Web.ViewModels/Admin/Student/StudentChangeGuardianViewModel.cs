@@ -1,6 +1,11 @@
-﻿using KyberKlass.Web.ViewModels.Admin.User;
+﻿#region
+
+using KyberKlass.Web.ViewModels.Admin.User;
+
+#endregion
 
 namespace KyberKlass.Web.ViewModels.Admin.Student;
+
 public class StudentChangeGuardianViewModel
 {
     public StudentChangeGuardianViewModel()

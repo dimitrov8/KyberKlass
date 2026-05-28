@@ -1,11 +1,16 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.School;
+
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace KyberKlass.Tests.Services;
 
@@ -25,11 +30,20 @@ public class SchoolServiceTests : IDisposable
         _sut = new SchoolService(_dbContextMock);
     }
 
+    public async void Dispose()
+    {
+        await _dbContextMock.DisposeAsync();
+        GC.SuppressFinalize(this);
+    }
+
     [Fact]
     public async Task AddAsync_ShouldSetProperties_Correctly()
     {
         // Arrange
-        AddSchoolFormModel model = new() { Name = "Test School", Address = "Test Address", Email = "test@test.com", PhoneNumber = "0888888888" };
+        AddSchoolFormModel model = new()
+        {
+            Name = "Test School", Address = "Test Address", Email = "test@test.com", PhoneNumber = "0888888888"
+        };
 
         // Expected School Count => Should not change because we check only if properties are set correctly and not the addition
         int expectedSchoolsCount = await _dbContextMock.Schools.CountAsync();
@@ -44,7 +58,7 @@ public class SchoolServiceTests : IDisposable
         Assert.True(result);
 
         // Verify that the school is added to the database
-        School? addedSchool = await _dbContextMock.Schools.FirstOrDefaultAsync(s => s.Name == model.Name);
+        School? addedSchool = await _dbContextMock.Schools.FirstOrDefaultAsync(predicate: s => s.Name == model.Name);
         Assert.NotNull(addedSchool);
 
         // Verify that the properties are set correctly
@@ -62,7 +76,10 @@ public class SchoolServiceTests : IDisposable
         // Arrange
         AddSchoolFormModel model = new()
         {
-            Name = "Existing School", Address = "Existing Address", Email = "existing@test.com", PhoneNumber = "0888888888"
+            Name = "Existing School",
+            Address = "Existing Address",
+            Email = "existing@test.com",
+            PhoneNumber = "0888888888"
         };
 
         await _sut.AddAsync(model); // Adding the school once
@@ -90,52 +107,52 @@ public class SchoolServiceTests : IDisposable
         Guid schoolId5 = Guid.NewGuid();
 
         await _dbContextMock.Schools.AddRangeAsync(
-            new School
-            {
-                Id = schoolId1,
-                Name = "11E",
-                Address = "Random Address",
-                Email = "school1@school.com",
-                PhoneNumber = "0888888888",
-                IsActive = true
-            },
-            new School
-            {
-                Id = schoolId2,
-                Name = "12A",
-                Address = "Random Address2",
-                Email = "school2@school.com",
-                PhoneNumber = "0888888888",
-                IsActive = true
-            },
-            new School
-            {
-                Id = schoolId3,
-                Name = "10A",
-                Address = "Random Address3",
-                Email = "school3@school.com",
-                PhoneNumber = "0888888888",
-                IsActive = true
-            },
-            new School
-            {
-                Id = schoolId4,
-                Name = "9A",
-                Address = "Random Address4",
-                Email = "school4@school.com",
-                PhoneNumber = "0888888888",
-                IsActive = true
-            }
-            ,
-            new School
-            {
-                Id = schoolId5,
-                Name = "8E",
-                Address = "Random Address5",
-                Email = "school5@school.com",
-                PhoneNumber = "0888888888",
-                IsActive = true
-            });
+        new School
+        {
+            Id = schoolId1,
+            Name = "11E",
+            Address = "Random Address",
+            Email = "school1@school.com",
+            PhoneNumber = "0888888888",
+            IsActive = true
+        },
+        new School
+        {
+            Id = schoolId2,
+            Name = "12A",
+            Address = "Random Address2",
+            Email = "school2@school.com",
+            PhoneNumber = "0888888888",
+            IsActive = true
+        },
+        new School
+        {
+            Id = schoolId3,
+            Name = "10A",
+            Address = "Random Address3",
+            Email = "school3@school.com",
+            PhoneNumber = "0888888888",
+            IsActive = true
+        },
+        new School
+        {
+            Id = schoolId4,
+            Name = "9A",
+            Address = "Random Address4",
+            Email = "school4@school.com",
+            PhoneNumber = "0888888888",
+            IsActive = true
+        }
+        ,
+        new School
+        {
+            Id = schoolId5,
+            Name = "8E",
+            Address = "Random Address5",
+            Email = "school5@school.com",
+            PhoneNumber = "0888888888",
+            IsActive = true
+        });
 
         await _dbContextMock.SaveChangesAsync();
 
@@ -224,8 +241,8 @@ public class SchoolServiceTests : IDisposable
             IsActive = true
         };
 
-         await _dbContextMock.Schools.AddAsync(initialSchool);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(initialSchool);
+        await _dbContextMock.SaveChangesAsync();
 
         AddSchoolFormModel editedModel = new()
         {
@@ -286,7 +303,7 @@ public class SchoolServiceTests : IDisposable
             IsActive = true
         };
 
-         await _dbContextMock.Schools.AddAsync(new School
+        await _dbContextMock.Schools.AddAsync(new School
         {
             Id = schoolId,
             Name = expectedViewModel.Name,
@@ -296,7 +313,7 @@ public class SchoolServiceTests : IDisposable
             IsActive = expectedViewModel.IsActive
         });
 
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         SchoolDetailsViewModel? result = await _sut.GetForDeleteAsync(schoolId.ToString());
@@ -339,8 +356,8 @@ public class SchoolServiceTests : IDisposable
             IsActive = true
         };
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.DeleteAsync(schoolId.ToString());
@@ -376,10 +393,13 @@ public class SchoolServiceTests : IDisposable
             SchoolId = schoolId
         });
 
-        school.Students.Add(new Student { Id = Guid.NewGuid(), GuardianId = Guid.NewGuid(), SchoolId = schoolId, ClassroomId = classroomId });
+        school.Students.Add(new Student
+        {
+            Id = Guid.NewGuid(), GuardianId = Guid.NewGuid(), SchoolId = schoolId, ClassroomId = classroomId
+        });
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.DeleteAsync(schoolId.ToString());
@@ -447,8 +467,8 @@ public class SchoolServiceTests : IDisposable
         school.Students = [student1, student2];
         school.Classrooms = [classroom1, classroom2];
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.HasStudentsAssignedAsync(schoolId.ToString());
@@ -489,8 +509,8 @@ public class SchoolServiceTests : IDisposable
         };
 
         // Add school to database
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.HasStudentsAssignedAsync(schoolId.ToString());
@@ -524,8 +544,8 @@ public class SchoolServiceTests : IDisposable
             IsActive = true
         };
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         SchoolDetailsViewModel? result = await _sut.GetByIdAsync(schoolId.ToString());
@@ -581,8 +601,8 @@ public class SchoolServiceTests : IDisposable
             ]
         };
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.ClassroomExistsInSchoolAsync(schoolId, classroomId);
@@ -609,8 +629,8 @@ public class SchoolServiceTests : IDisposable
             Classrooms = []
         };
 
-         await _dbContextMock.Schools.AddAsync(school);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Schools.AddAsync(school);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.ClassroomExistsInSchoolAsync(schoolId, classroomId);
@@ -696,7 +716,8 @@ public class SchoolServiceTests : IDisposable
             Assert.Equal(actualSchool.PhoneNumber, school.PhoneNumber);
             Assert.Equal(actualSchool.IsActive, school.IsActive);
 
-            int expectedClassroomCount = await _dbContextMock.Classrooms.CountAsync(c => c.SchoolId == actualSchool.Id);
+            int expectedClassroomCount =
+                await _dbContextMock.Classrooms.CountAsync(predicate: c => c.SchoolId == actualSchool.Id);
             Assert.Equal(expectedClassroomCount, actualSchool.Classrooms.Count);
 
             foreach (ClassroomDetailsViewModel classroom in school.Classrooms)
@@ -704,10 +725,12 @@ public class SchoolServiceTests : IDisposable
                 Classroom? actualClassroom = await _dbContextMock.Classrooms.FindAsync(Guid.Parse(classroom.Id));
 
                 Assert.Equal(actualClassroom!.Name, classroom.Name);
-                Assert.Equal($"{actualClassroom.Teacher.ApplicationUser.FirstName} {actualClassroom.Teacher.ApplicationUser.LastName}",
-                    classroom.TeacherName);
+                Assert.Equal(
+                $"{actualClassroom.Teacher.ApplicationUser.FirstName} {actualClassroom.Teacher.ApplicationUser.LastName}",
+                classroom.TeacherName);
 
-                int expectedStudentCount = await _dbContextMock.Students.CountAsync(s => s.ClassroomId == actualClassroom.Id);
+                int expectedStudentCount =
+                    await _dbContextMock.Students.CountAsync(predicate: s => s.ClassroomId == actualClassroom.Id);
                 Assert.Equal(expectedStudentCount, classroom.Students.Count);
 
                 foreach (BasicViewModel student in classroom.Students)
@@ -718,11 +741,5 @@ public class SchoolServiceTests : IDisposable
                 }
             }
         }
-    }
-
-    public async void Dispose()
-    {
-        await _dbContextMock.DisposeAsync();
-        GC.SuppressFinalize(this);
     }
 }

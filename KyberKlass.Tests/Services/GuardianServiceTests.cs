@@ -1,20 +1,27 @@
-﻿using KyberKlass.Data;
+﻿#region
+
+using System.Globalization;
+
+using KyberKlass.Data;
 using KyberKlass.Data.Models;
 using KyberKlass.Services.Data;
 using KyberKlass.Services.Data.Interfaces.Guardians;
 using KyberKlass.Web.ViewModels.Admin;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 using Moq;
-using System.Globalization;
+
+#endregion
 
 namespace KyberKlass.Tests.Services;
 
 public class GuardianServiceTests : IDisposable
 {
     private readonly KyberKlassDbContext _dbContextMock;
-    private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
     private readonly IGuardianService _sut;
+    private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
 
     public GuardianServiceTests()
     {
@@ -27,7 +34,8 @@ public class GuardianServiceTests : IDisposable
         // Mock UserManager<ApplicationUser>
         Mock<IUserStore<ApplicationUser>> store = new();
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
+        _userManagerMock =
+            new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
 
 
         _sut = new GuardianService(_dbContextMock, _userManagerMock.Object);
@@ -55,9 +63,9 @@ public class GuardianServiceTests : IDisposable
 
         Guardian expectedGuardian = new() { Id = guardianId, ApplicationUser = guardianUser };
 
-         await _dbContextMock.Users.AddAsync(guardianUser);
-         await _dbContextMock.Guardians.AddAsync(expectedGuardian);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Users.AddAsync(guardianUser);
+        await _dbContextMock.Guardians.AddAsync(expectedGuardian);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         Guardian? result = await _sut.GetByIdAsync(guardianId.ToString());
@@ -116,11 +124,14 @@ public class GuardianServiceTests : IDisposable
 
 
         Guardian guardian = new() { Id = guardianId, ApplicationUser = guardianUser };
-        Student student = new() { Id = studentId, ApplicationUser = studentUser, GuardianId = guardianId, Guardian = guardian };
+        Student student = new()
+        {
+            Id = studentId, ApplicationUser = studentUser, GuardianId = guardianId, Guardian = guardian
+        };
 
-         await _dbContextMock.Guardians.AddAsync(guardian);
-         await _dbContextMock.Students.AddAsync(student);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Guardians.AddAsync(guardian);
+        await _dbContextMock.Students.AddAsync(student);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.IsGuardianAssignedToStudentAsync(guardianUser.Id.ToString());
@@ -149,8 +160,8 @@ public class GuardianServiceTests : IDisposable
         };
 
         Guardian guardian = new() { Id = guardianId, ApplicationUser = guardianUser };
-         await _dbContextMock.Guardians.AddAsync(guardian);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Guardians.AddAsync(guardian);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         bool result = await _sut.IsGuardianAssignedToStudentAsync(guardianId.ToString());
@@ -193,25 +204,18 @@ public class GuardianServiceTests : IDisposable
             IsActive = true
         };
 
-        Guardian guardian = new()
-        {
-            Id = guardianId,
-            ApplicationUser = guardianUser
-        };
+        Guardian guardian = new() { Id = guardianId, ApplicationUser = guardianUser };
 
         Student student = new()
         {
-            Id = Guid.NewGuid(),
-            ApplicationUser = studentUser,
-            GuardianId = guardianId,
-            Guardian = guardian
+            Id = Guid.NewGuid(), ApplicationUser = studentUser, GuardianId = guardianId, Guardian = guardian
         };
 
         guardian.Students = [student];
 
-         await _dbContextMock.Guardians.AddAsync(guardian);
-         await _dbContextMock.Students.AddAsync(student);
-         await _dbContextMock.SaveChangesAsync();
+        await _dbContextMock.Guardians.AddAsync(guardian);
+        await _dbContextMock.Students.AddAsync(student);
+        await _dbContextMock.SaveChangesAsync();
 
         // Act
         Guardian? result = await _sut.GetGuardianAssignedByUserIdAsync(studentId.ToString());
@@ -240,13 +244,11 @@ public class GuardianServiceTests : IDisposable
         // Arrange
         List<ApplicationUser> guardians =
         [
-            new()
-                { Id = Guid.NewGuid(), FirstName = "TestFirstName", LastName = "TestLastName" },
-            new()
-                { Id = Guid.NewGuid(), FirstName = "AnotherTestFirstName", LastName = "AnotherTestLastName" }
+            new() { Id = Guid.NewGuid(), FirstName = "TestFirstName", LastName = "TestLastName" },
+            new() { Id = Guid.NewGuid(), FirstName = "AnotherTestFirstName", LastName = "AnotherTestLastName" }
         ];
 
-         _userManagerMock.Setup(m => m.GetUsersInRoleAsync("Guardian"))
+        _userManagerMock.Setup(expression: m => m.GetUsersInRoleAsync("Guardian"))
             .ReturnsAsync(guardians);
 
         // Act
@@ -259,7 +261,8 @@ public class GuardianServiceTests : IDisposable
 
         foreach (ApplicationUser guardian in guardians)
         {
-            Assert.Contains(basicViewModels, g => g.Id == guardian.Id.ToString() && g.Name == guardian.GetFullName());
+            Assert.Contains(basicViewModels,
+            filter: g => g.Id == guardian.Id.ToString() && g.Name == guardian.GetFullName());
         }
     }
 
@@ -267,7 +270,7 @@ public class GuardianServiceTests : IDisposable
     public async Task GetAllGuardiansAsync_ReturnsEmptyListWhenNoGuardiansExist()
     {
         // Arrange
-         _userManagerMock.Setup(m => m.GetUsersInRoleAsync("Guardian"))
+        _userManagerMock.Setup(expression: m => m.GetUsersInRoleAsync("Guardian"))
             .ReturnsAsync([]);
 
         // Act
