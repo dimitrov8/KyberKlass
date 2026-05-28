@@ -9,19 +9,13 @@ namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing classrooms.
 /// </summary>
-public class ClassroomService : IClassroomService
+/// <remarks>
+///     Constructor for ClassroomService.
+/// </remarks>
+/// <param name="dbContext">The database context.</param>
+public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
 {
-    private readonly KyberKlassDbContext _dbContext;
-
-    /// <summary>
-    ///     Constructor for ClassroomService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    public ClassroomService(KyberKlassDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
+    private readonly KyberKlassDbContext _dbContext = dbContext;
     /// <inheritdoc />
     public async Task<bool> AddAsync(AddClassroomViewModel model)
     {
@@ -179,7 +173,7 @@ public class ClassroomService : IClassroomService
     public async Task<bool> DeleteAsync(string id)
     {
         Classroom? classroomToDelete = await _dbContext
-            .Classrooms
+            .Classrooms.Include(classroom => classroom.Students)
             .FirstOrDefaultAsync(c => c.Id == Guid.Parse(id));
 
         // If the classroom exists and there are no students in this classrooms
@@ -203,5 +197,48 @@ public class ClassroomService : IClassroomService
             .AnyAsync(c => c.Students.Any());
 
         return hasStudents;
+    }
+
+    public async Task<IEnumerable<ClassroomDetailsViewModel>> GetTeacherClassroomsAsync(string? teacherId)
+    {
+        IEnumerable<Classroom> classrooms = await _dbContext
+            .Classrooms
+            .Where(c => c.TeacherId == Guid.Parse(teacherId!))
+            .Include(c => c.Students)
+            .ThenInclude(s => s.ApplicationUser)
+            .Include(c => c.Teacher.ApplicationUser)
+            .AsNoTracking()
+            .ToArrayAsync();
+
+        return classrooms.Select(c => new ClassroomDetailsViewModel
+        {
+            Id = c.Id.ToString(),
+            Name = c.Name,
+            TeacherName = c.Teacher.ApplicationUser.GetFullName(),
+            IsActive = c.IsActive,
+            Students = c.Students
+                .Select(s => new BasicViewModel
+                {
+                    Id = s.Id.ToString(),
+                    Name = s.ApplicationUser.GetFullName()
+                })
+                .ToArray()
+        });
+    }
+
+    public async Task<IEnumerable<BasicViewModel>> GetClassroomStudentsAsync(string classroomId)
+    {
+        IEnumerable<Student> students = await _dbContext
+            .Students
+            .Where(s => s.ClassroomId == Guid.Parse(classroomId))
+            .Include(s => s.ApplicationUser)
+            .AsNoTracking()
+            .ToArrayAsync();
+
+        return students.Select(s => new BasicViewModel
+        {
+            Id = s.Id.ToString(),
+            Name = s.ApplicationUser.GetFullName()
+        });
     }
 }

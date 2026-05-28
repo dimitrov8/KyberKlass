@@ -1,4 +1,5 @@
-﻿using KyberKlass.Web.ViewModels.Admin;
+﻿using KyberKlass.Data.Configurations;
+using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.School;
 
 namespace KyberKlass.Services.Data.Interfaces;
@@ -13,13 +14,13 @@ public interface ISchoolService
     /// <param name="model">The model containing information about the school to add.</param>
     /// <returns>True if the school was added successfully; otherwise, false.</returns>
     Task<bool> AddAsync(AddSchoolFormModel model);
-
+    
     /// <summary>
     ///     Retrieves a collection of school view models asynchronously, optionally filtered by a search term.
     /// </summary>
     /// <param name="searchTerm">Optional search term to filter schools.</param>
     /// <returns>A collection of school view models.</returns>
-    Task<IEnumerable<SchoolViewModel>> AllAsync(string? searchTerm = null);
+    Task<IEnumerable<SchoolDetailsViewModel>> AllAsync(string? searchTerm = null);
 
     /// <summary>
     ///     Retrieves a basic collection of school view models about asynchronously.

@@ -75,4 +75,8 @@ public interface IClassroomService
     /// <param name="id">The unique identifier of the classroom.</param>
     /// <returns>True if the classroom has students; otherwise, false.</returns>
     Task<bool> HasStudentsAssignedAsync(string id);
+
+    Task<IEnumerable<ClassroomDetailsViewModel>> GetTeacherClassroomsAsync(string? teacherId);
+
+    Task<IEnumerable<BasicViewModel>> GetClassroomStudentsAsync(string classroomId);
 }

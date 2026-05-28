@@ -12,29 +12,21 @@ namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing students.
 /// </summary>
-public class StudentService : IStudentService
+/// <remarks>
+///     Constructor for GuardianService.
+/// </remarks>
+/// <param name="dbContext">The database context.</param>
+/// <param name="userService">The user service.</param>
+/// <param name="guardianService">The guardian service.</param>
+public class StudentService(KyberKlassDbContext dbContext,
+    IUserService userService,
+    IGuardianService guardianService) : IStudentService
 {
-    private readonly KyberKlassDbContext _dbContext;
-    private readonly IUserService _userService;
-    private readonly IGuardianService _guardianService;
-
-    /// <summary>
-    ///     Constructor for GuardianService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    /// <param name="userService">The user service.</param>
-    /// <param name="guardianService">The guardian service.</param>
-    public StudentService(KyberKlassDbContext dbContext,
-        IUserService userService,
-        IGuardianService guardianService)
-    {
-        _dbContext = dbContext;
-        _userService = userService;
-        _guardianService = guardianService;
-    }
-
+    private readonly KyberKlassDbContext _dbContext = dbContext;
+    private readonly IUserService _userService = userService;
+    private readonly IGuardianService _guardianService = guardianService;
     /// <inheritdoc />
-    public async Task<IEnumerable<UserViewModel>?> AllAsync(string? searchTerm = null)
+    public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
         string studentRoleName = "Student";
 
@@ -51,27 +43,27 @@ public class StudentService : IStudentService
         }
 
 
-            List<ApplicationUser> students = await _dbContext
-                .Users
-                .Where(user => _dbContext
-                    .UserRoles
-                    .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
-                //.Include(user => user.Role)
-                .AsNoTracking()
-                .ToListAsync();
+        List<ApplicationUser> students = await _dbContext
+            .Users
+            .Where(user => _dbContext
+                .UserRoles
+                .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
+            //.Include(user => user.Role)
+            .AsNoTracking()
+            .ToListAsync();
 
-            List<UserViewModel> studentViewModels = students
-                .Select(t => new UserViewModel
-                {
-                    Id = t.Id.ToString(),
-                    Email = t.Email,
-                    FullName = t.GetFullName(),
-                    Role = studentRoleName, // Hardcode the role as "Student" to avoid unnecessary role queries
-                })
-                .ToList();
+        List<UserViewModel> studentViewModels = students
+            .Select(t => new UserViewModel
+            {
+                Id = t.Id.ToString(),
+                Email = t.Email,
+                FullName = t.GetFullName(),
+                Role = studentRoleName, // Hardcode the role as "Student" to avoid unnecessary role queries
+            })
+            .ToList();
 
-            return studentViewModels;
-        }
+        return studentViewModels;
+    }
 
     /// <inheritdoc />
     public Task<Student?> GetByIdASync(string id)

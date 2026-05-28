@@ -1,4 +1,5 @@
 ﻿using KyberKlass.Web.ViewModels.Admin;
+using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.User;
 
 namespace KyberKlass.Services.Data.Interfaces;
@@ -22,4 +23,11 @@ public interface ITeacherService
     /// <param name="userId">The unique identifier of the teacher.</param>
     /// <returns>True if the teacher is assigned to any classroom; otherwise, false.</returns>
     Task<bool> IsTeacherAssignedToClassroomAsync(string userId);
+
+    /// <summary>
+    /// Gets all classrooms assigned to a specific teacher.
+    /// </summary>
+    /// <param name="teacherId">The teacher's ID</param>
+    /// <returns>A collection of classrooms assigned to the teacher.</returns>
+    Task<IEnumerable<ClassroomDetailsViewModel>> GetTeacherClassroomAsync(string teacherId);
 }

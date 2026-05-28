@@ -14,26 +14,19 @@ namespace KyberKlass.Services.Data.User;
 /// <summary>
 ///     Service class responsible for managing users.
 /// </summary>
-public class UserService : IUserService
+/// <remarks>
+///     Constructor for UserService.
+/// </remarks>
+/// <param name="dbContext">The database context.</param>
+/// <param name="userManager">The user manager.</param>
+/// <param name="guardianService">The guardian service.</param>
+public class UserService(KyberKlassDbContext dbContext,
+    UserManager<ApplicationUser> userManager,
+    IGuardianService guardianService) : IUserService
 {
-    private readonly KyberKlassDbContext _dbContext;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IGuardianService _guardianService;
-
-    /// <summary>
-    ///     Constructor for UserService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    /// <param name="userManager">The user manager.</param>
-    /// <param name="guardianService">The guardian service.</param>
-    public UserService(KyberKlassDbContext dbContext,
-        UserManager<ApplicationUser> userManager,
-        IGuardianService guardianService)
-    {
-        _dbContext = dbContext;
-        _userManager = userManager;
-        _guardianService = guardianService;
-    }
+    private readonly KyberKlassDbContext _dbContext = dbContext;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IGuardianService _guardianService = guardianService;
 
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null, string? roleFilter = null)
@@ -147,7 +140,7 @@ public class UserService : IUserService
         user.NormalizedEmail = model.Email.ToUpper();
         user.IsActive = model.IsActive;
 
-        _ = await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
         return model;
     }
@@ -183,10 +176,5 @@ public class UserService : IUserService
         return await _dbContext
             .Users
             .FindAsync(Guid.Parse(id));
-    }
-
-    public Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
-    {
-        throw new NotImplementedException();
     }
 }

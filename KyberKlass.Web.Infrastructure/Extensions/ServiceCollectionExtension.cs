@@ -41,7 +41,8 @@ public static class ServiceCollectionExtension
                                   throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<KyberKlassDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(connectionString)
+                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 

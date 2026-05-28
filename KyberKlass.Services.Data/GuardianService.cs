@@ -9,22 +9,15 @@ namespace KyberKlass.Services.Data;
 /// <summary>
 ///     Service class responsible for managing guardians.
 /// </summary>
-public class GuardianService : IGuardianService
+/// <remarks>
+///     Constructor for GuardianService.
+/// </remarks>
+/// <param name="dbContext">The database context.</param>
+/// <param name="userManager">The user manager.</param>
+public class GuardianService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager) : IGuardianService
 {
-    private readonly KyberKlassDbContext _dbContext;
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    /// <summary>
-    ///     Constructor for GuardianService.
-    /// </summary>
-    /// <param name="dbContext">The database context.</param>
-    /// <param name="userManager">The user manager.</param>
-    public GuardianService(KyberKlassDbContext dbContext, UserManager<ApplicationUser> userManager)
-    {
-        _dbContext = dbContext;
-        _userManager = userManager;
-    }
-
+    private readonly KyberKlassDbContext _dbContext = dbContext;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     /// <inheritdoc />
     public Task<Guardian?> GetByIdAsync(string id)
     {
