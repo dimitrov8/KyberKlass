@@ -4,6 +4,8 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <AnalysisLevel>latest</AnalysisLevel>
         <UserSecretsId>aspnet-KyberKlass.Web-f6428f1f-ce95-4c77-80fb-15838ba26fe4</UserSecretsId>
     </PropertyGroup>
 
