@@ -1,8 +1,10 @@
 ﻿using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.Guardian;
 
 namespace KyberKlass.Data.Configurations;
+
 public class GuardianEntityConfiguration : IEntityTypeConfiguration<Guardian>
 {
     public void Configure(EntityTypeBuilder<Guardian> builder)
@@ -15,5 +17,17 @@ public class GuardianEntityConfiguration : IEntityTypeConfiguration<Guardian>
             .WithOne(s => s.Guardian)
             .HasForeignKey(s => s.GuardianId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        SeedGuardians(builder);
+    }
+    
+    private static void SeedGuardians(EntityTypeBuilder<Guardian> builder)
+    {
+        builder.HasData(
+            new Guardian
+            {
+                Id = Guardian1Id
+            }
+        );
     }
 }

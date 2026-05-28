@@ -1,14 +1,16 @@
 ﻿using KyberKlass.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using static KyberKlass.Data.Configurations.Constants.SeedDataConstants.School;
 
 namespace KyberKlass.Data.Configurations;
+
 public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
 {
     public void Configure(EntityTypeBuilder<School> builder)
     {
         builder
-            .HasQueryFilter(c => c.IsActive);
+            .HasQueryFilter(static c => c.IsActive);
 
         SeedSchools(builder);
     }
@@ -18,28 +20,31 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<School>
         builder.HasData(
             new School
             {
-                Id = Guid.NewGuid(),
+                Id = School1Id,
                 Name = "St. George International School",
                 Address = "Promishlena zona Hladilnika, bul. \"Nikola Y. Vaptsarov\" 47, 1407 Sofia",
                 Email = "st@example.com",
-                PhoneNumber = "02 414 4414"
+                PhoneNumber = "02 414 4414",
+                IsActive = true
             },
             new School
             {
-                Id = Guid.NewGuid(),
+                Id = School2Id,
                 Name = "91. Немска езикова гимназия „Проф. Константин Гълъбов“",
                 Address = "Sofia Center, Pozitano St 26, 1000 Sofia",
                 Email = "schoolb@ez.com",
-                PhoneNumber = "02 987 5305"
+                PhoneNumber = "02 987 5305",
+                IsActive = true
             },
-                new School
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Test School",
-                    Address = "Rnd. Address",
-                    Email = "test_schoolc@ez.com",
-                    PhoneNumber = "02 987 0000"
-                }
+            new School
+            {
+                Id = School3Id,
+                Name = "Test School",
+                Address = "Rnd. Address",
+                Email = "test_schoolc@ez.com",
+                PhoneNumber = "02 987 0000",
+                IsActive = true
+            }
         );
     }
 }

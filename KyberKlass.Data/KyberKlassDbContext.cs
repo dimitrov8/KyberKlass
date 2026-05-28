@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace KyberKlass.Data;
+
 public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public KyberKlassDbContext()
@@ -43,7 +44,7 @@ public class KyberKlassDbContext : IdentityDbContext<ApplicationUser, IdentityRo
                     Expression.Constant(true));
 
                 builder.Entity(entityType.ClrType)
-                    .HasQueryFilter(Expression.Lambda(body, parameter));
+                  .HasQueryFilter(Expression.Lambda(body, parameter));
             }
         }
 
