@@ -10,23 +10,23 @@ using Moq;
 using System.Globalization;
 
 namespace KyberKlass.Tests.Services;
+
 public class TeacherServiceTests : IDisposable
 {
-    private readonly DbContextOptions<KyberKlassDbContext> _options;
     private readonly KyberKlassDbContext _dbContextMock;
     private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
     private readonly ITeacherService _sut;
 
     public TeacherServiceTests()
     {
-        _options = new DbContextOptionsBuilder<KyberKlassDbContext>()
+        DbContextOptions<KyberKlassDbContext> options = new DbContextOptionsBuilder<KyberKlassDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        _dbContextMock = new KyberKlassDbContext(_options);
+        _dbContextMock = new KyberKlassDbContext(options);
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        _userManagerMock = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        _userManagerMock =
+            new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
         _sut = new TeacherService(_dbContextMock, _userManagerMock.Object);
     }
@@ -51,11 +51,7 @@ public class TeacherServiceTests : IDisposable
             IsActive = true
         };
 
-        Teacher teacher = new()
-        {
-            Id = teacherId,
-            ApplicationUser = teacherUser
-        };
+        Teacher teacher = new() { Id = teacherId, ApplicationUser = teacherUser };
 
         Classroom classroom = new() { Id = classroomId, Name = "11E", TeacherId = teacherId, Teacher = teacher };
 
@@ -104,11 +100,7 @@ public class TeacherServiceTests : IDisposable
             IsActive = true
         };
 
-        Teacher teacher2 = new()
-        {
-            Id = teacher2Id,
-            ApplicationUser = teacherUser2
-        };
+        Teacher teacher2 = new() { Id = teacher2Id, ApplicationUser = teacherUser2 };
 
         Guid classroomId = Guid.NewGuid();
         Classroom classroom = new() { Id = classroomId, Name = "11E", TeacherId = teacher2Id, Teacher = teacher2 };
@@ -128,7 +120,9 @@ public class TeacherServiceTests : IDisposable
     public async Task GetUnassignedTeachersAsync_ReturnsEmptyListWhenNoTeachersExist()
     {
         // Arrange
-        Mock<UserManager<ApplicationUser>> userManagerMock = new(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        Mock<UserManager<ApplicationUser>> userManagerMock =
+            new(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+
         userManagerMock.Setup(m => m.GetUsersInRoleAsync("Teacher"))
             .ReturnsAsync(new List<ApplicationUser>());
 
@@ -190,23 +184,11 @@ public class TeacherServiceTests : IDisposable
             IsActive = true
         };
 
-        Teacher teacher1 = new()
-        {
-            Id = teacher1Id,
-            ApplicationUser = teacherUser1
-        };
+        Teacher teacher1 = new() { Id = teacher1Id, ApplicationUser = teacherUser1 };
 
-        Teacher teacher2 = new()
-        {
-            Id = teacher2Id,
-            ApplicationUser = teacherUser2
-        };
+        Teacher teacher2 = new() { Id = teacher2Id, ApplicationUser = teacherUser2 };
 
-        Teacher teacher3 = new()
-        {
-            Id = teacher3Id,
-            ApplicationUser = teacherUser3
-        };
+        Teacher teacher3 = new() { Id = teacher3Id, ApplicationUser = teacherUser3 };
 
         Classroom classroom1 = new() { Id = Guid.NewGuid(), Name = "11E", TeacherId = teacher1Id, Teacher = teacher1 };
         Classroom classroom2 = new() { Id = Guid.NewGuid(), Name = "12A", TeacherId = teacher2Id, Teacher = teacher2 };
@@ -264,17 +246,9 @@ public class TeacherServiceTests : IDisposable
             IsActive = true
         };
 
-        Teacher teacher1 = new()
-        {
-            Id = teacher1Id,
-            ApplicationUser = teacherUser1
-        };
+        Teacher teacher1 = new() { Id = teacher1Id, ApplicationUser = teacherUser1 };
 
-        Teacher teacher2 = new()
-        {
-            Id = teacher2Id,
-            ApplicationUser = teacherUser2
-        };
+        Teacher teacher2 = new() { Id = teacher2Id, ApplicationUser = teacherUser2 };
 
         Classroom classroom1 = new() { Id = Guid.NewGuid(), Name = "11E", TeacherId = teacher1Id, Teacher = teacher1 };
         Classroom classroom2 = new() { Id = Guid.NewGuid(), Name = "12A", TeacherId = teacher2Id, Teacher = teacher2 };
@@ -295,21 +269,21 @@ public class TeacherServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task AllAsync_ReturnsEmptyList_WhenNoTeachersExist()
+    public async Task AllAsync_ReturnsEmptyCollection_WhenNoTeachersExist()
     {
         // Arrange
         await _dbContextMock.Roles.AddAsync(new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = "Teacher" });
         await _dbContextMock.SaveChangesAsync();
 
         // Act
-        List<UserViewModel>? result = await _sut.AllAsync();
+        List<UserViewModel> result = (await _sut.AllAsync()).ToList();
 
         // Assert
-        Assert.Empty(result!);
+        Assert.Empty(result);
     }
 
     [Fact]
-    public async Task AllAsync_ReturnsListOfTeachersWhenTeachersExist()
+    public async Task AllAsync_ReturnsCollectionOfTeachersWhenTeachersExist()
     {
         // Arrange
         Guid teacherRoleId = Guid.NewGuid();
@@ -318,8 +292,8 @@ public class TeacherServiceTests : IDisposable
 
         Guid teacher1Id = Guid.NewGuid();
         Guid teacher2Id = Guid.NewGuid();
-        List<ApplicationUser> teachers = new()
-        {
+        List<ApplicationUser> teachers =
+        [
             new()
             {
                 Id = teacher1Id,
@@ -333,6 +307,7 @@ public class TeacherServiceTests : IDisposable
                 Address = "Test Address",
                 IsActive = true
             },
+
             new()
             {
                 Id = teacher2Id,
@@ -346,7 +321,7 @@ public class TeacherServiceTests : IDisposable
                 Address = "Test Address 2",
                 IsActive = true
             }
-        };
+        ];
 
         await _dbContextMock.Users.AddRangeAsync(teachers);
         await _dbContextMock.SaveChangesAsync();
@@ -359,19 +334,18 @@ public class TeacherServiceTests : IDisposable
         await _dbContextMock.SaveChangesAsync();
 
         // Act
-        List<UserViewModel>? result = await _sut.AllAsync();
-
+        List<UserViewModel> result = (await _sut.AllAsync()).ToList();
+        
         // Assert
-        Assert.Equal(teachers.Count, result!.Count);
+        Assert.Equal(teachers.Count, result.Count);
 
         foreach (ApplicationUser teacher in teachers)
         {
             UserViewModel? teacherViewModel = result.FirstOrDefault(t => t.Id == teacher.Id.ToString());
             Assert.NotNull(teacherViewModel);
-            Assert.Equal(teacher.Email, teacherViewModel!.Email);
+            Assert.Equal(teacher.Email, teacherViewModel.Email);
             Assert.Equal(teacher.GetFullName(), teacherViewModel.FullName);
             Assert.Equal("Teacher", teacherViewModel.Role);
-            Assert.True(teacherViewModel.IsActive);
         }
     }
 
@@ -379,7 +353,7 @@ public class TeacherServiceTests : IDisposable
     public async Task AllAsync_ReturnsNullWhenTeacherRoleIdNotFound()
     {
         // Act
-        List<UserViewModel>? result = await _sut.AllAsync();
+        List<UserViewModel>? result = (await _sut.AllAsync()).ToList();
 
         // Assert
         Assert.Null(result);

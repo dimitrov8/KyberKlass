@@ -13,22 +13,18 @@ namespace KyberKlass.Tests.Services
 {
     public class UserRoleServiceTests : IDisposable
     {
-        private readonly DbContextOptions<KyberKlassDbContext> _options;
         private readonly KyberKlassDbContext _dbContextMock;
         private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
         private readonly Mock<RoleManager<IdentityRole<Guid>>> _roleManagerMock;
-        private readonly Mock<IUserService> _userServiceMock;
-        private readonly Mock<ISchoolService> _schoolServiceMock;
-        private readonly Mock<IGuardianService> _guardianServiceMock;
         private readonly UserRoleService _sut;
 
         public UserRoleServiceTests()
         {
-            _options = new DbContextOptionsBuilder<KyberKlassDbContext>()
+            DbContextOptions<KyberKlassDbContext> options = new DbContextOptionsBuilder<KyberKlassDbContext>()
                 .UseInMemoryDatabase(databaseName: "KyberKlassTestDb")
                 .Options;
 
-            _dbContextMock = new KyberKlassDbContext(_options);
+            _dbContextMock = new KyberKlassDbContext(options);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             _userManagerMock = new Mock<UserManager<ApplicationUser>>(
@@ -51,11 +47,11 @@ namespace KyberKlass.Tests.Services
               null
           );
 
-            _userServiceMock = new Mock<IUserService>();
-            _schoolServiceMock = new Mock<ISchoolService>();
-            _guardianServiceMock = new Mock<IGuardianService>();
+            Mock<IUserService> userServiceMock = new();
+            Mock<ISchoolService> schoolServiceMock = new();
+            Mock<IGuardianService> guardianServiceMock = new();
 
-            _sut = new UserRoleService(_dbContextMock, _userManagerMock.Object, _roleManagerMock.Object, _userServiceMock.Object, _schoolServiceMock.Object, _guardianServiceMock.Object);
+            _sut = new UserRoleService(_dbContextMock, _userManagerMock.Object, _roleManagerMock.Object, userServiceMock.Object, schoolServiceMock.Object, guardianServiceMock.Object);
         }
 
         [Fact]
@@ -66,7 +62,7 @@ namespace KyberKlass.Tests.Services
             string roleName = "Admin";
             IdentityRole<Guid> role = new(roleName);
 
-            _roleManagerMock.Setup(m => m.FindByIdAsync(roleId))
+             _roleManagerMock.Setup(m => m.FindByIdAsync(roleId))
                 .ReturnsAsync(role);
 
             // Act
@@ -82,7 +78,7 @@ namespace KyberKlass.Tests.Services
             // Arrange
             string invalidRoleId = Guid.NewGuid().ToString();
 
-            _roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId))
+             _roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId))
                 .ReturnsAsync((IdentityRole<Guid>)null!);
 
             // Act
@@ -99,7 +95,7 @@ namespace KyberKlass.Tests.Services
             Guid invalidUserId = Guid.NewGuid();
             Guid roleId = Guid.NewGuid();
 
-            _userManagerMock.Setup(m => m.FindByIdAsync(invalidUserId.ToString()))!
+             _userManagerMock.Setup(m => m.FindByIdAsync(invalidUserId.ToString()))
                 .ReturnsAsync((ApplicationUser?)null);
 
             // Act
@@ -129,10 +125,10 @@ namespace KyberKlass.Tests.Services
                 IsActive = true
             };
 
-            _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
+             _userManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
                 .ReturnsAsync(user);
 
-            _roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId.ToString()))!
+             _roleManagerMock.Setup(m => m.FindByIdAsync(invalidRoleId.ToString()))
                 .ReturnsAsync((IdentityRole<Guid>?)null);
 
             // Act

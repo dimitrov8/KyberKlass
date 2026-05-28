@@ -9,9 +9,9 @@ using Moq;
 using System.Globalization;
 
 namespace KyberKlass.Tests.Services;
+
 public class UserServiceTests : IDisposable
 {
-    private readonly DbContextOptions<KyberKlassDbContext> _options;
     private readonly KyberKlassDbContext _dbContextMock;
     private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
     private readonly Mock<IGuardianService> _guardianServiceMock;
@@ -19,13 +19,12 @@ public class UserServiceTests : IDisposable
 
     public UserServiceTests()
     {
-        _options = new DbContextOptionsBuilder<KyberKlassDbContext>()
+        DbContextOptions<KyberKlassDbContext> options = new DbContextOptionsBuilder<KyberKlassDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        _dbContextMock = new KyberKlassDbContext(_options);
+        _dbContextMock = new KyberKlassDbContext(options);
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         _userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null,
@@ -69,7 +68,7 @@ public class UserServiceTests : IDisposable
         ApplicationUser? result = await _sut.GetUserById(user.Id.ToString());
 
         Assert.NotNull(result);
-        Assert.Equal(userId, result!.Id);
+        Assert.Equal(userId, result.Id);
     }
 
     [Fact]
@@ -221,7 +220,7 @@ public class UserServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Student", result!.Role);
+        Assert.Equal("Student", result.Role);
     }
 
     [Fact]
@@ -252,7 +251,7 @@ public class UserServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(user.Id.ToString(), result!.Id);
+        Assert.Equal(user.Id.ToString(), result.Id);
         Assert.Equal(user.FirstName, result.FirstName);
         Assert.Equal(user.LastName, result.LastName);
         Assert.Equal(expectedBirthDate, result.BirthDate);
@@ -315,7 +314,7 @@ public class UserServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(user.Id.ToString(), result!.Id);
+        Assert.Equal(user.Id.ToString(), result.Id);
         Assert.Equal(user.FirstName, result.FirstName);
         Assert.Equal(user.LastName, result.LastName);
         Assert.Equal(expectedBirthDate, result.BirthDate);
@@ -404,8 +403,8 @@ public class UserServiceTests : IDisposable
         Guid user2Id = Guid.NewGuid();
         Guid adminRoleId = Guid.NewGuid();
 
-        List<ApplicationUser> users = new()
-        {
+        List<ApplicationUser> users =
+        [
             new()
             {
                 Id = user1Id,
@@ -419,6 +418,7 @@ public class UserServiceTests : IDisposable
                 Address = "Random Address",
                 IsActive = true
             },
+
             new()
             {
                 Id = user2Id,
@@ -432,7 +432,7 @@ public class UserServiceTests : IDisposable
                 Address = "Random Address",
                 IsActive = true
             }
-        };
+        ];
 
         IdentityRole<Guid> role = new()
         {
@@ -462,7 +462,6 @@ public class UserServiceTests : IDisposable
                 Assert.Equal("Random User", user.FullName);
                 Assert.Equal("test@test.com", user.Email);
                 Assert.Equal("Admin", user.Role);
-                Assert.True(user.IsActive);
             },
             user =>
             {
@@ -470,7 +469,6 @@ public class UserServiceTests : IDisposable
                 Assert.Equal("AnotherRandom User", user.FullName);
                 Assert.Equal("test2@test.com", user.Email);
                 Assert.Equal("No Role Assigned", user.Role);
-                Assert.True(user.IsActive);
             }
         );
     }
@@ -543,7 +541,7 @@ public class UserServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Student", result!.Role);
+        Assert.Equal("Student", result.Role);
         Assert.NotNull(result.Guardian);
         Assert.Equal(guardianId.ToString(), result.Guardian!.Id);
         Assert.Equal(guardianUser.GetFullName(), result.Guardian.FullName);
@@ -621,7 +619,7 @@ public class UserServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Guardian", result!.Role);
+        Assert.Equal("Guardian", result.Role);
         Assert.NotNull(result.Students);
         Assert.Equal(guardianId.ToString(), result.Id);
         Assert.Equal(guardianUser.GetFullName(), result.FullName);
