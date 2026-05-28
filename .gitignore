@@ -361,3 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# JetBrains Rider
+.idea/
+
+# Rider virtual file preview
+*__virtual.html
+
+# Visual Studio/Rider per-user project files
+*.csproj.user
+
+# Local service dependencies
+Properties/serviceDependencies.local.json
