@@ -1,27 +1,46 @@
-﻿using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.ViewModels.Admin.User;
+﻿using KyberKlass.Data.Models;
+using KyberKlass.Services.Data.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static KyberKlass.Common.CustomMessageConstants;
 
 namespace KyberKlass.Web.Controllers;
-public class TeacherController : Controller
+
+[Authorize(Roles = "Admin")]
+public class TeacherController(
+    ITeacherService teacherService,
+    IClassroomService classroomService,
+    UserManager<ApplicationUser> userManager)
+    : Controller
 {
-    private readonly ITeacherService _teacherService;
-
-    public TeacherController(ITeacherService teacherService)
-    {
-        _teacherService = teacherService;
-    }
-
     private string GetViewPath(string viewName)
     {
         return $"~/Views/Admin/Teacher/{viewName}.cshtml";
     }
 
     [HttpGet]
+    public async Task<IActionResult> Dashboard()
+    {
+        var teacher = await userManager.GetUserAsync(User);
+
+        var classrooms = await classroomService.GetTeacherClassroomsAsync(teacher?.Id.ToString());
+
+        return View(GetViewPath(nameof(Dashboard)), classrooms);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ClassroomStudents(string id)
+    {
+        var students = await classroomService.GetClassroomStudentsAsync(id);
+
+        return View(GetViewPath(nameof(ClassroomStudents)), students);
+    }
+
+
+    [HttpGet]
     public async Task<IActionResult> All(string? searchTerm = null)
     {
-        IEnumerable<UserViewModel> teachers = await _teacherService.AllAsync(searchTerm);
+        var teachers = await teacherService.AllAsync(searchTerm);
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {

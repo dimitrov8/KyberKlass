@@ -6,16 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using static KyberKlass.Common.CustomMessageConstants.Student;
 
 namespace KyberKlass.Web.Controllers;
-[Authorize(Roles = "Admin")]
-public class StudentController : Controller
-{
-    private readonly IStudentService _studentService;
-    private const string CONTROLLER_NAME = "Student";
 
-    public StudentController(IStudentService studentService)
-    {
-        _studentService = studentService;
-    }
+[Authorize(Roles = "Admin")]
+public class StudentController(IStudentService studentService) : Controller
+{
+    private const string CONTROLLER_NAME = "Student";
 
     private string GetViewPath(string viewName)
     {
@@ -25,9 +20,9 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<IActionResult> All(string? searchTerm)
     {
-        IEnumerable<UserViewModel>? students = await _studentService.AllAsync(searchTerm);
+        IEnumerable<UserViewModel>? students = await studentService.AllAsync(searchTerm);
 
-        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
             return PartialView(GetViewPath("_AllPartial"), students);
         }
@@ -49,9 +44,9 @@ public class StudentController : Controller
 
         try
         {
-            ViewModels.Admin.Student.StudentChangeGuardianViewModel viewModel = await _studentService.GetStudentChangeGuardianAsync(id);
+            ViewModels.Admin.Student.StudentChangeGuardianViewModel viewModel = await studentService.GetStudentChangeGuardianAsync(id);
 
-            return viewModel.UserDetails == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(ChangeGuardian)), viewModel);
+            return viewModel.UserDetails == null ? View("NotFound404") : View(GetViewPath(nameof(ChangeGuardian)), viewModel);
         }
         catch (Exception)
         {
@@ -73,7 +68,7 @@ public class StudentController : Controller
 
         try
         {
-            bool successfulGuardianChange = await _studentService.StudentChangeGuardianAsync(id, guardianId);
+            bool successfulGuardianChange = await studentService.StudentChangeGuardianAsync(id, guardianId);
 
             if (successfulGuardianChange)
             {

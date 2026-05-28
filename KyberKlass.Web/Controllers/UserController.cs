@@ -12,23 +12,15 @@ using static KyberKlass.Common.CustomMessageConstants.User;
 namespace KyberKlass.Web.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class UserController : Controller
+public class UserController(
+    IUserService userService,
+    IUserRoleService userRoleService,
+    ISchoolService schoolService,
+    ITeacherService teacherService,
+    IGuardianService guardianService)
+    : Controller
 {
-    private readonly IUserService _userService;
-    private readonly IUserRoleService _userRoleService;
-    private readonly ISchoolService _schoolService;
-    private readonly ITeacherService _teacherService;
-    private readonly IGuardianService _guardianService;
     private const string CONTROLLER_NAME = "User";
-
-    public UserController(IUserService userService, IUserRoleService userRoleService, ISchoolService schoolService, ITeacherService teacherService, IGuardianService guardianService)
-    {
-        _userService = userService;
-        _userRoleService = userRoleService;
-        _schoolService = schoolService;
-        _teacherService = teacherService;
-        _guardianService = guardianService;
-    }
 
     private static string GetViewPath(string viewName)
     {
@@ -38,7 +30,7 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> All(string? searchTerm, string? roleFilter)
     {
-        IEnumerable<UserViewModel> users = await _userService.AllAsync(searchTerm, roleFilter);
+        IEnumerable<UserViewModel> users = await userService.AllAsync(searchTerm, roleFilter);
 
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
@@ -63,7 +55,7 @@ public class UserController : Controller
 
         try
         {
-            UserDetailsViewModel? userDetailsViewModel = await _userService.GetDetailsAsync(id);
+            UserDetailsViewModel? userDetailsViewModel = await userService.GetDetailsAsync(id);
 
             return userDetailsViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Details)), userDetailsViewModel);
         }
@@ -86,7 +78,7 @@ public class UserController : Controller
 
         try
         {
-            UserEditFormModel? userViewModel = await _userService.GetForEditAsync(id);
+            UserEditFormModel? userViewModel = await userService.GetForEditAsync(id);
 
             return userViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Edit)), userViewModel);
         }
@@ -116,7 +108,7 @@ public class UserController : Controller
 
         try
         {
-            UserEditFormModel? userToEdit = await _userService.EditAsync(id, model);
+            UserEditFormModel? userToEdit = await userService.EditAsync(id, model);
 
             if (userToEdit != null)
             {
@@ -148,7 +140,7 @@ public class UserController : Controller
 
         try
         {
-            UserUpdateRoleViewModel? userUpdateRoleViewModel = await _userRoleService.GetForUpdateRoleAsync(id);
+            UserUpdateRoleViewModel? userUpdateRoleViewModel = await userRoleService.GetForUpdateRoleAsync(id);
 
             return userUpdateRoleViewModel == null
                 ? View("NotFound404")
@@ -174,15 +166,15 @@ public class UserController : Controller
 
         try
         {
-            UserUpdateRoleViewModel? userUpdateRoleViewModel = await _userRoleService.GetForUpdateRoleAsync(id); // Retrieve the user viewmodel
+            UserUpdateRoleViewModel? userUpdateRoleViewModel = await userRoleService.GetForUpdateRoleAsync(id); // Retrieve the user viewmodel
 
             string? currentRole = userUpdateRoleViewModel?.PreviousRoleName; // Gets the name of the role before the update
-            string? roleToUpdateTo = await _userRoleService.GetRoleNameByIdAsync(roleId); // Get the name of the role which we want to update to
+            string? roleToUpdateTo = await userRoleService.GetRoleNameByIdAsync(roleId); // Get the name of the role which we want to update to
 
             if (roleToUpdateTo != null && currentRole == "Teacher") // If user wants to update to a valid role and his current role is "Teacher"
             {
                 // Checks if teacher is assigned to a classroom
-                bool isTeacherAssignedToClassroom = await _teacherService.IsTeacherAssignedToClassroomAsync(id);
+                bool isTeacherAssignedToClassroom = await teacherService.IsTeacherAssignedToClassroomAsync(id);
 
                 if (isTeacherAssignedToClassroom) // If teacher is assigned to a classroom
                 {
@@ -194,7 +186,7 @@ public class UserController : Controller
             else if (roleToUpdateTo != null && currentRole == "Guardian") // If user wants to update to a valid role and his current role is "Guardian"
             {
                 // Checks if guardian is assigned to any student
-                bool isGuardianAssignedToStudent = await _guardianService.IsGuardianAssignedToStudentAsync(id);
+                bool isGuardianAssignedToStudent = await guardianService.IsGuardianAssignedToStudentAsync(id);
 
                 if (isGuardianAssignedToStudent) // If guardian is assigned to any student
                 {
@@ -204,7 +196,7 @@ public class UserController : Controller
                 }
             }
 
-            bool successfulRoleUpdate = await _userRoleService.UpdateRoleAsync(id, roleId, guardianId, schoolId, classroomId);
+            bool successfulRoleUpdate = await userRoleService.UpdateRoleAsync(id, roleId, guardianId, schoolId, classroomId);
 
             if (successfulRoleUpdate)
             {
@@ -212,8 +204,6 @@ public class UserController : Controller
 
                 return RedirectToAction(roleToUpdateTo switch
                 {
-                    "Teacher" => nameof(All),
-                    "Student" or "Guardian" or "Admin" => nameof(All),
                     _ => nameof(All)
                 });
             }
@@ -230,8 +220,8 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> GetGuardiansAndSchools()
     {
-        IEnumerable<BasicViewModel> guardians = await _guardianService.GetAllGuardiansAsync(); // Fetch guardians
-        IEnumerable<BasicViewModel> schools = await _schoolService.BasicAllAsync(); // Fetch schools
+        IEnumerable<BasicViewModel> guardians = await guardianService.GetAllGuardiansAsync(); // Fetch guardians
+        IEnumerable<BasicViewModel> schools = await schoolService.BasicAllAsync(); // Fetch schools
 
         var data = new
         {

@@ -9,21 +9,15 @@ using static KyberKlass.Common.EntityValidations.BaseUser;
 #nullable disable
 
 namespace KyberKlass.Web.Areas.Identity.Pages.Account;
-public class RegisterModel : PageModel
-{
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IUserStore<ApplicationUser> _userStore;
 
-    public RegisterModel(
-        UserManager<ApplicationUser> userManager,
-        IUserStore<ApplicationUser> userStore,
-        SignInManager<ApplicationUser> signInManager)
-    {
-        _userManager = userManager;
-        _userStore = userStore;
-        _signInManager = signInManager;
-    }
+public class RegisterModel(
+    UserManager<ApplicationUser> userManager,
+    IUserStore<ApplicationUser> userStore,
+    SignInManager<ApplicationUser> signInManager) : PageModel
+{
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IUserStore<ApplicationUser> _userStore = userStore;
 
     [BindProperty]
     public InputModel Input { get; set; }

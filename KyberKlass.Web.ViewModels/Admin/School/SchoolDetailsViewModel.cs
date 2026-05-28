@@ -4,11 +4,6 @@ using System.ComponentModel.DataAnnotations;
 namespace KyberKlass.Web.ViewModels.Admin.School;
 public class SchoolDetailsViewModel
 {
-    public SchoolDetailsViewModel()
-    {
-        Classrooms = new HashSet<ClassroomDetailsViewModel>();
-    }
-
     public string Id { get; set; } = null!;
 
     public string Name { get; set; } = null!;
@@ -28,7 +23,7 @@ public class SchoolDetailsViewModel
     [Display(Name = "Total Students")]
     public int TotalStudents => Classrooms.Sum(s => s.StudentsCount);
 
-    public IEnumerable<ClassroomDetailsViewModel> Classrooms { get; set; }
+    public IEnumerable<ClassroomDetailsViewModel> Classrooms { get; set; } = new HashSet<ClassroomDetailsViewModel>();
 
     public string? SearchTerm { get; set; }
 }

@@ -6,22 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using static KyberKlass.Common.CustomMessageConstants.Common;
 
 namespace KyberKlass.Web.Controllers;
-public class ClassroomController : Controller
+
+public class ClassroomController(
+    ISchoolService schoolService,
+    IClassroomService classroomService,
+    ITeacherService teacherService)
+    : Controller
 {
-    private readonly ISchoolService _schoolService;
-    private readonly IClassroomService _classroomService;
-    private readonly ITeacherService _teacherService;
-
     private const string CONTROLLER_NAME = "Classroom";
-
-    public ClassroomController(ISchoolService schoolService,
-        IClassroomService classroomService,
-        ITeacherService teacherService)
-    {
-        _schoolService = schoolService;
-        _classroomService = classroomService;
-        _teacherService = teacherService;
-    }
 
     private string GetViewPath(string viewName)
     {
@@ -39,7 +31,7 @@ public class ClassroomController : Controller
             //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
-        IEnumerable<BasicViewModel> unassignedTeachers = await _teacherService.GetUnassignedTeachersAsync();
+        IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
 
         AddClassroomViewModel viewModel = new()
         {
@@ -57,7 +49,7 @@ public class ClassroomController : Controller
         if (ModelState.IsValid == false)
         {
             // Repopulate unassigned teachers
-            IEnumerable<BasicViewModel> unassignedTeachers = await _teacherService.GetUnassignedTeachersAsync();
+            IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
             model.UnassignedTeachers = unassignedTeachers;
 
             // Repopulate unassigned students
@@ -67,7 +59,7 @@ public class ClassroomController : Controller
 
         try
         {
-            bool alreadyExists = await _classroomService.ClassroomExistsInSchoolAsync(model.Name, model.SchoolId);
+            bool alreadyExists = await classroomService.ClassroomExistsInSchoolAsync(model.Name, model.SchoolId);
 
             if (alreadyExists)
             {
@@ -75,7 +67,7 @@ public class ClassroomController : Controller
             }
             else
             {
-                bool addedSuccessfully = await _classroomService.AddAsync(model);
+                bool addedSuccessfully = await classroomService.AddAsync(model);
 
                 if (addedSuccessfully == false)
                 {
@@ -94,7 +86,7 @@ public class ClassroomController : Controller
             ModelState.AddModelError(string.Empty, string.Format(ADDITION_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
 
             // Repopulate unassigned teachers
-            IEnumerable<BasicViewModel> unassignedTeachers = await _teacherService.GetUnassignedTeachersAsync();
+            IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
             model.UnassignedTeachers = unassignedTeachers;
 
             // Repopulate unassigned students
@@ -106,7 +98,7 @@ public class ClassroomController : Controller
     [HttpGet]
     public async Task<IActionResult> GetSchoolClassrooms(string schoolId)
     {
-        IEnumerable<BasicViewModel> classrooms = await _classroomService.GetAllClassroomsBySchoolIdAsJsonAsync(schoolId);
+        IEnumerable<BasicViewModel> classrooms = await classroomService.GetAllClassroomsBySchoolIdAsJsonAsync(schoolId);
 
         return Json(classrooms);
     }
@@ -125,11 +117,11 @@ public class ClassroomController : Controller
 
         try
         {
-            ClassroomDetailsViewModel? classroomDetailsViewModel = await _classroomService.GetClassroomAsync(classroomId);
+            ClassroomDetailsViewModel? classroomDetailsViewModel = await classroomService.GetClassroomAsync(classroomId);
 
             return classroomDetailsViewModel == null
                 ? View("NotFound404")
-                : (IActionResult)View(GetViewPath(nameof(Details)), classroomDetailsViewModel);
+                : View(GetViewPath(nameof(Details)), classroomDetailsViewModel);
         }
         catch (Exception)
         {
@@ -150,7 +142,7 @@ public class ClassroomController : Controller
 
         try
         {
-            ViewModels.Admin.School.SchoolDetailsViewModel? school = await _schoolService.GetByIdAsync(schoolId);
+            ViewModels.Admin.School.SchoolDetailsViewModel? school = await schoolService.GetByIdAsync(schoolId);
 
             if (school == null)
             {
@@ -158,13 +150,13 @@ public class ClassroomController : Controller
                 //return NotFound();
             }
 
-            IEnumerable<ClassroomDetailsViewModel> classrooms = await _classroomService.AllAsync(schoolId);
+            IEnumerable<ClassroomDetailsViewModel> classrooms = await classroomService.AllAsync(schoolId);
 
             ManageClassroomsViewModel viewModel = new()
             {
                 SchoolId = schoolId,
                 SchoolName = school.Name,
-                Classrooms = classrooms.ToList()
+                Classrooms = [.. classrooms]
             };
 
             return View(GetViewPath(nameof(Manage)), viewModel);
@@ -189,9 +181,9 @@ public class ClassroomController : Controller
 
         try
         {
-            AddClassroomViewModel? classroomViewModel = await _classroomService.GetForEditAsync(classroomId);
+            AddClassroomViewModel? classroomViewModel = await classroomService.GetForEditAsync(classroomId);
 
-            return classroomViewModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Edit)), classroomViewModel);
+            return classroomViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Edit)), classroomViewModel);
         }
         catch (Exception)
         {
@@ -224,13 +216,13 @@ public class ClassroomController : Controller
 
         try
         {
-            bool editSuccessfully = await _classroomService.EditAsync(classroomId, model);
+            bool editSuccessfully = await classroomService.EditAsync(classroomId, model);
 
             if (editSuccessfully)
             {
                 TempData["SuccessMessage"] = model.IsActive == false
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
-                    : (object)string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
+                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
 
             return RedirectToAction(nameof(Manage), new { model.SchoolId });
@@ -257,9 +249,9 @@ public class ClassroomController : Controller
 
         try
         {
-            ClassroomDetailsViewModel? model = await _classroomService.GetForDeleteAsync(classroomId);
+            ClassroomDetailsViewModel? model = await classroomService.GetForDeleteAsync(classroomId);
 
-            return model == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Delete)), model);
+            return model == null ? View("NotFound404") : View(GetViewPath(nameof(Delete)), model);
         }
         catch (Exception)
         {
@@ -286,7 +278,7 @@ public class ClassroomController : Controller
 
         try
         {
-            bool hasStudentsAssigned = await _classroomService.HasStudentsAssignedAsync(classroomId);
+            bool hasStudentsAssigned = await classroomService.HasStudentsAssignedAsync(classroomId);
 
             if (hasStudentsAssigned)
             {
@@ -295,7 +287,7 @@ public class ClassroomController : Controller
                 return RedirectToAction(nameof(Manage), new { schoolId });
             }
 
-            bool successfullyDeleted = await _classroomService.DeleteAsync(classroomId);
+            bool successfullyDeleted = await classroomService.DeleteAsync(classroomId);
 
             if (successfullyDeleted)
             {

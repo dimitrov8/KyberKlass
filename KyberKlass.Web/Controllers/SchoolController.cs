@@ -1,10 +1,8 @@
-﻿using AspNetCoreGeneratedDocument;
-using KyberKlass.Services.Data.Interfaces;
+﻿using KyberKlass.Services.Data.Interfaces;
 using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.School;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using static KyberKlass.Common.CustomMessageConstants.Common;
 
@@ -12,20 +10,15 @@ namespace KyberKlass.Web.Controllers;
 /// <summary>
 ///     Controller responsible for managing schools in the system.
 /// </summary>
+/// <remarks>
+///     Initializes a new instance of the <see cref="SchoolController" /> class.
+/// </remarks>
+/// <param name="schoolService">The service for managing schools.</param>
 [Authorize(Roles = "Admin")]
-public class SchoolController : Controller
+public class SchoolController(ISchoolService schoolService) : Controller
 {
-    private readonly ISchoolService _schoolService;
+    private readonly ISchoolService _schoolService = schoolService;
     private const string CONTROLLER_NAME = "School";
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="SchoolController" /> class.
-    /// </summary>
-    /// <param name="schoolService">The service for managing schools.</param>
-    public SchoolController(ISchoolService schoolService)
-    {
-        _schoolService = schoolService;
-    }
 
     private string GetViewPath(string viewName)
     {
@@ -38,7 +31,7 @@ public class SchoolController : Controller
     [HttpGet]
     public async Task<IActionResult> All(string? searchTerm)
     {
-        IEnumerable<SchoolViewModel> schools = await _schoolService.AllAsync(searchTerm);
+        IEnumerable<SchoolDetailsViewModel> schools = await _schoolService.AllAsync(searchTerm);
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {
@@ -75,7 +68,7 @@ public class SchoolController : Controller
     [HttpPost]
     public async Task<IActionResult> Add(AddSchoolFormModel model)
     {
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             return View(GetViewPath(nameof(Add)), model);
         }
@@ -122,7 +115,7 @@ public class SchoolController : Controller
         {
             SchoolDetailsViewModel? schoolModel = await _schoolService.ViewDetailsAsync(id);
 
-            return schoolModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Details)), schoolModel);
+            return schoolModel == null ? View("NotFound404") : View(GetViewPath(nameof(Details)), schoolModel);
         }
         catch (Exception)
         {
@@ -149,7 +142,7 @@ public class SchoolController : Controller
         {
             AddSchoolFormModel? schoolViewModel = await _schoolService.GetForEditAsync(id);
 
-            return schoolViewModel == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Edit)), schoolViewModel);
+            return schoolViewModel == null ? View("NotFound404") : View(GetViewPath(nameof(Edit)), schoolViewModel);
         }
         catch (Exception)
         {
@@ -188,7 +181,7 @@ public class SchoolController : Controller
             {
                 TempData["SuccessMessage"] = model.IsActive == false
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
-                    : (object)string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
+                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
             }
 
             return RedirectToAction(nameof(All));
@@ -220,7 +213,7 @@ public class SchoolController : Controller
         {
             SchoolDetailsViewModel? model = await _schoolService.GetForDeleteAsync(id);
 
-            return model == null ? View("NotFound404") : (IActionResult)View(GetViewPath(nameof(Delete)), model);
+            return model == null ? View("NotFound404") : View(GetViewPath(nameof(Delete)), model);
         }
         catch (Exception)
         {

@@ -2,14 +2,6 @@
 
 public class UserUpdateRoleViewModel
 {
-    public UserUpdateRoleViewModel()
-    {
-        AvailableRoles = new HashSet<UserRolesViewModel>();
-        AvailableGuardians = new HashSet<BasicViewModel>();
-        AvailableSchools = new HashSet<BasicViewModel>();
-        AvailableClassrooms = new HashSet<BasicViewModel>();
-    }
-
     public string Id { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
@@ -33,14 +25,14 @@ public class UserUpdateRoleViewModel
     public string? ClassroomId { get; set; }
 
     // Additional property to hold available roles
-    public IEnumerable<UserRolesViewModel> AvailableRoles { get; set; }
+    public IEnumerable<UserRolesViewModel> AvailableRoles { get; set; } = new HashSet<UserRolesViewModel>();
 
     // Additional property to hold available guardians (only for students)
-    public IEnumerable<BasicViewModel> AvailableGuardians { get; set; }
+    public IEnumerable<BasicViewModel> AvailableGuardians { get; set; } = new HashSet<BasicViewModel>();
 
     // Additional property to hold available classrooms (only for students)
-    public IEnumerable<BasicViewModel> AvailableSchools { get; set; }
+    public IEnumerable<BasicViewModel> AvailableSchools { get; set; } = new HashSet<BasicViewModel>();
 
     // Additional property to hold available classrooms (only for students)
-    public IEnumerable<BasicViewModel> AvailableClassrooms { get; set; }
+    public IEnumerable<BasicViewModel> AvailableClassrooms { get; set; } = new HashSet<BasicViewModel>();
 }

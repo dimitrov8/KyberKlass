@@ -9,19 +9,9 @@ using System.ComponentModel.DataAnnotations;
 #nullable disable
 
 namespace KyberKlass.Web.Areas.Identity.Pages.Account;
-public class LoginModel : PageModel
+
+public class LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager) : PageModel
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-
-    public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
-
     [BindProperty]
     public InputModel Input { get; set; }
 
@@ -71,19 +61,19 @@ public class LoginModel : PageModel
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, false);
+            Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, false);
 
             if (result.Succeeded)
             {
-                ApplicationUser user = await _userManager.FindByEmailAsync(Input.Email);
+                ApplicationUser user = await userManager.FindByEmailAsync(Input.Email);
 
                 if (user != null)
                 {
-                    string roleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                    string roleName = (await userManager.GetRolesAsync(user)).FirstOrDefault();
 
                     if (roleName != null)
                     {
-                        user.Role = await _roleManager.FindByNameAsync(roleName);
+                        user.Role = await roleManager.FindByNameAsync(roleName);
                     }
                 }
 
