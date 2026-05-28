@@ -17,7 +17,7 @@
     }
 
 .action-btn {
-    width: 6.25rem;
+    min-width: 6.25rem;
     padding: 0.375rem 0.375rem;
     text-align: center;
     white-space: nowrap;
@@ -76,7 +76,7 @@
         padding-left: 0.625rem;
         padding-right: 0.625rem;
     }
-  
+
 
 .custom-table_paginate {
     text-align: center !important;

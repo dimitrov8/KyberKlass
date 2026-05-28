@@ -7,13 +7,20 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
     <UserSecretsId>aspnet-KyberKlass.Web-f6428f1f-ce95-4c77-80fb-15838ba26fe4</UserSecretsId>
+    <WatchExclude>wwwroot/**/*</WatchExclude>
+      <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="wwwroot\dist\**"/>
     <Content Remove="wwwroot\dist\**"/>
     <EmbeddedResource Remove="wwwroot\dist\**"/>
-    <None Remove="wwwroot\dist\**"/>
+    <None Remove="**\*~" />
+    <None Remove="**\*.swp" />
+
+    <Watch Include="**\*.cs" />
+    <Watch Include="**\*.cshtml" />
+    <Watch Remove="wwwroot\**\*" />
   </ItemGroup>
 
   <ItemGroup>
