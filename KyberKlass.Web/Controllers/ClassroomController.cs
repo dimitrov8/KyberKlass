@@ -218,6 +218,12 @@ public class ClassroomController(
         {
             TempData["ErrorMessage"] = UNABLE_TO_SAVE_CHANGES_MESSAGE;
 
+            AddClassroomViewModel? editModel = await classroomService.GetForEditAsync(model.Id.ToString());
+            if (editModel != null)
+            {
+                model.UnassignedTeachers = editModel.UnassignedTeachers;
+            }
+
             return View(GetViewPath(nameof(Edit)), model);
         }
 
@@ -229,7 +235,7 @@ public class ClassroomController(
             {
                 TempData["SuccessMessage"] = !model.IsActive
                     ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
-                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Name);
+                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Id);
             }
 
             return RedirectToAction(nameof(Manage), new { model.SchoolId });

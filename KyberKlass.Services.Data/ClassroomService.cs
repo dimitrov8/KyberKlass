@@ -137,6 +137,21 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
             .AsNoTracking()
             .FirstOrDefaultAsync();
 
+        if (viewModel != null)
+        {
+            Guid currentTeacherId = Guid.Parse(viewModel.TeacherId);
+
+            viewModel.UnassignedTeachers = await _dbContext
+                .Teachers
+                .Where(predicate: t => !_dbContext.Classrooms.Any(c => c.TeacherId == t.Id) || t.Id == currentTeacherId)
+                .Select(selector: t => new BasicViewModel
+                {
+                    Id = t.Id.ToString(),
+                    Name = t.ApplicationUser.GetFullName()
+                })
+                .ToArrayAsync();
+        }
+
         return viewModel;
     }
 
@@ -150,6 +165,10 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
             return false;
         }
 
+        classroomToEdit.Name = model.Name;
+        classroomToEdit.TeacherId = Guid.Parse(model.TeacherId);
+        classroomToEdit.Name = model.Name;
+        classroomToEdit.TeacherId = Guid.Parse(model.TeacherId);
         classroomToEdit.IsActive = model.IsActive;
 
         await _dbContext.SaveChangesAsync();
