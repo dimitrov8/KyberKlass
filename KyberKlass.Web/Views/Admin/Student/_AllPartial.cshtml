@@ -1,0 +1,42 @@
+@model IEnumerable<UserViewModel>
+
+<table id="id" class="table table-bordered table-active table-hover custom-table">
+    <thead>
+    <tr>
+        <th class="email-col">ID</th>
+        <th class="email-col">Email</th>
+        <th class="name-col">Full Name</th>
+        <th class="role-col">Role</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td class="email-col">@user.Id</td>
+            <td class="email-col">@user.Email</td>
+            <td class="name-col">@user.FullName</td>
+            <td class="role-col">@user.Role</td>
+            <td>
+                <form asp-controller="User" asp-action="Edit" method="get" style="display: inline;">
+                    <input type="hidden" name="id" value="@user.Id"/>
+                    <button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
+                </form>
+                <form asp-controller="User" asp-action="Details" method="get" style="display: inline;">
+                    <input type="hidden" name="id" value="@user.Id"/>
+                    <button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+                </form>
+                <form asp-controller="User" asp-action="UpdateRole" method="get" style="display: inline;">
+                    <input type="hidden" name="id" value="@user.Id"/>
+                    <button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
+                </form>
+                <form asp-controller="Student" asp-action="ChangeGuardian" method="get" style="display: inline;">
+                    <input type="hidden" name="id" value="@user.Id"/>
+                    <button type="submit" class="btn btn-success btn-sm fw-bold">Change Guardian</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

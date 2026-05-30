@@ -35,7 +35,7 @@ public class StudentService(KyberKlassDbContext dbContext,
     /// <inheritdoc />
     public async Task<IEnumerable<UserViewModel>> AllAsync(string? searchTerm = null)
     {
-        string studentRoleName = "Student";
+        const string studentRoleName = "Student";
 
         Guid studentRoleId = await _dbContext
             .Roles
@@ -49,15 +49,23 @@ public class StudentService(KyberKlassDbContext dbContext,
             return Enumerable.Empty<UserViewModel>();
         }
 
-
-        List<ApplicationUser> students = await _dbContext
+        IQueryable<ApplicationUser> query = _dbContext
             .Users
             .Where(predicate: user => _dbContext
                 .UserRoles
                 .Any(userRole => userRole.UserId == user.Id && userRole.RoleId == studentRoleId))
-            //.Include(user => user.Role)
-            .AsNoTracking()
-            .ToListAsync();
+            .AsNoTracking();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            string term = searchTerm.ToLower();
+            query = query.Where(predicate: u =>
+                u.FirstName.ToLower().Contains(term) ||
+                u.LastName.ToLower().Contains(term) ||
+                u.Email.ToLower().Contains(term));
+        }
+
+        List<ApplicationUser> students = await query.ToListAsync();
 
         List<UserViewModel> studentViewModels = students
             .Select(selector: t => new UserViewModel
