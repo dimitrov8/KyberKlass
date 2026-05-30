@@ -81,7 +81,7 @@ public class StudentService(KyberKlassDbContext dbContext,
     }
 
     /// <inheritdoc />
-    public Task<Student?> GetByIdASync(string id)
+    public Task<Student?> GetByIdAsync(string id)
     {
         return _dbContext
             .Students
@@ -106,7 +106,7 @@ public class StudentService(KyberKlassDbContext dbContext,
     /// <inheritdoc />
     public async Task<bool> StudentChangeGuardianAsync(string userId, string guardianId)
     {
-        Student? student = await GetByIdASync(userId);
+        Student? student = await GetByIdAsync(userId);
         Guardian? newGuardian = await _guardianService.GetByIdAsync(guardianId);
 
         if (student == null || newGuardian == null)

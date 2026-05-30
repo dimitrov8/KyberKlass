@@ -98,7 +98,7 @@ public class StudentServiceTests : IDisposable
         await _dbContextMock.SaveChangesAsync();
 
         // Act
-        Student? result = await _sut.GetByIdASync(studentId.ToString());
+        Student? result = await _sut.GetByIdAsync(studentId.ToString());
 
         // Assert
         Assert.NotNull(result);
@@ -116,7 +116,7 @@ public class StudentServiceTests : IDisposable
         Guid invalidId = Guid.NewGuid();
 
         // Act
-        Student? result = await _sut.GetByIdASync(invalidId.ToString());
+        Student? result = await _sut.GetByIdAsync(invalidId.ToString());
 
         // Assert
         Assert.Null(result);

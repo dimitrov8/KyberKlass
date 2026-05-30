@@ -25,7 +25,7 @@ public interface IStudentService
     /// </summary>
     /// <param name="id">The unique identifier of the student.</param>
     /// <returns>The Student object if found, otherwise null.</returns>
-    Task<Student?> GetByIdASync(string id);
+    Task<Student?> GetByIdAsync(string id);
 
     /// <summary>
     ///     Retrieves the view model for changing a student's guardian asynchronously.
