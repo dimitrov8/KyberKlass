@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<UserViewModel>
 
-@{
-    var gridClass = "not-four-buttons";
-}
-
 <table id="teachersTable" class="table table-bordered table-active table-hover custom-table">
     <thead>
         <tr>
@@ -21,20 +17,14 @@
                 <td class="name-col">@user.FullName</td>
                 <td class="role-col">@user.Role</td>
                 <td>
-                    <div class="action-container @gridClass">
-
-                        <!-- Details button -->
-                        <form asp-controller="User" asp-action="Details" method="get">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <button type="submit" class="btn btn-info btn-sm fw-bold action-btn">Details</button>
-                        </form>
-
-                        <!-- Update Role button -->
-                        <form asp-controller="User" asp-action="UpdateRole" method="get">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <button type="submit" class="btn btn-warning btn-sm fw-bold action-btn">Update Role</button>
-                        </form>
-                    </div>
+                    <form asp-controller="User" asp-action="Details" method="get" style="display: inline;">
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+                    </form>
+                    <form asp-controller="User" asp-action="UpdateRole" method="get" style="display: inline;">
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <button type="submit" class="btn btn-warning btn-sm fw-bold">Update Role</button>
+                    </form>
                 </td>
             </tr>
         }

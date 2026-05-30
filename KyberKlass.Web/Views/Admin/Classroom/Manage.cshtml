@@ -24,13 +24,13 @@
 }
 
 <div class="card-body">
-	<table id="id" class="table table-bordered table-striped">
+	<table id="id" class="table table-bordered table-active table-hover custom-table">
 		<thead>
 		<tr>
-			<th>Classroom ID</th>
-			<th>Classroom Name</th>
-			<th>Teacher</th>
-			<th>Number of Students</th>
+			<th class="email-col">Classroom ID</th>
+			<th class="name-col">Classroom Name</th>
+			<th class="name-col">Teacher</th>
+			<th class="email-col">Students</th>
 			<th>Actions</th>
 		</tr>
 		</thead>
@@ -38,27 +38,22 @@
 		@foreach (var classroom in Model.Classrooms)
 		{
 			<tr>
-				<td>@classroom.Id</td>
-				<td>@classroom.Name</td>
-				<td>@classroom.TeacherName</td>
-				<td>@classroom.StudentsCount</td>
+				<td class="email-col">@classroom.Id</td>
+				<td class="name-col">@classroom.Name</td>
+				<td class="name-col">@classroom.TeacherName</td>
+				<td class="email-col">@classroom.StudentsCount</td>
 				<td>
-					<!-- Edit button -->
-					<form asp-controller="Classroom" asp-action="Edit" method="get" style="display : inline;">
+					<form asp-controller="Classroom" asp-action="Edit" method="get" style="display: inline;">
 						<input type="hidden" name="schoolId" value="@Model.SchoolId"/>
 						<input type="hidden" name="classroomId" value="@classroom.Id"/>
 						<button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
 					</form>
-
-					<!-- Details button -->
-					<form asp-controller="Classroom" asp-action="Details" method="get" style="display : inline;">
+					<form asp-controller="Classroom" asp-action="Details" method="get" style="display: inline;">
 						<input type="hidden" name="schoolId" value="@Model.SchoolId"/>
 						<input type="hidden" name="classroomId" value="@classroom.Id"/>
 						<button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
 					</form>
-
-					<!-- Delete button -->
-					<form asp-controller="Classroom" asp-action="Delete" method="get" style="display : inline;">
+					<form asp-controller="Classroom" asp-action="Delete" method="get" style="display: inline;">
 						<input type="hidden" name="schoolId" value="@Model.SchoolId"/>
 						<input type="hidden" name="classroomId" value="@classroom.Id"/>
 						<button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>

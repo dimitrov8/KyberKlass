@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<SchoolDetailsViewModel>
 
-@{
-    const string gridClass = "four-buttons";
-}
-
 <table id="schoolsTable" class="table table-bordered table-active table-hover custom-table">
     <thead>
         <tr>
@@ -23,32 +19,22 @@
                 <td class="email-col">@school.Email</td>
                 <td class="phone-col">@school.PhoneNumber</td>
                 <td>
-                    <div class="action-container @gridClass">
-
-                        <!-- Edit button -->
-                        <form asp-controller="School" asp-action="Edit" method="get">
-                            <input type="hidden" name="id" value="@school.Id" />
-                            <button type="submit" class="btn btn-secondary btn-sm fw-bold action-btn">Edit</button>
-                        </form>
-
-                        <!-- Details button -->
-                        <form asp-controller="School" asp-action="Details" method="get">
-                            <input type="hidden" name="id" value="@school.Id" />
-                            <button type="submit" class="btn btn-info btn-sm fw-bold action-btn">Details</button>
-                        </form>
-
-                        <!-- Manage Classrooms button -->
-                        <form asp-controller="Classroom" asp-action="Manage" method="get">
-                        <input type="hidden" name="schoolId" value="@school.Id" />
-                        <button type="submit" class="btn btn-primary btn-sm fw-bold action-btn">Manage</button>
-                        </form>
-
-                        <!-- Delete button -->
-                        <form asp-controller="School" asp-action="Delete" method="get">
+                    <form asp-controller="School" asp-action="Edit" method="get" style="display: inline;">
                         <input type="hidden" name="id" value="@school.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm fw-bold action-btn">Delete</button>
-                        </form>
-                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm fw-bold">Edit</button>
+                    </form>
+                    <form asp-controller="School" asp-action="Details" method="get" style="display: inline;">
+                        <input type="hidden" name="id" value="@school.Id" />
+                        <button type="submit" class="btn btn-info btn-sm fw-bold">Details</button>
+                    </form>
+                    <form asp-controller="Classroom" asp-action="Manage" method="get" style="display: inline;">
+                        <input type="hidden" name="schoolId" value="@school.Id" />
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold">Manage</button>
+                    </form>
+                    <form asp-controller="School" asp-action="Delete" method="get" style="display: inline;">
+                        <input type="hidden" name="id" value="@school.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm fw-bold">Delete</button>
+                    </form>
                 </td>
             </tr>
         }
