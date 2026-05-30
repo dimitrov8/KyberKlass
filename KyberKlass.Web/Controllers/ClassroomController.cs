@@ -6,6 +6,7 @@ using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.School;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using static KyberKlass.Common.CustomMessageConstants.Common;
@@ -14,6 +15,7 @@ using static KyberKlass.Common.CustomMessageConstants.Common;
 
 namespace KyberKlass.Web.Controllers;
 
+[Authorize(Roles="Admin")]
 public class ClassroomController(
     ISchoolService schoolService,
     IClassroomService classroomService,
