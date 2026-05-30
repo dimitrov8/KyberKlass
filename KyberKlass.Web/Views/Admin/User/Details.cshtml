@@ -35,7 +35,7 @@
                 <dd class="col-sm-8">@Model.FullName</dd>
 
                 <dt class="col-sm-4">Birth Date:</dt>
-                <dd class="col-sm-8">@Model.BirthDate</dd>
+                <dd class="col-sm-8">@DateTime.Parse(Model.BirthDate).ToString("dd-MM-yyyy")</dd>
 
                 <dt class="col-sm-4">Address:</dt>
                 <dd class="col-sm-8">@Model.Address</dd>
