@@ -6,7 +6,6 @@
             <th class="name-col">Name</th>
             <th class="address-col">Address</th>
             <th class="email-col">Email</th>
-            <th class="phone-col">Phone</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -17,7 +16,6 @@
                 <td class="name-col">@school.Name</td>
                 <td class="address-col">@school.Address</td>
                 <td class="email-col">@school.Email</td>
-                <td class="phone-col">@school.PhoneNumber</td>
                 <td>
                     <form asp-controller="School" asp-action="Edit" method="get" style="display: inline;">
                         <input type="hidden" name="id" value="@school.Id" />

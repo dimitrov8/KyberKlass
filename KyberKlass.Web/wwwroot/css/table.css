@@ -30,13 +30,6 @@
         word-wrap: break-word;
     }
 
-    .custom-table .phone-col {
-        max-width: 3.75rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     .custom-table .role-col {
         max-width: 3.75rem;
         white-space: normal;
@@ -109,6 +102,31 @@
 }
 
 @media (max-width: 576px) {
+    .dt-toolbar {
+        flex-wrap: wrap !important;
+        overflow-x: auto;
+    }
+
+    .dt-top-left {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .dt-top-right {
+        flex: 0 0 auto;
+        margin-left: auto;
+        padding-top: 0.25rem;
+    }
+
+    .dt-top-right .dt-buttons .btn {
+        padding: 0.125rem 0.3rem;
+        font-size: 0.7rem;
+    }
+
+    #searchContainer {
+        max-width: 100%;
+    }
+
     .custom-table td,
     .custom-table th {
         padding: 0.25rem 0.375rem;

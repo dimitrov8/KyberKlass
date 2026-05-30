@@ -2,7 +2,7 @@
     function setupDataTable({resultContainerSelector, searchUrl, tableSelector, onInitComplete}) {
         const config = {
             dom:
-                "<'d-flex justify-content-between align-items-center'<'dt-top-left'><'dt-top-right'B>>" +
+                "<'d-flex justify-content-between align-items-center dt-toolbar'<'dt-top-left'><'dt-top-right'B>>" +
                 't' +
                 "<'d-flex justify-content-between align-items-center'<'dt-bottom-left'l><'dt-bottom-center'p><'dt-bottom-right'>>",
             buttons: [
@@ -13,7 +13,6 @@
             ],
             pageLength: 10,
             lengthMenu: [10, 25],
-            responsive: true,
             initComplete: function () {
                 if (typeof onInitComplete === 'function') {
                     onInitComplete();
@@ -65,4 +64,18 @@
     }
 
     window.setupDataTable = setupDataTable;
+
+    let resizeTimer;
+    $(window).on('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            $('.custom-table').each(function () {
+                const table = $(this).DataTable();
+                if (table) {
+                    $(this).css('width', '');
+                    table.columns.adjust();
+                }
+            });
+        }, 50);
+    });
 })(jQuery);
