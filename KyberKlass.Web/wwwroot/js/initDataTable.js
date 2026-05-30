@@ -37,25 +37,22 @@
 
             clearTimeout(window.delayTimer);
             window.delayTimer = setTimeout(() => {
-                const roleChosen = typeof roleFilter === 'string' ? roleFilter.trim().length > 0 : !!roleFilter;
-                if (searchTerm.length === 0 || searchTerm.length >= 3 || roleFilter) {
-                    $.ajax({
-                        url: searchUrl,
-                        type: 'GET',
-                        data: {
-                            searchTerm: searchTerm,
-                            roleFilter: roleFilter,
-                        },
-                        headers: {'X-Requested-With': 'XMLHttpRequest'},
-                        success: function (data) {
-                            $(resultContainerSelector).html(data);
-                            initDataTable();
-                        },
-                        error: function () {
-                            console.error('Error fetching search results');
-                        },
-                    });
-                }
+                $.ajax({
+                    url: searchUrl,
+                    type: 'GET',
+                    data: {
+                        searchTerm: searchTerm,
+                        roleFilter: roleFilter,
+                    },
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    success: function (data) {
+                        $(resultContainerSelector).html(data);
+                        initDataTable();
+                    },
+                    error: function () {
+                        console.error('Error fetching search results');
+                    },
+                });
             }, 300);
         }
 
