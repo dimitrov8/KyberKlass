@@ -167,8 +167,6 @@ public class ClassroomService(KyberKlassDbContext dbContext) : IClassroomService
 
         classroomToEdit.Name = model.Name;
         classroomToEdit.TeacherId = Guid.Parse(model.TeacherId);
-        classroomToEdit.Name = model.Name;
-        classroomToEdit.TeacherId = Guid.Parse(model.TeacherId);
         classroomToEdit.IsActive = model.IsActive;
 
         await _dbContext.SaveChangesAsync();

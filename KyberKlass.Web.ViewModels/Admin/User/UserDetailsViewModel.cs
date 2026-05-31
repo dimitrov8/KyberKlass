@@ -1,7 +1,6 @@
 ﻿#region
 
 using KyberKlass.Web.ViewModels.Admin.Guardian;
-using KyberKlass.Web.ViewModels.Admin.School;
 
 #endregion
 
@@ -35,6 +34,4 @@ public class UserDetailsViewModel
     public GuardianViewModel? Guardian { get; set; }
     public IEnumerable<BasicViewModel>? Students { get; set; }
 
-    // Property for student's school information
-    public IEnumerable<SchoolDetailsViewModel>? School { get; set; }
 }

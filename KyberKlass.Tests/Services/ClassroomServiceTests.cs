@@ -300,7 +300,12 @@ public class ClassroomServiceTests : IDisposable
         await _dbContextMock.Classrooms.AddAsync(classroom);
         await _dbContextMock.SaveChangesAsync();
 
-        AddClassroomViewModel model = new() { IsActive = false };
+        AddClassroomViewModel model = new()
+        {
+            Name = "11E",
+            TeacherId = Guid.NewGuid().ToString(),
+            IsActive = false
+        };
 
         // Act
         bool result = await _sut.EditAsync(classroomId.ToString(), model);

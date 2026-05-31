@@ -135,8 +135,7 @@ public class UserServiceTests : IDisposable
             Role = "No Role Assigned",
             IsActive = "true",
             Guardian = null,
-            Students = null,
-            School = null
+            Students = null
         };
 
         await _dbContextMock.AddAsync(user);

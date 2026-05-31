@@ -121,7 +121,6 @@ public class StudentService(KyberKlassDbContext dbContext,
             return false;
         }
 
-        student.GuardianId = Guid.Empty;
         student.GuardianId = newGuardian.Id;
 
         await _dbContext.SaveChangesAsync();
