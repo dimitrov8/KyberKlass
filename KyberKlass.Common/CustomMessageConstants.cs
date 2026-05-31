@@ -75,5 +75,4 @@ public static class CustomMessageConstants
             "You cannot change your guardian to the current guardian because it is already set.";
     }
 
-    public static class Classroom {}
 }
