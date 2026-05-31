@@ -1,6 +1,11 @@
 ﻿@model AddClassroomViewModel
 
-<h2>Create Classroom</h2>
+@{
+    ViewData["Title"] = "Add Classroom";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr/>
 
 <form asp-controller="Classroom" asp-action="Add" method="post" onsubmit="return validateForm()">
     <div class="form-group">

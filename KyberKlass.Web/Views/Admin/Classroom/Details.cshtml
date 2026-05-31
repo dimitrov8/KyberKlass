@@ -11,7 +11,7 @@
     @await Html.PartialAsync("~/Views/Admin/Classroom/_DetailsPartial.cshtml", Model)
 
     <div class="mt-5">
-        <a class="btn btn-secondary fw-bold" asp-controller="Classroom" asp-action="Manage"
-           asp-route-schoolId="@Model.SchoolId">Back to List</a>
+        <a class="btn btn-warning fw-bold" asp-controller="Classroom" asp-action="Edit"
+           asp-route-schoolId="@Model.SchoolId">Edit</a>
     </div>
 </div>

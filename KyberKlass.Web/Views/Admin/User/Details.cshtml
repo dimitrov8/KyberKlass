@@ -21,7 +21,7 @@
 }
 
 <div class="container-fluid">
-    <h1>@ViewData["Title"]</h1>
+    <h1 class="text-center">@ViewData["Title"]</h1>
     <hr/>
 
     <div class="row">
@@ -116,6 +116,5 @@
             <a class="btn btn-success fw-bold" asp-controller="Student" asp-action="ChangeGuardian"
                asp-route-id="@Model.Id">Change Guardian</a>
         }
-        <a class="btn btn-secondary fw-bold" asp-controller="User" asp-action="All">Back to List</a>
     </div>
 </div>

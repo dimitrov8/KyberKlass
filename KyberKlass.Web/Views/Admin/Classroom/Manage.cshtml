@@ -6,7 +6,7 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h1 class="text-center">@ViewData["Title"]</h1>
 <hr/>
 
 @if (TempData["SuccessMessage"] != null)
@@ -71,7 +71,6 @@
 }
 
 <a asp-controller="Classroom" asp-action="Add" asp-route-schoolId="@Model.SchoolId" class="btn btn-success fw-bold">Add Classroom</a>
-<a asp-controller="School" asp-action="All" class="btn btn-secondary fw-bold">Back to List</a>
 
 @section scripts
 {

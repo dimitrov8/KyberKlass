@@ -5,7 +5,7 @@
 }
 
 <div class="container-fluid">
-    <h1>@ViewData["Title"]</h1>
+    <h1 class="text-center">@ViewData["Title"]</h1>
     <hr/>
 
     @await Html.PartialAsync("~/Views/Admin/School/_DetailsPartial.cshtml", Model)
@@ -14,8 +14,6 @@
         <form asp-controller="School" asp-action="DeleteConfirmed" method="post">
             <input type="hidden" asp-for="Id"/>
             <button type="submit" class="btn btn-danger fw-bold">Delete</button>
-            <a class="btn btn-secondary fw-bold" asp-controller="School" asp-action="All"
-               asp-route-schoolId="@Model.Id">Back to List</a>
         </form>
     </div>
 </div>
