@@ -1,6 +1,4 @@
-﻿@using static KyberKlass.Common.GeneralApplicationConstants
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8"/>
@@ -100,13 +98,9 @@ else
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container-fluid">
-        &copy; KyberKlass @RELEASE_YEAR
-        @if (DateTime.UtcNow.Year != RELEASE_YEAR)
-        {
-            @Html.Raw($" - {DateTime.UtcNow.Year}")
-        }
+<footer class="border-top footer text-muted py-3">
+    <div class="container text-center">
+        &copy; KyberKlass @DateTime.UtcNow.Year
     </div>
 </footer>
 
