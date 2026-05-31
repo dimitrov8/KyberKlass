@@ -1,7 +1,6 @@
 ﻿#region
 
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin.Student;
 using KyberKlass.Web.ViewModels.Admin.User;
 
@@ -17,9 +16,7 @@ namespace KyberKlass.Web.Controllers;
 [Authorize(Roles = "Admin")]
 public class StudentController(IStudentService studentService) : Controller
 {
-    private const string CONTROLLER_NAME = "Student";
-
-    private string GetViewPath(string viewName)
+    private static string GetViewPath(string viewName)
     {
         return $"~/Views/Admin/Student/{viewName}.cshtml";
     }
@@ -41,12 +38,9 @@ public class StudentController(IStudentService studentService) : Controller
     [HttpGet]
     public async Task<IActionResult> ChangeGuardian(string id)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(id))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -66,13 +60,9 @@ public class StudentController(IStudentService studentService) : Controller
     [HttpPost]
     public async Task<IActionResult> ChangeGuardian(string id, string guardianId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(id, null) &&
-                            ValidationExtensions.IsNotNullOrEmptyInput<string>(guardianId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(guardianId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try

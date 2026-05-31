@@ -1,7 +1,6 @@
 ﻿#region
 
 using KyberKlass.Services.Data.Interfaces;
-using KyberKlass.Web.Infrastructure.Extensions;
 using KyberKlass.Web.ViewModels.Admin;
 using KyberKlass.Web.ViewModels.Admin.Classroom;
 using KyberKlass.Web.ViewModels.Admin.School;
@@ -15,35 +14,31 @@ using static KyberKlass.Common.CustomMessageConstants.Common;
 
 namespace KyberKlass.Web.Controllers;
 
-[Authorize(Roles="Admin")]
+[Authorize(Roles = "Admin")]
 public class ClassroomController(
     ISchoolService schoolService,
     IClassroomService classroomService,
     ITeacherService teacherService)
     : Controller
 {
-    private const string CONTROLLER_NAME = "Classroom";
+    private const string ControllerName = "Classroom";
 
-    private string GetViewPath(string viewName)
+    private static string GetViewPath(string viewName)
     {
-        return $"~/Views/Admin/Classroom/{viewName}.cshtml";
+        return $"~/Views/Admin/{ControllerName}/{viewName}.cshtml";
     }
 
     [HttpGet]
     public async Task<IActionResult> Add(string schoolId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
 
         AddClassroomViewModel viewModel = new() { SchoolId = schoolId, UnassignedTeachers = unassignedTeachers };
-
 
         return View(GetViewPath(nameof(Add)), viewModel);
     }
@@ -53,11 +48,7 @@ public class ClassroomController(
     {
         if (!ModelState.IsValid)
         {
-            // Repopulate unassigned teachers
-            IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
-            model.UnassignedTeachers = unassignedTeachers;
-
-            // Repopulate unassigned students
+            model.UnassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
 
             return View(GetViewPath(nameof(Add)), model);
         }
@@ -68,7 +59,7 @@ public class ClassroomController(
 
             if (alreadyExists)
             {
-                TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, CONTROLLER_NAME, model.Name);
+                TempData["ErrorMessage"] = string.Format(ALREADY_ADDED_MESSAGE, ControllerName, model.Name);
             }
             else
             {
@@ -76,12 +67,11 @@ public class ClassroomController(
 
                 if (!addedSuccessfully)
                 {
-                    TempData["ErrorMessage"] = string.Format(UNABLE_TO_ADD_MESSAGE, CONTROLLER_NAME.ToLower());
+                    TempData["ErrorMessage"] = string.Format(UNABLE_TO_ADD_MESSAGE, ControllerName.ToLower());
                 }
                 else
                 {
-                    TempData["SuccessMessage"] =
-                        string.Format(ADDITION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Name);
+                    TempData["SuccessMessage"] = string.Format(ADDITION_SUCCESSFUL_MESSAGE, ControllerName, model.Name);
                 }
             }
 
@@ -89,13 +79,9 @@ public class ClassroomController(
         }
         catch (Exception)
         {
-            ModelState.AddModelError(string.Empty, string.Format(ADDITION_ERROR_MESSAGE, CONTROLLER_NAME.ToLower()));
+            ModelState.AddModelError(string.Empty, string.Format(ADDITION_ERROR_MESSAGE, ControllerName.ToLower()));
 
-            // Repopulate unassigned teachers
-            IEnumerable<BasicViewModel> unassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
-            model.UnassignedTeachers = unassignedTeachers;
-
-            // Repopulate unassigned students
+            model.UnassignedTeachers = await teacherService.GetUnassignedTeachersAsync();
 
             return View(GetViewPath(nameof(Add)), model);
         }
@@ -112,13 +98,9 @@ public class ClassroomController(
     [HttpGet]
     public async Task<IActionResult> Details(string schoolId, string classroomId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null) &&
-                            ValidationExtensions.IsNotNullOrEmptyInput<string>(classroomId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId) || string.IsNullOrWhiteSpace(classroomId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -139,12 +121,9 @@ public class ClassroomController(
     [HttpGet]
     public async Task<IActionResult> Manage(string schoolId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -154,7 +133,6 @@ public class ClassroomController(
             if (school == null)
             {
                 return View("NotFound404");
-                //return NotFound();
             }
 
             IEnumerable<ClassroomDetailsViewModel> classrooms = await classroomService.AllAsync(schoolId);
@@ -175,13 +153,9 @@ public class ClassroomController(
     [HttpGet]
     public async Task<IActionResult> Edit(string schoolId, string classroomId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null) &&
-                            ValidationExtensions.IsNotNullOrEmptyInput<string>(classroomId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId) || string.IsNullOrWhiteSpace(classroomId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -198,20 +172,12 @@ public class ClassroomController(
         }
     }
 
-    /// <summary>
-    ///     Updates the details of a school.
-    /// </summary>
-    /// <param name="classroomId">The unique identifier of the classroom.</param>
-    /// <param name="model">The <see cref="ClassroomDetailsViewModel" /> containing the updated details.</param>
     [HttpPost]
     public async Task<IActionResult> Edit(string classroomId, AddClassroomViewModel model)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(classroomId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(classroomId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         if (!ModelState.IsValid)
@@ -234,8 +200,8 @@ public class ClassroomController(
             if (editSuccessfully)
             {
                 TempData["SuccessMessage"] = !model.IsActive
-                    ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, model.Id)
-                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, CONTROLLER_NAME, model.Id);
+                    ? string.Format(SOFT_DELETION_SUCCESSFUL_MESSAGE, ControllerName, model.Id)
+                    : string.Format(CHANGES_SUCCESSFULLY_APPLIED_MESSAGE, ControllerName, model.Id);
             }
 
             return RedirectToAction(nameof(Manage), new { model.SchoolId });
@@ -251,13 +217,9 @@ public class ClassroomController(
     [HttpGet]
     public async Task<IActionResult> Delete(string schoolId, string classroomId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null) &&
-                            ValidationExtensions.IsNotNullOrEmptyInput<string>(classroomId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId) || string.IsNullOrWhiteSpace(classroomId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -272,21 +234,12 @@ public class ClassroomController(
         }
     }
 
-    /// <summary>
-    ///     Displays a confirmation page before deleting a classroom.
-    /// </summary>
-    /// <param name="schoolId">The unique identifier of the school the classroom is in.</param>
-    /// <param name="classroomId">The unique identifier of the classroom.</param>
     [HttpPost]
     public async Task<IActionResult> DeleteConfirmed(string schoolId, string classroomId)
     {
-        bool isValidInput = ValidationExtensions.IsNotNullOrEmptyInput<string>(schoolId, null) &&
-                            ValidationExtensions.IsNotNullOrEmptyInput<string>(classroomId, null);
-
-        if (!isValidInput)
+        if (string.IsNullOrWhiteSpace(schoolId) || string.IsNullOrWhiteSpace(classroomId))
         {
             return View("BadRequest400");
-            //return BadRequest(INVALID_INPUT_MESSAGE);
         }
 
         try
@@ -295,7 +248,7 @@ public class ClassroomController(
 
             if (hasStudentsAssigned)
             {
-                TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, CONTROLLER_NAME.ToLower());
+                TempData["ErrorMessage"] = string.Format(DELETION_DATA_ERROR_MESSAGE, ControllerName.ToLower());
 
                 return RedirectToAction(nameof(Manage), new { schoolId });
             }
@@ -304,16 +257,16 @@ public class ClassroomController(
 
             if (successfullyDeleted)
             {
-                TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, CONTROLLER_NAME, classroomId);
+                TempData["SuccessMessage"] = string.Format(DELETION_SUCCESSFUL_MESSAGE, ControllerName, classroomId);
 
                 return RedirectToAction(nameof(Manage), new { schoolId });
             }
 
-            return BadRequest(string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, classroomId));
+            return BadRequest(string.Format(DELETION_ERROR_MESSAGE, ControllerName, classroomId));
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, CONTROLLER_NAME, classroomId);
+            TempData["ErrorMessage"] = string.Format(DELETION_ERROR_MESSAGE, ControllerName, classroomId);
             return RedirectToAction(nameof(Manage), new { schoolId });
         }
     }
