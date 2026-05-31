@@ -35,3 +35,15 @@ body {
     white-space: nowrap;
     line-height: 60px;
 }
+
+.hero-section {
+    min-height: calc(100vh - 120px);
+}
+
+.features-section .card {
+    transition: border-color 0.2s ease;
+}
+
+.features-section .card:hover {
+    border-color: var(--kyber-primary) !important;
+}

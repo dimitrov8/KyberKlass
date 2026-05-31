@@ -10,20 +10,88 @@
     }
     else
     {
-        ViewData["Title"] = "Home Page";
+        ViewData["Title"] = "Home";
     }
 
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (SignInManager.IsSignedIn(User))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = null;
+    }
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    @if (SignInManager.IsSignedIn(User))
-    {
-        var user = await UserManager.GetUserAsync(User);
-        IList<string>? roles = await UserManager.GetRolesAsync(user);
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    IList<string>? roles = await UserManager.GetRolesAsync(user);
 
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
         <p>Welcome, @user.UserName! Your role(s): @string.Join(", ", roles)</p>
-    }
+    </div>
+}
+else
+{
+    <!DOCTYPE html>
+    <html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>@ViewData["Title"] - KyberKlass</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    </head>
+    <body>
+        <div class="hero-section d-flex align-items-center">
+            <div class="container text-center">
+                <h1 class="display-3 fw-bold mb-3">KyberKlass</h1>
+                <p class="lead mb-4 text-secondary">School management made simple. Manage schools, classrooms, teachers, students, and guardians — all in one place.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a class="btn btn-primary btn-lg fw-bold px-4" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    <a class="btn btn-outline-light btn-lg fw-bold px-4" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                </div>
+            </div>
+        </div>
 
-</div>
+        <div class="container features-section py-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-secondary bg-transparent">
+                        <div class="card-body text-center py-4">
+                            <h5 class="card-title fw-bold">Schools &amp; Classrooms</h5>
+                            <p class="card-text text-secondary">Organize schools and classrooms with ease. Assign teachers, track students, and manage everything from a single dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-secondary bg-transparent">
+                        <div class="card-body text-center py-4">
+                            <h5 class="card-title fw-bold">Roles &amp; Permissions</h5>
+                            <p class="card-text text-secondary">Role-based access for Admins, Teachers, Students, and Guardians. Each role sees exactly what they need.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-secondary bg-transparent">
+                        <div class="card-body text-center py-4">
+                            <h5 class="card-title fw-bold">Student Management</h5>
+                            <p class="card-text text-secondary">Track students across classrooms, assign guardians, update roles, and maintain accurate records at all times.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="border-top footer text-muted py-3">
+            <div class="container text-center">
+                &copy; KyberKlass @DateTime.UtcNow.Year
+            </div>
+        </footer>
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+}
