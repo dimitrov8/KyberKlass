@@ -4,15 +4,13 @@
     ViewData["Title"] = "School Details";
 }
 
-<div class="container-fluid">
-    <h1 class="text-center">@ViewData["Title"]</h1>
-    <hr/>
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr/>
 
-    @await Html.PartialAsync("~/Views/Admin/School/_DetailsPartial.cshtml", Model)
+@await Html.PartialAsync("~/Views/Admin/School/_DetailsPartial.cshtml", Model)
 
-    <div class="mt-5">
-        <a class="btn btn-secondary fw-bold" asp-controller="School" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-        <a class="btn btn-primary fw-bold" asp-controller="Classroom" asp-action="Manage"
-           asp-route-schoolId="@Model.Id">Manage Classrooms</a>
-    </div>
+<div class="mt-5">
+    <a class="btn btn-secondary fw-bold" asp-controller="School" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a class="btn btn-primary fw-bold" asp-controller="Classroom" asp-action="Manage"
+       asp-route-schoolId="@Model.Id">Manage Classrooms</a>
 </div>

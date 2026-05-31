@@ -4,16 +4,14 @@
     ViewData["Title"] = "Delete School";
 }
 
-<div class="container-fluid">
-    <h1 class="text-center">@ViewData["Title"]</h1>
-    <hr/>
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr/>
 
-    @await Html.PartialAsync("~/Views/Admin/School/_DetailsPartial.cshtml", Model)
+@await Html.PartialAsync("~/Views/Admin/School/_DetailsPartial.cshtml", Model)
 
-    <div class="mt-5">
-        <form asp-controller="School" asp-action="DeleteConfirmed" method="post">
-            <input type="hidden" asp-for="Id"/>
-            <button type="submit" class="btn btn-danger fw-bold">Delete</button>
-        </form>
-    </div>
+<div class="mt-5">
+    <form asp-controller="School" asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id"/>
+        <button type="submit" class="btn btn-danger fw-bold">Delete</button>
+    </form>
 </div>
